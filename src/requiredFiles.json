@@ -1,0 +1,33 @@
+[{
+    "name": "package.json",
+    "warn": "WARNING :",
+    "message": "is not present. Think about having a meal at the beginning of the project."
+}, {
+    "name": ".eslintrc",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": ".editorconfig",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": "index.d.ts",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": "jsdoc.json",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": "commitlint.config.js",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": "licence",
+    "warn": "WARNING :",
+    "message": ""
+}, {
+    "name": ".npmignore",
+    "warn": "WARNING :",
+    "message": ""
+}]

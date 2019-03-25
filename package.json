@@ -14,7 +14,10 @@
   "keywords": [],
   "author": "SlimIO",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "inquirer": "^6.2.2",
+    "kleur": "^3.0.2"
+  },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
