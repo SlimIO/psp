@@ -2,8 +2,8 @@
     "name": "package.json",
     "severity": {
         "cri": {
-            "name": "Critical :",
-            "message": "is not present. Think about having 'npm i' at the beginning of the project."
+            "name": "Critical : ",
+            "message": " is not present. Think about having 'npm i' at the beginning of the project."
         },
         "info": "",
         "warn": ""
@@ -13,29 +13,27 @@
     "name": ".eslintrc",
     "severity": {
         "cri": {
-            "name": "Critical :",
-            "message": "is not present."
+            "name": "Critical : ",
+            "message": " is not present."
         },
         "info": ":",
         "warn": {
-            "name": "Warning :",
-            "message": "contains the rules field, some specific rules are in place."
+            "name": "Warning : ",
+            "message": " contains the rules field, some specific rules are in place."
         }
     },
-    "message": "",
     "contents": {
         "extends": "@slimio/eslint-config",
         "rules": ""
     }
-
 }, {
     "name": ".editorconfig",
     "severity": {
         "cri": "",
         "info": "",
         "warn": {
-            "name": "Warning :",
-            "message": "is not present. The configuration of Visual Studio Code will not be standard to SlimIO projects."
+            "name": "Warning : ",
+            "message": " is not present. The configuration of Visual Studio Code will not be standard to SlimIO projects."
         }
     },
     "contents": ""
@@ -45,8 +43,8 @@
         "cri": "",
         "info": "",
         "warn": {
-            "name": "Warning :",
-            "message": "is not present. The definition of type(s) will be missing."
+            "name": "Warning : ",
+            "message": " is not present. The definition of type(s) will be missing."
         }
     },
     "contents": ""
@@ -62,13 +60,13 @@
     "name": "commitlint.config.js",
     "severity": {
         "cri": {
-            "name": "Critical :",
-            "message": "is not present."
+            "name": "Critical : ",
+            "message": " is not present."
         },
         "info": "",
         "warn": {
-            "name": "Warning :",
-            "message": "does not contain the right resource in the 'extends' field (@commitlint/config-conventional)"
+            "name": "Warning : ",
+            "message": " does not contain the right resource in the 'extends' field (@commitlint/config-conventional)"
         }
     },
     "contents": {
@@ -78,8 +76,8 @@
     "name": "LICENCE",
     "severity": {
         "cri": {
-            "name": "Critical :",
-            "message": "is not present."
+            "name": "Critical : ",
+            "message": " is not present."
         },
         "info": "",
         "warn": ""
@@ -89,8 +87,8 @@
     "name": ".npmignore",
     "severity": {
         "cri": {
-            "name": "Critical :",
-            "message": "is not present."
+            "name": "Critical : ",
+            "message": " is not present."
         },
         "info": "",
         "warn": ""
