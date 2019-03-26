@@ -43,6 +43,11 @@
     "functions": 98,
     "branches": 90
   },
+  "husky": {
+    "hooks": {
+        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "preferGlobal": true,
   "bin": {
     "psp": "./bin/index.js"

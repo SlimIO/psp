@@ -32,35 +32,32 @@ const requiredDir = {
 
 async function main(MainDir) {
     const elemMainDir = new Set(await readdir(MainDir));
-    const msg = console.log;
 
-    for (const fileRequired of requiredFiles) {
+    for (const file of requiredFiles) {
         // If file exist
-        if (elemMainDir.has(fileRequired.name)) {
+        if (elemMainDir.has(file.name)) {
             // Read file
-            const fileName = fileRequired.name;
+            const excludeFiles = new Set(["package.json", "LICENSE"]);
             let contents = "";
-            if (fileName !== "package.json" && fileName !== "LICENSE") {
-                contents = await readFile(join(MainDir, `/${fileName}`));
-                contents = contents.toString();
+            if (!excludeFiles.has(file.name)) {
+                contents = await readFile(join(MainDir, `/${file.name}`), { encoding: "utf8" });
             }
             // Switch all files
-            switch (fileName) {
+            switch (file.name) {
                 case ".eslintrc":
                     
                     break;
             
                 default:
-                    break;
             }
             continue;
         }
         // If file doesn't exist
-        if (fileRequired.name === "index.d.ts") {
-            msg(yellow("WARNING :"), green(fileRequired.name), "doesn't exist");
+        if (file.name === "index.d.ts") {
+            console.log(yellow("WARNING :"), green(file.name), "doesn't exist");
         }
         else {
-            msg(bold().red("CRITICAL :"), green(fileRequired.name), "doesn't exist");
+            console.log(bold().red("CRITICAL :"), green(file.name), "doesn't exist");
         }
     }
 }
