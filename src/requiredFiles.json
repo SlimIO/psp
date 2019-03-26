@@ -1,33 +1,99 @@
 [{
     "name": "package.json",
-    "severity": "WARNING :",
-    "message": "is not present. Think about having 'npm i' at the beginning of the project."
+    "severity": {
+        "cri": {
+            "name": "Critical :",
+            "message": "is not present. Think about having 'npm i' at the beginning of the project."
+        },
+        "info": "",
+        "warn": ""
+    },
+    "contents": ""
 }, {
     "name": ".eslintrc",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": {
+            "name": "Critical :",
+            "message": "is not present."
+        },
+        "info": ":",
+        "warn": {
+            "name": "Warning :",
+            "message": "contains the rules field, some specific rules are in place."
+        }
+    },
+    "message": "",
+    "contents": {
+        "extends": "@slimio/eslint-config",
+        "rules": ""
+    }
+
 }, {
     "name": ".editorconfig",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": "",
+        "info": "",
+        "warn": {
+            "name": "Warning :",
+            "message": "is not present. The configuration of Visual Studio Code will not be standard to SlimIO projects."
+        }
+    },
+    "contents": ""
 }, {
     "name": "index.d.ts",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": "",
+        "info": "",
+        "warn": {
+            "name": "Warning :",
+            "message": "is not present. The definition of type(s) will be missing."
+        }
+    },
+    "contents": ""
 }, {
     "name": "jsdoc.json",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": "",
+        "info": "",
+        "warn": ""
+    },
+    "contents": ""
 }, {
     "name": "commitlint.config.js",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": {
+            "name": "Critical :",
+            "message": "is not present."
+        },
+        "info": "",
+        "warn": {
+            "name": "Warning :",
+            "message": "does not contain the right resource in the 'extends' field (@commitlint/config-conventional)"
+        }
+    },
+    "contents": {
+        "extends": ["@commitlint/config-conventional"]
+    }
 }, {
-    "name": "licence",
-    "severity": "WARNING :",
-    "message": ""
+    "name": "LICENCE",
+    "severity": {
+        "cri": {
+            "name": "Critical :",
+            "message": "is not present."
+        },
+        "info": "",
+        "warn": ""
+    },
+    "contents": ""
 }, {
     "name": ".npmignore",
-    "severity": "WARNING :",
-    "message": ""
+    "severity": {
+        "cri": {
+            "name": "Critical :",
+            "message": "is not present."
+        },
+        "info": "",
+        "warn": ""
+    },
+    "contents": ""
 }]
