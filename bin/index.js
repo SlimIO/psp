@@ -12,7 +12,7 @@ const inquirer = require("inquirer");
 
 // Constants
 
-const pathMainDir = join(process.cwd());
+const pathMainDir = join(process.cwd(), "/test");
 const requiredFiles = require("../src/requiredFiles.json");
 
 const requiredDir = {
@@ -39,13 +39,19 @@ async function main(MainDir) {
             // Read file
             const excludeFiles = new Set(["package.json", "LICENSE"]);
             let contents = "";
+            // If file isn't excluded
             if (!excludeFiles.has(file.name)) {
                 contents = await readFile(join(MainDir, `/${file.name}`), { encoding: "utf8" });
             }
             // Switch all files
             switch (file.name) {
                 case ".eslintrc":
-                    
+                    if (JSON.parse(contents).extends !== file.contents[0].extends) {
+                        console.log(bold().red("CRITICAL :"), green(file.name), `must be extends by ${file.contents[0].extends}`);
+                    }
+                    if (JSON.parse(contents).rules !== undefined) {
+                        console.log(yellow("WARNING :"), green(file.name), "contains a 'rules' field (specifics rules !)");
+                    }
                     break;
             
                 default:
@@ -54,10 +60,10 @@ async function main(MainDir) {
         }
         // If file doesn't exist
         if (file.name === "index.d.ts") {
-            console.log(yellow("WARNING :"), green(file.name), "doesn't exist");
+            console.log(yellow("WARNING :"), green(file.name), "doesn't exist in your main directory");
         }
         else {
-            console.log(bold().red("CRITICAL :"), green(file.name), "doesn't exist");
+            console.log(bold().red("CRITICAL :"), green(file.name), "doesn't exist in your main directory");
         }
     }
 }

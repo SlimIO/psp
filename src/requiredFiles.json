@@ -2,9 +2,8 @@
     "name": "package.json"
 }, {
     "name": ".eslintrc",
-    "content": [
-        { "extends": "@slimio/eslint-config" },
-        { "rules": "" }
+    "contents": [
+        { "extends": "@slimio/eslint-config" }
     ]
 }, {
     "name": ".editorconfig"
@@ -14,8 +13,8 @@
     "name": "jsdoc.json"
 }, {
     "name": "commitlint.config.js",
-    "content": [
-        { "extends": "@slimio/eslint-config" }
+    "contents": [
+        { "extends": "@commitlint/config-conventional" }
     ]
 }, {
     "name": "LICENSE"
