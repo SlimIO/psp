@@ -31,17 +31,11 @@ const requiredDir = {
  */
 
 async function main(MainDir) {
-    const elemMainDir = await readdir(MainDir);
+    const elemMainDir = new Set(await readdir(MainDir));
 
     for (const fileRequired of requiredFiles) {
-        let fileFound;
-        for (const fileUser of elemMainDir) {
-            if (fileUser === fileRequired.name) {
-                fileFound = true;
-            }
-        }
-        if (!fileFound) {
-            console.log(yellow(fileRequired.warn), "The file", green(fileRequired.name), fileRequired.message);
+        if (!elemMainDir.has(fileRequired.name)) {
+            console.log(yellow(fileRequired.severity), "The file", green(fileRequired.name), fileRequired.message);
         }
     }
 }

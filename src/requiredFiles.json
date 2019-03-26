@@ -1,33 +1,33 @@
 [{
     "name": "package.json",
-    "warn": "WARNING :",
-    "message": "is not present. Think about having a meal at the beginning of the project."
+    "severity": "WARNING :",
+    "message": "is not present. Think about having 'npm i' at the beginning of the project."
 }, {
     "name": ".eslintrc",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": ".editorconfig",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": "index.d.ts",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": "jsdoc.json",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": "commitlint.config.js",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": "licence",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }, {
     "name": ".npmignore",
-    "warn": "WARNING :",
+    "severity": "WARNING :",
     "message": ""
 }]
