@@ -1,7 +1,7 @@
 [{
     "name": "package.json",
     "severity": {
-        "cri": {
+        "crit": {
             "name": "Critical : ",
             "message": " is not present. Think about having 'npm i' at the beginning of the project."
         },
@@ -12,7 +12,7 @@
 }, {
     "name": ".eslintrc",
     "severity": {
-        "cri": {
+        "crit": {
             "name": "Critical : ",
             "message": " is not present."
         },
@@ -29,7 +29,7 @@
 }, {
     "name": ".editorconfig",
     "severity": {
-        "cri": "",
+        "crit": "",
         "info": "",
         "warn": {
             "name": "Warning : ",
@@ -40,7 +40,7 @@
 }, {
     "name": "index.d.ts",
     "severity": {
-        "cri": "",
+        "crit": "",
         "info": "",
         "warn": {
             "name": "Warning : ",
@@ -51,7 +51,7 @@
 }, {
     "name": "jsdoc.json",
     "severity": {
-        "cri": "",
+        "crit": "",
         "info": "",
         "warn": ""
     },
@@ -59,7 +59,7 @@
 }, {
     "name": "commitlint.config.js",
     "severity": {
-        "cri": {
+        "crit": {
             "name": "Critical : ",
             "message": " is not present."
         },
@@ -75,7 +75,7 @@
 }, {
     "name": "LICENCE",
     "severity": {
-        "cri": {
+        "crit": {
             "name": "Critical : ",
             "message": " is not present."
         },
@@ -86,7 +86,7 @@
 }, {
     "name": ".npmignore",
     "severity": {
-        "cri": {
+        "crit": {
             "name": "Critical : ",
             "message": " is not present."
         },

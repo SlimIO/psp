@@ -7,7 +7,7 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 
-const { red, green, yellow, bold, black, bgRed, white } = require("kleur");
+const { red, green, yellow, bold, black, bgBlack, white } = require("kleur");
 const inquirer = require("inquirer");
 
 // Constants
@@ -24,10 +24,10 @@ const requiredDir = {
 
 /**
  * @async
- * @func extractDirectory Self-Invoking
+ * @func main
  * @description Extract from main directory the list of files and folders
  * @param MainDir Constant pathMainDir
- * @returns {Array}
+ * @returns {Console}
  */
 
 async function main(MainDir) {
@@ -37,21 +37,20 @@ async function main(MainDir) {
         // If file doesn't exist
         if (!elemMainDir.has(fileRequired.name)) {
             const msg = console.log;
-            const key = fileRequired.name;
-            const severityName = fileRequired.severity.cri.name;
-            const severityMsg = fileRequired.severity.cri.message;
-            switch (key) {
+            const key = fileRequired;
+            const filSev = key.severity;
+            switch (key.name) {
                 case "package.json":
-                    msg(black().bgRed(severityName), "The file", green(key), severityMsg);
+                    msg(bold().red(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
                     break;
                 case ".eslintrc":
-                    msg(black().bgRed(severityName), "The file", green(key), severityMsg);
+                    msg(black().bgRed(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
                     break;
                 case ".editorconfig":
-                    
+                    msg(black().bgRed(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
                     break;
                 case "index.d.ts":
-                    
+                    msg(yellow(filSev.warn.name), "The file", green(key.name), filSev.warn.message);
                     break;
                 case "jsdoc.json":
                     
