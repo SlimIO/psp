@@ -1,97 +1,24 @@
 [{
-    "name": "package.json",
-    "severity": {
-        "crit": {
-            "name": "Critical : ",
-            "message": " is not present. Think about having 'npm i' at the beginning of the project."
-        },
-        "info": "",
-        "warn": ""
-    },
-    "contents": ""
+    "name": "package.json"
 }, {
     "name": ".eslintrc",
-    "severity": {
-        "crit": {
-            "name": "Critical : ",
-            "message": " is not present."
-        },
-        "info": ":",
-        "warn": {
-            "name": "Warning : ",
-            "message": " contains the rules field, some specific rules are in place."
-        }
-    },
-    "contents": {
-        "extends": "@slimio/eslint-config",
-        "rules": ""
-    }
+    "content": [
+        { "extends": "@slimio/eslint-config" },
+        { "rules": "" }
+    ]
 }, {
-    "name": ".editorconfig",
-    "severity": {
-        "crit": "",
-        "info": "",
-        "warn": {
-            "name": "Warning : ",
-            "message": " is not present. The configuration of Visual Studio Code will not be standard to SlimIO projects."
-        }
-    },
-    "contents": ""
+    "name": ".editorconfig"
 }, {
-    "name": "index.d.ts",
-    "severity": {
-        "crit": "",
-        "info": "",
-        "warn": {
-            "name": "Warning : ",
-            "message": " is not present. The definition of type(s) will be missing."
-        }
-    },
-    "contents": ""
+    "name": "index.d.ts"
 }, {
-    "name": "jsdoc.json",
-    "severity": {
-        "crit": "",
-        "info": "",
-        "warn": ""
-    },
-    "contents": ""
+    "name": "jsdoc.json"
 }, {
     "name": "commitlint.config.js",
-    "severity": {
-        "crit": {
-            "name": "Critical : ",
-            "message": " is not present."
-        },
-        "info": "",
-        "warn": {
-            "name": "Warning : ",
-            "message": " does not contain the right resource in the 'extends' field (@commitlint/config-conventional)"
-        }
-    },
-    "contents": {
-        "extends": ["@commitlint/config-conventional"]
-    }
+    "content": [
+        { "extends": "@slimio/eslint-config" }
+    ]
 }, {
-    "name": "LICENCE",
-    "severity": {
-        "crit": {
-            "name": "Critical : ",
-            "message": " is not present."
-        },
-        "info": "",
-        "warn": ""
-    },
-    "contents": ""
+    "name": "LICENSE"
 }, {
-    "name": ".npmignore",
-    "severity": {
-        "crit": {
-            "name": "Critical : ",
-            "message": " is not present."
-        },
-        "info": "",
-        "warn": ""
-    },
-    "contents": ""
+    "name": ".npmignore"
 }]

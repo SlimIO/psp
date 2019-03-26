@@ -12,7 +12,7 @@ const inquirer = require("inquirer");
 
 // Constants
 
-const pathMainDir = process.cwd();
+const pathMainDir = join(process.cwd());
 const requiredFiles = require("../src/requiredFiles.json");
 
 const requiredDir = {
@@ -32,41 +32,35 @@ const requiredDir = {
 
 async function main(MainDir) {
     const elemMainDir = new Set(await readdir(MainDir));
+    const msg = console.log;
 
     for (const fileRequired of requiredFiles) {
-        // If file doesn't exist
-        if (!elemMainDir.has(fileRequired.name)) {
-            const msg = console.log;
-            const key = fileRequired;
-            const filSev = key.severity;
-            switch (key.name) {
-                case "package.json":
-                    msg(bold().red(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
-                    break;
+        // If file exist
+        if (elemMainDir.has(fileRequired.name)) {
+            // Read file
+            const fileName = fileRequired.name;
+            let contents = "";
+            if (fileName !== "package.json" && fileName !== "LICENSE") {
+                contents = await readFile(join(MainDir, `/${fileName}`));
+                contents = contents.toString();
+            }
+            // Switch all files
+            switch (fileName) {
                 case ".eslintrc":
-                    msg(black().bgRed(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
-                    break;
-                case ".editorconfig":
-                    msg(black().bgRed(filSev.crit.name), "The file", green(key.name), filSev.crit.message);
-                    break;
-                case "index.d.ts":
-                    msg(yellow(filSev.warn.name), "The file", green(key.name), filSev.warn.message);
-                    break;
-                case "jsdoc.json":
-                    
-                    break;
-                case "commitlint.config.js":
-                    
-                    break;
-                case "LICENCE":
-                    
-                    break;
-                case ".npmignore":
                     
                     break;
             
                 default:
+                    break;
             }
+            continue;
+        }
+        // If file doesn't exist
+        if (fileRequired.name === "index.d.ts") {
+            msg(yellow("WARNING :"), green(fileRequired.name), "doesn't exist");
+        }
+        else {
+            msg(bold().red("CRITICAL :"), green(fileRequired.name), "doesn't exist");
         }
     }
 }
