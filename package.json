@@ -15,6 +15,7 @@
   "author": "SlimIO",
   "license": "MIT",
   "dependencies": {
+    "@slimio/manifest": "github:slimio/manifest",
     "inquirer": "^6.2.2",
     "kleur": "^3.0.2"
   },
@@ -45,7 +46,7 @@
   },
   "husky": {
     "hooks": {
-        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "preferGlobal": true,
