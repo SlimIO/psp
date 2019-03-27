@@ -75,12 +75,11 @@ async function main(MainDir) {
             continue;
         }
         // If file doesn't exist
+        message = "doesn't exist in your main directory.";
         if (file.name === "index.d.ts") {
-            message = "doesn't exist in your main directory.";
             console.log(yellow("WARNING :"), green(file.name), message);
         }
         else {
-            message = "doesn't exist in your main directory.";
             console.log(bold().red("CRITICAL :"), green(file.name), message);
         }
     }
