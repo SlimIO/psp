@@ -35,7 +35,6 @@ async function main(MainDir) {
 
     for (const file of requiredFiles) {
         // If file exist
-        let message = "";
         if (elemMainDir.has(file.name)) {
             // Read file
             const excludeFiles = new Set(["package.json", "LICENSE"]);
@@ -49,25 +48,21 @@ async function main(MainDir) {
             switch (file.name) {
                 case ".eslintrc":
                     if (JSON.parse(contentUserFile).extends !== file.content[0].extends) {
-                        message = `must be extends by ${file.content[0].extends}.`;
-                        console.log(bold().red("CRITICAL :"), green(file.name), message);
+                        console.log(bold().red("CRITICAL :"), green(file.name), file.message[0]);
                     }
                     if (JSON.parse(contentUserFile).rules !== undefined) {
-                        message = "contains a 'rules' field (specifics rules !).";
-                        console.log(yellow("WARNING :"), green(file.name), message);
+                        console.log(yellow("WARNING :"), green(file.name), file.message[1]);
                     }
                     break;
                 case ".editorconfig":
                     contentLocalFile = await readFile(join(__dirname, "../src/.editorconfig"), { encoding: "utf8" });
                     if (contentUserFile !== contentLocalFile) {
-                        message = "isn't identical to SlimIO projects";
-                        console.log(yellow("WARNING :"), green(file.name), message);
+                        console.log(yellow("WARNING :"), green(file.name), file.message[0]);
                     }
                     break;
                 case "commitlint.config.js":
                     if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
-                        message = "must be extends by @commitlint/config-conventional";
-                        console.log(bold().red("CRITICAL :"), green(file.name), message);
+                        console.log(bold().red("CRITICAL :"), green(file.name), file.message[0]);
                     }
                     break;
                 default:
@@ -75,7 +70,7 @@ async function main(MainDir) {
             continue;
         }
         // If file doesn't exist
-        message = "doesn't exist in your main directory.";
+        const message = "doesn't exist in your main directory.";
         if (file.name === "index.d.ts") {
             console.log(yellow("WARNING :"), green(file.name), message);
         }
