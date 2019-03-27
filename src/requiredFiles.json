@@ -2,7 +2,7 @@
     "name": "package.json"
 }, {
     "name": ".eslintrc",
-    "contents": [
+    "content": [
         { "extends": "@slimio/eslint-config" }
     ]
 }, {
@@ -13,7 +13,7 @@
     "name": "jsdoc.json"
 }, {
     "name": "commitlint.config.js",
-    "contents": [
+    "content": [
         { "extends": "@commitlint/config-conventional" }
     ]
 }, {

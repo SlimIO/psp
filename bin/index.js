@@ -35,35 +35,53 @@ async function main(MainDir) {
 
     for (const file of requiredFiles) {
         // If file exist
+        let message = "";
         if (elemMainDir.has(file.name)) {
             // Read file
             const excludeFiles = new Set(["package.json", "LICENSE"]);
-            let contents = "";
+            let contentUserFile = "";
+            let contentLocalFile = "";
             // If file isn't excluded
             if (!excludeFiles.has(file.name)) {
-                contents = await readFile(join(MainDir, `/${file.name}`), { encoding: "utf8" });
+                contentUserFile = await readFile(join(MainDir, `/${file.name}`), { encoding: "utf8" });
             }
             // Switch all files
             switch (file.name) {
                 case ".eslintrc":
-                    if (JSON.parse(contents).extends !== file.contents[0].extends) {
-                        console.log(bold().red("CRITICAL :"), green(file.name), `must be extends by ${file.contents[0].extends}`);
+                    if (JSON.parse(contentUserFile).extends !== file.content[0].extends) {
+                        message = `must be extends by ${file.content[0].extends}.`;
+                        console.log(bold().red("CRITICAL :"), green(file.name), message);
                     }
-                    if (JSON.parse(contents).rules !== undefined) {
-                        console.log(yellow("WARNING :"), green(file.name), "contains a 'rules' field (specifics rules !)");
+                    if (JSON.parse(contentUserFile).rules !== undefined) {
+                        message = "contains a 'rules' field (specifics rules !).";
+                        console.log(yellow("WARNING :"), green(file.name), message);
                     }
                     break;
-            
+                case ".editorconfig":
+                    contentLocalFile = await readFile(join(__dirname, "../src/.editorconfig"), { encoding: "utf8" });
+                    if (contentUserFile !== contentLocalFile) {
+                        message = "isn't identical to SlimIO projects";
+                        console.log(yellow("WARNING :"), green(file.name), message);
+                    }
+                    break;
+                case "commitlint.config.js":
+                    if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
+                        message = "must be extends by @commitlint/config-conventional";
+                        console.log(bold().red("CRITICAL :"), green(file.name), message);
+                    }
+                    break;
                 default:
             }
             continue;
         }
         // If file doesn't exist
         if (file.name === "index.d.ts") {
-            console.log(yellow("WARNING :"), green(file.name), "doesn't exist in your main directory");
+            message = "doesn't exist in your main directory.";
+            console.log(yellow("WARNING :"), green(file.name), message);
         }
         else {
-            console.log(bold().red("CRITICAL :"), green(file.name), "doesn't exist in your main directory");
+            message = "doesn't exist in your main directory.";
+            console.log(bold().red("CRITICAL :"), green(file.name), message);
         }
     }
 }
