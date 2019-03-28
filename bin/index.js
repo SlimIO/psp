@@ -6,11 +6,12 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const inquirer = require("inquirer");
+const emoji = require("node-emoji");
 const { red, green, yellow } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Constants
-const pathMainDir = join(process.cwd(), "test");
+const pathMainDir = process.cwd();
 const requiredFiles = require("../src/requiredFiles.json");
 const msg = require("../src/messages.js");
 const requiredDir = new Set(["src", "test", "benchmark", "docs"]);
@@ -23,6 +24,26 @@ const excludeFiles = new Set(["package.json", "LICENSE"]);
  * @param MainDir Constant pathMainDir
  * @returns {Console}
  */
+
+function log(severity, message, file) {
+    let emojiSev = "";
+
+    // If critique or warning
+    if (severity === "crit") {
+        emojiSev = ":no_entry:";
+    }
+    else {
+        emojiSev = " :warning:";
+    }
+
+    // Messages in console
+    if (file === undefined) {
+        console.log("|", emoji.get(emojiSev), " :", message);
+    }
+    else {
+        console.log("|", emoji.get(emojiSev), " :", green(file), message);
+    }
+}
 
 async function main(MainDir) {
     // Read the main directory of user
@@ -46,10 +67,11 @@ async function main(MainDir) {
                 case ".eslintrc": {
                     const ctntUsFileJson = JSON.parse(contentUserFile);
                     if (ctntUsFileJson.extends !== file.extends) {
-                        console.log(red("| CRITICAL :"), green(file.name), msg.eslintExtends);
+                        log("crit", msg.eslintExtends, file.name);
+                        // process.exit(1);
                     }
                     if (Reflect.has(ctntUsFileJson, "rules")) {
-                        console.log(yellow("| WARNING :"), green(file.name), msg.eslintRulesKey);
+                        log("warn", msg.eslintRulesKey, file.name);
                     }
                     break;
                 }
@@ -57,13 +79,13 @@ async function main(MainDir) {
                 case ".editorconfig":
                     contentLocalFile = await readFile(join(__dirname, "..", "template", ".editorconfig"), { encoding: "utf8" });
                     if (contentUserFile !== contentLocalFile) {
-                        console.log(yellow("| WARNING :"), green(file.name), msg.editorConf);
+                        log("warn", msg.editorConf, file.name);
                     }
                     break;
                 // .commitlint.config.js
                 case "commitlint.config.js":
                     if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
-                        console.log(red("| CRITICAL :"), green(file.name), msg.commitLint);
+                        log("crit", msg.commitLint, file.name);
                     }
                     break;
                 default:
@@ -73,49 +95,60 @@ async function main(MainDir) {
 
         // If file doesn't exist
         if (file.name === "index.d.ts") {
-            console.log(yellow("| WARNING :"), green(file.name), msg.NotExist);
+            log("warn", msg.NotExist, file.name);
         }
         else {
-            console.log(red("| CRITICAL :"), green(file.name), msg.NotExist);
+            log("crit", msg.NotExist, file.name);
         }
     }
 
-    // If slimio.toml exists
+    // If slimio.toml exists for projects structure
     if (elemMainDir.has("slimio.toml")) {
-        manifest = Manifest.open().toJSON();
+        const manifest = Manifest.open().toJSON();
         switch (manifest.type) {
             // CLI
             case "CLI": {
-                const folder = yellow("bin folder");
-                const file = yellow("index.js file");
-
                 // If the main directory content a bin folder
                 if (elemMainDir.has("bin")) {
                     try {
                         const ctnIndexFile = await readFile(join(MainDir, "bin", "index.js"));
                         // eslint-disable-next-line max-depth
                         if (ctnIndexFile.indexOf("#!/usr/bin/env node")) {
-                            console.log(yellow("| WARNING :"), msg.shebang);
+                            log("warn", msg.shebang);
                             break;
                         }
                     }
                     catch (error) {
-                        console.log(yellow("| WARNING :"), msg.indexJsNotExist);
+                        log("crit", msg.indexJsNotExist);
                         break;
                     }
                 }
 
                 // Or not
                 else {
-                    console.log(red("| CRITICAL :"), msg.binNotExist);
+                    log("crit", msg.binNotExist);
                     break;
                 }
                 // preferGlobal, bin, main in package.json
-                console.log(msg.rootFields);
+                console.log(msg.rootFieldsCLI);
                 break;
             }
             // N-API
-            case "N-API":
+            case "NAPI":
+                // If include folder doesn't exist.
+                if (!elemMainDir.has("include")) {
+                    log("crit", msg.napiInclude);
+                    break;
+                }
+
+                // If binding.gyp file doesn't exist
+                if (!elemMainDir.has("binding.gyp")) {
+                    log("crit", msg.napiBinding);
+                    break;
+                }
+
+                // gypfile in package.json
+                console.log(msg.rootFieldsNAPI);
                 break;
             default:
         }
@@ -123,7 +156,7 @@ async function main(MainDir) {
 
     // If slimio manisfest doesn't installed in this project => return
     else {
-        console.log(red("| CRITICAL :"), msg.manifest);
+        log("crit", msg.manifest);
     }
 }
 
