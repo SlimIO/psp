@@ -30,7 +30,6 @@ const E_SEV = Object.freeze({
  */
 
 function log(severity, message, file) {
-
     // Messages in console
     if (file === undefined) {
         console.log("|", emoji.get(severity), " :", message);
@@ -105,7 +104,6 @@ async function main(MainDir) {
         switch (manifest.type) {
             // CLI
             case "CLI": {
-                console.log("je passe là");
                 // If the main directory content a bin folder
                 if (elemMainDir.has("bin")) {
                     try {
@@ -121,7 +119,7 @@ async function main(MainDir) {
                         process.exit(1);
                     }
                 }
-
+                
                 // Or not
                 else {
                     log(E_SEV.CRIT, msg.binNotExist);
