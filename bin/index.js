@@ -11,15 +11,10 @@ const inquirer = require("inquirer");
 // Constants
 const pathMainDir = join(process.cwd(), "test");
 const requiredFiles = require("../src/requiredFiles.json");
+const requiredDir = new Set(["src", "test", "benchmark", "docs"]);
 const excludeFiles = new Set(["package.json", "LICENSE"]);
 const msgNotExist = "doesn't exist in your main directory.";
 
-const requiredDir = {
-    src: "",
-    test: "",
-    benchmark: "",
-    docs: ""
-};
 
 /**
  * @async
@@ -31,7 +26,21 @@ const requiredDir = {
 
 async function main(MainDir) {
     const elemMainDir = new Set(await readdir(MainDir));
+    // If slimio manisfest doesn't installed in this project
+    if (!elemMainDir.has("include") && !elemMainDir.has("bin")) {
+        console.log(bold().red("CRITICAL :"), "You must install the slimio manifest -", green("npm i @slimio/manifest"));
+        console.log(`
+        ${green(".toml")} file must be created 
+        at the root of the project to determine if 
+        your application is CLI or N-API. Go to this 
+        link to install this file :
+        https://github.com/SlimIO/Manifest
+        `);
 
+        return;
+    }
+
+    // Loop on required files array
     for (const file of requiredFiles) {
         // If file exist
         if (elemMainDir.has(file.name)) {
@@ -45,9 +54,10 @@ async function main(MainDir) {
 
             // Switch all files
             switch (file.name) {
+                // .eslintrc
                 case ".eslintrc": {
                     const ctntUsFileJson = JSON.parse(contentUserFile);
-                    if (ctntUsFileJson.extends !== file.content[0].extends) {
+                    if (ctntUsFileJson.extends !== file.extends) {
                         console.log(bold().red("CRITICAL :"), green(file.name), file.message[0]);
                     }
                     if (Reflect.has(ctntUsFileJson, "rules")) {
@@ -55,15 +65,17 @@ async function main(MainDir) {
                     }
                     break;
                 }
+                // .editorconfig
                 case ".editorconfig":
                     contentLocalFile = await readFile(join(__dirname, "..", "template", ".editorconfig"), { encoding: "utf8" });
                     if (contentUserFile !== contentLocalFile) {
-                        console.log(yellow("WARNING :"), green(file.name), file.message[0]);
+                        console.log(yellow("WARNING :"), green(file.name), file.message);
                     }
                     break;
+                // .commitlint.config.js
                 case "commitlint.config.js":
                     if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
-                        console.log(bold().red("CRITICAL :"), green(file.name), file.message[0]);
+                        console.log(bold().red("CRITICAL :"), green(file.name), file.message);
                     }
                     break;
                 default:
