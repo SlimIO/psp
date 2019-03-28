@@ -4,15 +4,10 @@
     },
     {
         "name": ".eslintrc",
-        "extends": "@slimio/eslint-config",
-        "message": [
-            "must be extends by @slimio/eslint-config.",
-            "contains a 'rules' field (specifics rules !)."
-        ]
+        "extends": "@slimio/eslint-config"
     },
     {
-        "name": ".editorconfig",
-        "message": "isn't identical to SlimIO projects."
+        "name": ".editorconfig"
     },
     {
         "name": "index.d.ts"
@@ -22,8 +17,7 @@
     },
     {
         "name": "commitlint.config.js",
-        "extends": "@commitlint/config-conventional",
-        "message": "must be extends by @commitlint/config-conventional"
+        "extends": "@commitlint/config-conventional"
     },
     {
         "name": "LICENSE"

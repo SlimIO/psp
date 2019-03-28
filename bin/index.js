@@ -5,17 +5,16 @@ const { readdir, readFile } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
-const { red, green, yellow, bold, black, bgBlack, white } = require("kleur");
 const inquirer = require("inquirer");
+const { red, green, yellow } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Constants
 const pathMainDir = join(process.cwd(), "test");
 const requiredFiles = require("../src/requiredFiles.json");
+const msg = require("../src/messages.js");
 const requiredDir = new Set(["src", "test", "benchmark", "docs"]);
 const excludeFiles = new Set(["package.json", "LICENSE"]);
-const msgNotExist = "doesn't exist in your main directory.";
-
 
 /**
  * @async
@@ -47,10 +46,10 @@ async function main(MainDir) {
                 case ".eslintrc": {
                     const ctntUsFileJson = JSON.parse(contentUserFile);
                     if (ctntUsFileJson.extends !== file.extends) {
-                        console.log(red("CRITICAL :"), green(file.name), file.message[0]);
+                        console.log(red("| CRITICAL :"), green(file.name), msg.eslintExtends);
                     }
                     if (Reflect.has(ctntUsFileJson, "rules")) {
-                        console.log(yellow("WARNING :"), green(file.name), file.message[1]);
+                        console.log(yellow("| WARNING :"), green(file.name), msg.eslintRulesKey);
                     }
                     break;
                 }
@@ -58,13 +57,13 @@ async function main(MainDir) {
                 case ".editorconfig":
                     contentLocalFile = await readFile(join(__dirname, "..", "template", ".editorconfig"), { encoding: "utf8" });
                     if (contentUserFile !== contentLocalFile) {
-                        console.log(yellow("WARNING :"), green(file.name), file.message);
+                        console.log(yellow("| WARNING :"), green(file.name), msg.editorConf);
                     }
                     break;
                 // .commitlint.config.js
                 case "commitlint.config.js":
                     if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
-                        console.log(red("CRITICAL :"), green(file.name), file.message);
+                        console.log(red("| CRITICAL :"), green(file.name), msg.commitLint);
                     }
                     break;
                 default:
@@ -74,10 +73,10 @@ async function main(MainDir) {
 
         // If file doesn't exist
         if (file.name === "index.d.ts") {
-            console.log(yellow("WARNING :"), green(file.name), msgNotExist);
+            console.log(yellow("| WARNING :"), green(file.name), msg.NotExist);
         }
         else {
-            console.log(red("CRITICAL :"), green(file.name), msgNotExist);
+            console.log(red("| CRITICAL :"), green(file.name), msg.NotExist);
         }
     }
 
@@ -96,30 +95,23 @@ async function main(MainDir) {
                         const ctnIndexFile = await readFile(join(MainDir, "bin", "index.js"));
                         // eslint-disable-next-line max-depth
                         if (ctnIndexFile.indexOf("#!/usr/bin/env node")) {
-                            console.log(yellow("WARNING :"), `The ${file} must content => #!/usr/bin/env node <= to first line`);
+                            console.log(yellow("| WARNING :"), msg.shebang);
                             break;
                         }
                     }
                     catch (error) {
-                        console.log(yellow("WARNING :"), `Impossible to found ${file} to ${folder}`);
+                        console.log(yellow("| WARNING :"), msg.indexJsNotExist);
                         break;
                     }
                 }
 
                 // Or not
                 else {
-                    console.log(red("CRITICAL :"), `Your project is a CLI and must content a ${folder} with a ${file} !`);
+                    console.log(red("| CRITICAL :"), msg.binNotExist);
                     break;
                 }
                 // preferGlobal, bin, main in package.json
-                console.log(`
-                Into your package.json, think about :
-                
-                preferGlobal: true
-                bin: { your-project-name: ./bin/index.js}
-                see documentation to https://docs.npmjs.com/files/package.json#bin
-                main: ./bin/index.js
-                `);
+                console.log(msg.rootFields);
                 break;
             }
             // N-API
@@ -131,16 +123,7 @@ async function main(MainDir) {
 
     // If slimio manisfest doesn't installed in this project => return
     else {
-        console.log(red("CRITICAL :"), "You must install the slimio manifest -", green("npm i @slimio/manifest"));
-        console.log(`
-        ${green(".toml")} file must be created 
-        at the root of the project to determine if 
-        your application is CLI or N-API. Go to this 
-        link to install this file :
-        https://github.com/SlimIO/Manifest
-        `);
-
-        return;
+        console.log(red("| CRITICAL :"), msg.manifest);
     }
 }
 
