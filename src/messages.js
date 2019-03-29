@@ -10,8 +10,9 @@ const messages = {
     shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
     binNotExist: `${yellow("CLI STRUCTURE")}
-|            Your project is a CLI and must content a ${yellow("bin folder")} 
-|            with a ${yellow("index.js file")} !!
+|    
+|   Your project is a CLI and must content a ${yellow("bin folder")} 
+|   with a ${yellow("index.js file")} !!
 |----`,
     rootFieldsCLI: `|
 | ${emoji.get(":bulb:")} ${yellow("Into your package.json, think about :")}
@@ -25,19 +26,21 @@ const messages = {
 |----`,
     manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
 |
-|           ${green(".toml")} file must be created 
-|            at the root of the project to determine if 
-|            your application is CLI or N-API. Go to this 
-|            link to install this file :
-|            https://github.com/SlimIO/Manifest    
+|   ${green(".toml")} file must be created 
+|   at the root of the project to determine if 
+|   your application is CLI or N-API. Go to this 
+|   link to install this file :
+|   https://github.com/SlimIO/Manifest    
 |----`,
     napiInclude: `${yellow("N-API STRUCTURE")}
-|           Your project structure is a ${yellow("N-API")} and your main directory 
-|           must content a ${yellow("include")} folder !
+|
+|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   must content a ${yellow("include")} folder !
 |----`,
     napiBinding: `${yellow("N-API STRUCTURE")}
-|           Your project structure is a ${yellow("N-API")} and your main directory 
-|           must content a ${yellow("binding.gyp")} file !
+|
+|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   must content a ${yellow("binding.gyp")} file !
 |----`,
     rootFieldsNAPI: `|
 | ${emoji.get(":bulb:")} ${yellow("Into your package.json, think about :")}

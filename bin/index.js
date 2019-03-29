@@ -37,6 +37,9 @@ function log(severity, message, file) {
     else {
         console.log("|", emoji.get(severity), " :", green(file), message);
     }
+    if (severity === E_SEV.CRIT) {
+        process.exit(1);
+    }
 }
 
 async function main(MainDir) {
@@ -119,7 +122,7 @@ async function main(MainDir) {
                         process.exit(1);
                     }
                 }
-                
+
                 // Or not
                 else {
                     log(E_SEV.CRIT, msg.binNotExist);
