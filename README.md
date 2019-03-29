@@ -21,7 +21,7 @@ slimio.toml | Project Slimio [manifest](https://github.com/SlimIO/Manifest) | :n
 .editorconfig | Editor configuration, slimIO standard | :no_entry:*exist* :warning:*identique of the slimIO projects* 
 index.d.ts | Type(s) definition | :no_entry:*exist* 
 jsdoc.json | JSDoc configuration | :no_entry:*exist* :no_entry:*all source files*
-commitlint.config.json | GIT Commit convention configuration | :no_entry:*exist*, :no_entry:*extends* 
+commitlint.config.json | GIT Commit convention configuration | :no_entry:*exist*, :no_entry:*correct extends* 
 LICENSE | Project LICENSE (default MIT) | :no_entry:*exist*
 .npmignore | Keep stuff out of your package | :no_entry:*exist*
 
