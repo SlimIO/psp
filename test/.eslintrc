@@ -1,4 +1,4 @@
 {
-    "extends": "@slimio/eslint-config-test",
+    "extends": "@slimio/eslint-config",
     "rules": "test"
 }

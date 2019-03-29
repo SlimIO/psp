@@ -24,5 +24,17 @@
     },
     {
         "name": ".npmignore"
+    },
+    {
+        "name": "src"
+    },
+    {
+        "name": "test"
+    },
+    {
+        "name": "benchmark"
+    },
+    {
+        "name": "docs"
     }
 ]

@@ -7,12 +7,12 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const inquirer = require("inquirer");
 const emoji = require("node-emoji");
-const { red, green, yellow } = require("kleur");
+const { green } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Constants
 const pathMainDir = process.cwd();
-const requiredFiles = require("../src/requiredFiles.json");
+const requiredElems = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
 const requiredDir = new Set(["src", "test", "benchmark", "docs"]);
 const excludeFiles = new Set(["package.json", "LICENSE"]);
@@ -47,7 +47,7 @@ async function main(MainDir) {
     const elemMainDir = new Set(await readdir(MainDir));
 
     // Loop on required files array
-    for (const file of requiredFiles) {
+    for (const file of requiredElems) {
         // If file exist
         if (elemMainDir.has(file.name)) {
             let contentUserFile = "";
@@ -65,7 +65,6 @@ async function main(MainDir) {
                     const ctntUsFileJson = JSON.parse(contentUserFile);
                     if (ctntUsFileJson.extends !== file.extends) {
                         log(E_SEV.CRIT, msg.eslintExtends, file.name);
-                        process.exit(1);
                     }
                     if (Reflect.has(ctntUsFileJson, "rules")) {
                         log(E_SEV.WARN, msg.eslintRulesKey, file.name);
@@ -83,7 +82,6 @@ async function main(MainDir) {
                 case "commitlint.config.js":
                     if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
                         log(E_SEV.CRIT, msg.commitLint, file.name);
-                        process.exit(1);
                     }
                     break;
                 default:
@@ -97,7 +95,6 @@ async function main(MainDir) {
         }
         else {
             log(E_SEV.CRIT, msg.NotExist, file.name);
-            process.exit(1);
         }
     }
 
@@ -119,14 +116,12 @@ async function main(MainDir) {
                     }
                     catch (error) {
                         log(E_SEV.CRIT, msg.indexJsNotExist);
-                        process.exit(1);
                     }
                 }
 
                 // Or not
                 else {
                     log(E_SEV.CRIT, msg.binNotExist);
-                    process.exit(1);
                 }
                 // preferGlobal, bin, main in package.json
                 console.log(msg.rootFieldsCLI);
@@ -137,13 +132,11 @@ async function main(MainDir) {
                 // If include folder doesn't exist.
                 if (!elemMainDir.has("include")) {
                     log(E_SEV.CRIT, msg.napiInclude);
-                    process.exit(1);
                 }
 
                 // If binding.gyp file doesn't exist
                 if (!elemMainDir.has("binding.gyp")) {
                     log(E_SEV.CRIT, msg.napiBinding);
-                    process.exit(1);
                 }
 
                 // gypfile in package.json

@@ -14,15 +14,15 @@ const messages = {
 |   Your project is a CLI and must content a ${yellow("bin folder")} 
 |   with a ${yellow("index.js file")} !!
 |----`,
-    rootFieldsCLI: `|
-| ${emoji.get(":bulb:")} ${yellow("Into your package.json, think about :")}
-|----
-| "main": "${green("./bin/index.js")}"    
-| "preferGlobal": ${green(true)},
-| "bin": {
-|    "yourAppName": "${green("./bin/index.js")}"
-|  }
-|  ${cyan("==> See documentation to https://docs.npmjs.com/files/package.json#bin.")}
+    rootFieldsCLI: `|----
+| ${emoji.get(":bulb:")}  : ${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}
+|
+|     "main": "${green("./bin/index.js")}"    
+|     "preferGlobal": ${green(true)},
+|     "bin": {
+|        "yourAppName": "${green("./bin/index.js")}"
+|     }
+|     ${cyan("==> See documentation to https://docs.npmjs.com/files/package.json#bin.")}
 |----`,
     manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
 |
@@ -30,7 +30,7 @@ const messages = {
 |   at the root of the project to determine if 
 |   your application is CLI or N-API. Go to this 
 |   link to install this file :
-|   https://github.com/SlimIO/Manifest    
+|   ${cyan("==> https://github.com/SlimIO/Manifest")}    
 |----`,
     napiInclude: `${yellow("N-API STRUCTURE")}
 |
@@ -42,10 +42,10 @@ const messages = {
 |   Your project structure is a ${yellow("N-API")} and your main directory 
 |   must content a ${yellow("binding.gyp")} file !
 |----`,
-    rootFieldsNAPI: `|
-| ${emoji.get(":bulb:")} ${yellow("Into your package.json, think about :")}
-|----        
-| "gypfile": ${green(true)},
+    rootFieldsNAPI: `|----
+| ${emoji.get(":bulb:")}  : ${green("N-API project ==>")} ${yellow("Into your package.json, think about :")}
+|       
+|     "gypfile": ${green(true)},
 |----`
 };
 
