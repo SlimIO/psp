@@ -25,11 +25,12 @@ const E_SEV = Object.freeze({
 });
 
 /**
- * @async
- * @func main
- * @description Extract from main directory the list of files and folders
- * @param MainDir Constant pathMainDir
- * @returns {Console}
+ * @func log
+ * @description Log infos customs into the console
+ * @param {string} severity
+ * @param {string} message
+ * @param {string} file
+ * @returns {string} Into the console
  */
 
 function log(severity, message, file) {
@@ -44,6 +45,13 @@ function log(severity, message, file) {
         process.exit(1);
     }
 }
+
+/**
+ * @async
+ * @func main
+ * @description Extract from main directory the list of files and folders
+ * @returns {string} Into the console with function log
+ */
 
 async function main() {
     // Read the main directory of user
@@ -62,7 +70,7 @@ async function main() {
                 log(E_SEV.CRIT, msg.fileNotExist, file.name);
             }
         }
-        // If file is excluded
+        // If file is excluded, continue
         if (EXCLUDE_FILES.has(file.name)) {
             continue;
         }
