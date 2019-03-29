@@ -5,7 +5,7 @@ SlimIO - Project structure policy. This project is in progress production to hel
 
 ## Getting Started
 
-Before running psp, it's recommanded to run the [CLI generator](https://github.com/SlimIO/Generator).
+Before running psp, it's recommanded to run the [Generator](https://github.com/SlimIO/Generator).
 
 in progress...
 
@@ -20,7 +20,7 @@ slimio.toml | Project Slimio [manifest](https://github.com/SlimIO/Manifest) | :n
 .eslintrc | Linting configuration for JavaScript | :no_entry:*exist* :warning:*correct extends* :warning:*rules or not* 
 .editorconfig | Editor configuration, slimIO standard | :no_entry:*exist* :warning:*identique of the slimIO projects* 
 index.d.ts | Type(s) definition | :no_entry:*exist* 
-jsdoc.json | JSDoc configuration | :no_entry:*exist* 
+jsdoc.json | JSDoc configuration | :no_entry:*exist* :no_entry:*all source files*
 commitlint.config.json | GIT Commit convention configuration | :no_entry:*exist*, :no_entry:*extends* 
 LICENSE | Project LICENSE (default MIT) | :no_entry:*exist*
 .npmignore | Keep stuff out of your package | :no_entry:*exist*
@@ -39,5 +39,5 @@ name | description | Severity - checked if
 ##### _CLI--_
 
 name | Type | description | Severity - checked if 
----- | ---- | ---- | ----
-/bin | 
+---- | :----: | ---- | ----
+/bin | folder | 
