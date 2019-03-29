@@ -12,13 +12,14 @@ const Manifest = require("@slimio/manifest");
 
 // Constants
 const pathMainDir = process.cwd();
-const requiredElems = require("../src/requiredElems.json");
+const requiredFiles = require("../src/requiredFiles.json");
 const msg = require("../src/messages.js");
 const requiredDir = new Set(["src", "test", "benchmark", "docs"]);
 const excludeFiles = new Set(["package.json", "LICENSE"]);
 const E_SEV = Object.freeze({
     CRIT: ":no_entry:",
-    WARN: ":warning"
+    WARN: ":warning",
+    INFO: ":bulb:"
 });
 
 /**
@@ -47,7 +48,7 @@ async function main(MainDir) {
     const elemMainDir = new Set(await readdir(MainDir));
 
     // Loop on required files array
-    for (const file of requiredElems) {
+    for (const file of requiredFiles) {
         // If file exist
         if (elemMainDir.has(file.name)) {
             let contentUserFile = "";
@@ -91,10 +92,26 @@ async function main(MainDir) {
 
         // If file doesn't exist
         if (file.name === "index.d.ts") {
-            log(E_SEV.WARN, msg.NotExist, file.name);
+            log(E_SEV.WARN, msg.fileNotExist, file.name);
         }
         else {
-            log(E_SEV.CRIT, msg.NotExist, file.name);
+            log(E_SEV.CRIT, msg.fileNotExist, file.name);
+        }
+    }
+
+    // Folder management
+    for (const dir of requiredDir) {
+        if (!elemMainDir.has(dir)) {
+            switch (dir) {
+                case "src":
+                    log(E_SEV.CRIT, msg[dir], dir);
+                    break;
+                case "test":
+                    log(E_SEV.WARN, msg[dir], dir);
+                    break;
+                default:
+                    log(E_SEV.INFO, msg[dir], dir);
+            }
         }
     }
 
