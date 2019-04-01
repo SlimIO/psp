@@ -2,17 +2,38 @@ const { green, yellow, cyan } = require("kleur");
 const emoji = require("node-emoji");
 
 const messages = {
+    benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
+    binNotExist: `${yellow("CLI STRUCTURE")}
+|    
+|   Your project is a CLI and must content a ${yellow("bin folder")} 
+|   with a ${yellow("index.js file")} !!
+|`,
+    commitLint: "file must be extends by @commitlint/config-conventional",
+    docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
+    env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
+    editorConf: "file isn't identical to SlimIO projects.",
     eslintExtends: "file must be extends by @slimio/eslint-config.",
     eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
-    editorConf: "file isn't identical to SlimIO projects.",
-    commitLint: "file must be extends by @commitlint/config-conventional",
     fileNotExist: "file doesn't exist in your main directory.",
-    src: "folder doesn't exist in your main directory. Obligatory folder for your sources !",
-    test: "folder doesn't exist and is necessary to test your application.",
-    benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
-    docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
-    shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
+    manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
+|
+|   ${green(".toml")} file must be created 
+|   at the root of the project to determine if 
+|   your application is CLI or N-API. Go to this 
+|   link to install this file :
+|   ${cyan("==> https://github.com/SlimIO/Manifest")}    
+|`,
+    napiBinding: `${yellow("N-API STRUCTURE")}
+|
+|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   must content a ${yellow("binding.gyp")} file !
+|`,
+    napiInclude: `${yellow("N-API STRUCTURE")}
+|
+|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   must content a ${yellow("include")} folder !
+|`,
     npmignore: `file must contains at least the following elements :
 |
 |   test/
@@ -32,15 +53,16 @@ const messages = {
 |   .travis.yml
 |   CONTRIBUTING.md
 |   CHANGELOG.md
-|----`,
+|`,
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
-    env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
-    binNotExist: `${yellow("CLI STRUCTURE")}
-|    
-|   Your project is a CLI and must content a ${yellow("bin folder")} 
-|   with a ${yellow("index.js file")} !!
-|----`,
-    rootFieldsCLI: `|----
+    readme: `file must contants following titles :
+|
+|   Requirements
+|   Getting Started
+|   API
+|   License
+|`,
+    rootFieldsCLI: `|
 | ${emoji.get(":bulb:")}  : ${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}
 |
 |     "main": "${green("./bin/index.js")}"    
@@ -48,31 +70,16 @@ const messages = {
 |     "bin": {
 |        "yourAppName": "${green("./bin/index.js")}"
 |     }
-|     ${cyan("==> See documentation to https://docs.npmjs.com/files/package.json#bin.")}
-|----`,
-    manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
-|
-|   ${green(".toml")} file must be created 
-|   at the root of the project to determine if 
-|   your application is CLI or N-API. Go to this 
-|   link to install this file :
-|   ${cyan("==> https://github.com/SlimIO/Manifest")}    
-|----`,
-    napiInclude: `${yellow("N-API STRUCTURE")}
-|
-|   Your project structure is a ${yellow("N-API")} and your main directory 
-|   must content a ${yellow("include")} folder !
-|----`,
-    napiBinding: `${yellow("N-API STRUCTURE")}
-|
-|   Your project structure is a ${yellow("N-API")} and your main directory 
-|   must content a ${yellow("binding.gyp")} file !
-|----`,
-    rootFieldsNAPI: `|----
+|     ${cyan("==> See documentation to https://docs.npmjs.com/files/package.json#bin")}
+|`,
+    rootFieldsNAPI: `|
 | ${emoji.get(":bulb:")}  : ${green("N-API project ==>")} ${yellow("Into your package.json, think about :")}
 |       
 |     "gypfile": ${green(true)},
-|----`
+|`,
+    shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
+    src: "folder doesn't exist in your main directory. Obligatory folder for your sources !",
+    test: "folder doesn't exist and is necessary to test your application."
 };
 
 module.exports = messages;

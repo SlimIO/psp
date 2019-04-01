@@ -18,6 +18,14 @@ const msg = require("../src/messages.js");
 const PATH_MAIN_DIR = process.cwd();
 const REQUIRE_DIR = new Set(["src", "test", "benchmark", "docs"]);
 const EXCLUDE_FILES = new Set(["LICENSE"]);
+const README_TITLES =
+    [
+        "requirements",
+        "getting started",
+        "usage example",
+        "api",
+        "licence"
+    ];
 const E_SEV = Object.freeze({
     CRIT: ":no_entry:",
     WARN: ":warning",
@@ -82,7 +90,7 @@ async function switchFile(fileName, elemMainDir) {
             if (!contentUserFile.indexOf("'extends': '@slimio/eslint-config'")) {
                 log(E_SEV.CRIT, msg.eslintExtends, fileName);
             }
-            if (contentUserFile.indexOf("rules")) {
+            if (contentUserFile.includes("rules")) {
                 log(E_SEV.WARN, msg.eslintRulesKey, fileName);
             }
             break;
@@ -106,8 +114,17 @@ async function switchFile(fileName, elemMainDir) {
             break;
         // npmrc
         case ".npmrc":
-            if (contentUserFile.indexOf("package-lock=false") !== -1 && extractDir.has("package-lock.json")) {
+            if (contentUserFile.includes("package-lock=false") && extractDir.has("package-lock.json")) {
                 log(E_SEV.CRIT, msg.npmrc, fileName);
+            }
+            break;
+        // README.md
+        case "README.md":
+            for (let idx = 0; idx < README_TITLES.length; idx++) {
+                if (contentUserFile.includes(README_TITLES[idx])) {
+                    continue;
+                }
+                log(E_SEV.CRIT, msg.readme, fileName);
             }
             break;
         default:
