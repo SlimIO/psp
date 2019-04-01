@@ -34,13 +34,14 @@ const E_SEV = Object.freeze({
  */
 
 function log(severity, message, file) {
-    // Messages in console
+    // Messages into console
     if (file === undefined) {
         console.log("|", emoji.get(severity), " :", message);
     }
     else {
         console.log("|", emoji.get(severity), " :", green(file), message);
     }
+    // Exit if case critical
     if (severity === E_SEV.CRIT) {
         process.exit(1);
     }
@@ -53,9 +54,11 @@ function log(severity, message, file) {
  * @returns {string} Into the console with function log
  */
 
+// eslint-disable-next-line max-lines-per-function
 async function main() {
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(PATH_MAIN_DIR));
+    let contentLocalFile = "";
 
     // Loop on required files array
     for (const file of requiredFiles) {
@@ -75,34 +78,50 @@ async function main() {
             continue;
         }
         // Read file
-        const contentUserFile = await readFile(join(PATH_MAIN_DIR, file.name), { encoding: "utf8" });
+        let contentUserFile = await readFile(join(PATH_MAIN_DIR, file.name), { encoding: "utf8" });
 
         // Switch all files
         switch (file.name) {
-            // .eslintrc
-            case ".eslintrc": {
-                const ctntUsFileJson = JSON.parse(contentUserFile);
-                if (ctntUsFileJson.extends !== file.extends) {
-                    log(E_SEV.CRIT, msg.eslintExtends, file.name);
-                }
-                if (Reflect.has(ctntUsFileJson, "rules")) {
-                    log(E_SEV.WARN, msg.eslintRulesKey, file.name);
-                }
-                break;
-            }
-            // .editorconfig
-            case ".editorconfig":
-                contentLocalFile = await readFile(join(__dirname, "..", "template", ".editorconfig"), { encoding: "utf8" });
-                if (contentUserFile !== contentLocalFile) {
-                    log(E_SEV.WARN, msg.editorConf, file.name);
-                }
-                break;
             // .commitlint.config.js
             case "commitlint.config.js":
                 if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
                     log(E_SEV.CRIT, msg.commitLint, file.name);
                 }
                 break;
+            // .editorconfig
+            case ".editorconfig": {
+                contentLocalFile = await readFile(join(__dirname, "..", "template", file.name), { encoding: "utf8" });
+                if (contentUserFile !== contentLocalFile) {
+                    log(E_SEV.WARN, msg.editorConf, file.name);
+                }
+                break;
+            }
+            // .eslintrc
+            case ".eslintrc": {
+                const contentUserFileJSON = JSON.parse(contentUserFile);
+                if (contentUserFileJSON.extends !== file.extends) {
+                    log(E_SEV.CRIT, msg.eslintExtends, file.name);
+                }
+                if (Reflect.has(contentUserFileJSON, "rules")) {
+                    log(E_SEV.WARN, msg.eslintRulesKey, file.name);
+                }
+                break;
+            }
+            // .npmignore
+            case ".npmignore": {
+                contentLocalFile = await readFile(join(__dirname, "..", "template", file.name), { encoding: "utf8" });
+                // File processing
+                contentLocalFile = contentLocalFile.split("\r\n");
+                contentLocalFile.pop();
+                contentUserFile = new Set(contentUserFile.split("\r\n"));
+                // Check
+                for (const ligne of contentLocalFile) {
+                    if (!contentUserFile.has(ligne)) {
+                        log(E_SEV.CRIT, msg.npmignore, file.name);
+                    }
+                }
+                break;
+            }
             default:
         }
     }

@@ -13,6 +13,26 @@ const messages = {
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
+    npmignore: `file must contain at least the following elements :
+|
+|   test/
+|   tests/
+|   coverage/
+|   .nyc_output/
+|   .circleci/
+|   docs/
+|   jsdoc/
+|   jsdoc.json
+|   .editorconfig
+|   .eslintrc
+|   .gitignore
+|   tsconfig.json
+|   commitlint.config.js
+|   .env
+|   .travis.yml
+|   CONTRIBUTING.md
+|   CHANGELOG.md
+|----`,
     binNotExist: `${yellow("CLI STRUCTURE")}
 |    
 |   Your project is a CLI and must content a ${yellow("bin folder")} 
