@@ -107,7 +107,7 @@ async function main() {
                 }
                 break;
             }
-            // .npmignore
+            // .npmignore & .env
             case ".npmignore": {
                 contentLocalFile = await readFile(join(__dirname, "..", "template", file.name), { encoding: "utf8" });
                 // File processing
@@ -119,6 +119,10 @@ async function main() {
                     if (!contentUserFile.has(ligne)) {
                         log(E_SEV.CRIT, msg.npmignore, file.name);
                     }
+                }
+                // Check .env
+                if (elemMainDir.has(".env") && !contentUserFile.has(".env")) {
+                    log(E_SEV.WARN, msg.env, ".env");
                 }
                 break;
             }

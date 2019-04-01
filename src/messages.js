@@ -33,6 +33,7 @@ const messages = {
 |   CONTRIBUTING.md
 |   CHANGELOG.md
 |----`,
+    env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
     binNotExist: `${yellow("CLI STRUCTURE")}
 |    
 |   Your project is a CLI and must content a ${yellow("bin folder")} 
