@@ -49,6 +49,70 @@ function log(severity, message, file) {
 
 /**
  * @async
+ * @func switchFile
+ * @param {string} fileName file name of the main function
+ * @param {array} elemMainDir contain array the elements of main directory
+ * @description Switch all files in main directory
+ * @returns {string} Into the console with function log
+ */
+
+async function switchFile(fileName, elemMainDir) {
+    // Read file
+    const extractDir = elemMainDir;
+    let contentUserFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
+    let contentLocalFile = "";
+
+    // Switch all files
+    switch (fileName) {
+        // .commitlint.config.js
+        case "commitlint.config.js":
+            if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
+                log(E_SEV.CRIT, msg.commitLint, fileName);
+            }
+            break;
+        // .editorconfig
+        case ".editorconfig": {
+            contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
+            if (contentUserFile !== contentLocalFile) {
+                log(E_SEV.WARN, msg.editorConf, fileName);
+            }
+            break;
+        }
+        // .eslintrc
+        case ".eslintrc": {
+            if (!contentUserFile.indexOf("'extends': '@slimio/eslint-config'")) {
+                log(E_SEV.CRIT, msg.eslintExtends, fileName);
+            }
+            if (contentUserFile.indexOf("rules")) {
+                log(E_SEV.WARN, msg.eslintRulesKey, fileName);
+            }
+            break;
+        }
+        // .npmignore & .env
+        case ".npmignore": {
+            contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
+            // File processing
+            contentLocalFile = contentLocalFile.split("\r\n");
+            contentLocalFile.pop();
+            contentUserFile = new Set(contentUserFile.split("\r\n"));
+            // Check
+            for (const ligne of contentLocalFile) {
+                if (!contentUserFile.has(ligne)) {
+                    log(E_SEV.CRIT, msg.npmignore, fileName);
+                }
+            }
+            // Check .env
+            if (extractDir.has(".env") && !contentUserFile.has(".env")) {
+                log(E_SEV.WARN, msg.env, ".env");
+            }
+            break;
+        }
+        default:
+    }
+}
+
+/**
+ * @async
  * @func main
  * @description Extract from main directory the list of files and folders
  * @returns {string} Into the console with function log
@@ -58,7 +122,6 @@ function log(severity, message, file) {
 async function main() {
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(PATH_MAIN_DIR));
-    let contentLocalFile = "";
 
     // Loop on required files array
     for (const file of requiredFiles) {
@@ -77,57 +140,9 @@ async function main() {
         if (EXCLUDE_FILES.has(file.name)) {
             continue;
         }
-        // Read file
-        let contentUserFile = await readFile(join(PATH_MAIN_DIR, file.name), { encoding: "utf8" });
 
         // Switch all files
-        switch (file.name) {
-            // .commitlint.config.js
-            case "commitlint.config.js":
-                if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
-                    log(E_SEV.CRIT, msg.commitLint, file.name);
-                }
-                break;
-            // .editorconfig
-            case ".editorconfig": {
-                contentLocalFile = await readFile(join(__dirname, "..", "template", file.name), { encoding: "utf8" });
-                if (contentUserFile !== contentLocalFile) {
-                    log(E_SEV.WARN, msg.editorConf, file.name);
-                }
-                break;
-            }
-            // .eslintrc
-            case ".eslintrc": {
-                const contentUserFileJSON = JSON.parse(contentUserFile);
-                if (contentUserFileJSON.extends !== file.extends) {
-                    log(E_SEV.CRIT, msg.eslintExtends, file.name);
-                }
-                if (Reflect.has(contentUserFileJSON, "rules")) {
-                    log(E_SEV.WARN, msg.eslintRulesKey, file.name);
-                }
-                break;
-            }
-            // .npmignore & .env
-            case ".npmignore": {
-                contentLocalFile = await readFile(join(__dirname, "..", "template", file.name), { encoding: "utf8" });
-                // File processing
-                contentLocalFile = contentLocalFile.split("\r\n");
-                contentLocalFile.pop();
-                contentUserFile = new Set(contentUserFile.split("\r\n"));
-                // Check
-                for (const ligne of contentLocalFile) {
-                    if (!contentUserFile.has(ligne)) {
-                        log(E_SEV.CRIT, msg.npmignore, file.name);
-                    }
-                }
-                // Check .env
-                if (elemMainDir.has(".env") && !contentUserFile.has(".env")) {
-                    log(E_SEV.WARN, msg.env, ".env");
-                }
-                break;
-            }
-            default:
-        }
+        await switchFile(file.name, elemMainDir);
     }
 
     // Folder management
