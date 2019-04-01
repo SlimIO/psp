@@ -17,7 +17,7 @@ const msg = require("../src/messages.js");
 // Constants
 const PATH_MAIN_DIR = process.cwd();
 const REQUIRE_DIR = new Set(["src", "test", "benchmark", "docs"]);
-const EXCLUDE_FILES = new Set(["package.json", "LICENSE"]);
+const EXCLUDE_FILES = new Set(["LICENSE"]);
 const E_SEV = Object.freeze({
     CRIT: ":no_entry:",
     WARN: ":warning",
@@ -71,15 +71,14 @@ async function switchFile(fileName, elemMainDir) {
             }
             break;
         // .editorconfig
-        case ".editorconfig": {
+        case ".editorconfig":
             contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
             if (contentUserFile !== contentLocalFile) {
                 log(E_SEV.WARN, msg.editorConf, fileName);
             }
             break;
-        }
         // .eslintrc
-        case ".eslintrc": {
+        case ".eslintrc":
             if (!contentUserFile.indexOf("'extends': '@slimio/eslint-config'")) {
                 log(E_SEV.CRIT, msg.eslintExtends, fileName);
             }
@@ -87,9 +86,8 @@ async function switchFile(fileName, elemMainDir) {
                 log(E_SEV.WARN, msg.eslintRulesKey, fileName);
             }
             break;
-        }
         // .npmignore & .env
-        case ".npmignore": {
+        case ".npmignore":
             contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
             // File processing
             contentLocalFile = contentLocalFile.split("\r\n");
@@ -106,7 +104,12 @@ async function switchFile(fileName, elemMainDir) {
                 log(E_SEV.WARN, msg.env, ".env");
             }
             break;
-        }
+        // npmrc
+        case ".npmrc":
+            if (contentUserFile.indexOf("package-lock=false") !== -1 && extractDir.has("package-lock.json")) {
+                log(E_SEV.CRIT, msg.npmrc, fileName);
+            }
+            break;
         default:
     }
 }
@@ -128,7 +131,7 @@ async function main() {
         // If file not exist
         if (!elemMainDir.has(file.name)) {
             // If file doesn't exist
-            if (file.name === "index.d.ts") {
+            if (file.name === "index.d.ts" || file.name === ".npmrc") {
                 log(E_SEV.WARN, msg.fileNotExist, file.name);
                 continue;
             }

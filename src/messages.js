@@ -13,7 +13,7 @@ const messages = {
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
-    npmignore: `file must contain at least the following elements :
+    npmignore: `file must contains at least the following elements :
 |
 |   test/
 |   tests/
@@ -33,6 +33,7 @@ const messages = {
 |   CONTRIBUTING.md
 |   CHANGELOG.md
 |----`,
+    npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
     binNotExist: `${yellow("CLI STRUCTURE")}
 |    

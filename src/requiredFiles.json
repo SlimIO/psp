@@ -31,8 +31,5 @@
     },
     {
         "name": ".npmrc"
-    },
-    {
-        "name": "package-lock.json"
     }
 ]
