@@ -3,7 +3,9 @@
         {
             "CRIT": ":no_entry:",
             "WARN": ":warning:",
-            "INFO": ":bulb:" 
+            "INFO": ":bulb:",
+            "ARROW_UP": ":arrow_double_up:",
+            "ARROW_DOWN": ":arrow_double_down:"
         },
     "EXCLUDE_FILES":
         [
@@ -22,6 +24,12 @@
             "README.md",
             ".npmrc",
             ".gitignore"
+        ],
+    "INFO_CONTENT_FILE":
+        [
+            ".gitignore",
+            ".editorconfig",
+            ".npmignore"
         ],
     "README_TITLES":
             [

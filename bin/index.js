@@ -8,7 +8,7 @@ const { EOL } = require("os");
 // Require Third-party Dependencies
 const inquirer = require("inquirer");
 const emoji = require("node-emoji");
-const { green } = require("kleur");
+const { green, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
@@ -17,7 +17,9 @@ const MSG = require("../src/messages.js");
 
 // Constants
 const PATH_MAIN_DIR = process.cwd();
+const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
+const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
 const TYPE_OF_PROJECT = { type: "" };
 
 /**
@@ -133,8 +135,14 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".gitignore": {
             const localCtnFile = await readFileLocal(fileName);
             // Filter, remove index equal at '' & with '#'
-            const cleanLocFile = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
-            console.log(cleanLocFile);
+            const cleanLocFileToArray = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
+            // Check
+            for (const index of cleanLocFileToArray) {
+                if (userCtnFile.includes(index)) {
+                    continue;
+                }
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.gitignore, fileName);
+            }
             break;
         }
         default:
@@ -149,6 +157,14 @@ async function checkFileContent(fileName, elemMainDir) {
  */
 
 async function main() {
+    // Read process.argv
+    if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
+        const arrowUp = emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_UP);
+        const arrowDown = `${emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_DOWN)}\n`;
+        console.log(arrowDown, cyan(await readFileLocal(PROCESS_ARG)), arrowUp);
+        process.exit();
+    }
+
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(PATH_MAIN_DIR));
 
@@ -203,24 +219,24 @@ async function main() {
     }
 
     // Loop on required files array
-    for (const file of REQUIRED_ELEMS.FILE_TO_CHECKS) {
+    for (const fileName of REQUIRED_ELEMS.FILE_TO_CHECKS) {
         // If file not exist
-        if (!elemMainDir.has(file)) {
+        if (!elemMainDir.has(fileName)) {
             // If file doesn't exist
-            if (file === "index.d.ts" || file === ".npmrc") {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.fileNotExist, file);
+            if (fileName === "index.d.ts" || fileName === ".npmrc") {
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.fileNotExist, fileName);
                 continue;
             }
-            log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.fileNotExist, file);
+            log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.fileNotExist, fileName);
             // Exit
         }
         // If file is excluded, continue
-        if (EXCLUDE_FILES.has(file)) {
+        if (EXCLUDE_FILES.has(fileName)) {
             continue;
         }
 
         // Switch all files
-        await checkFileContent(file, elemMainDir);
+        await checkFileContent(fileName, elemMainDir);
     }
 
     // Folder management

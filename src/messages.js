@@ -11,10 +11,12 @@ const messages = {
     commitLint: "file must be extends by @commitlint/config-conventional",
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
-    editorConf: "file isn't identical to SlimIO projects.",
+    // eslint-disable-next-line max-len
+    editorConf: `file doesn't contains the good informations. You should used ${cyan("psp .editorConf")} to see exact informations`,
     eslintExtends: "file must be extends by @slimio/eslint-config.",
     eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
     fileNotExist: "file doesn't exist in your main directory.",
+    gitignore: `file doesn't contains the good informations. You should used ${cyan("psp .gitignore")} to see exact informations`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
     infos: `|
 | ${emoji.get(":bulb:")}  ${cyan(": If you want exlude or include files of cheking process, use the following commands :")}
@@ -40,26 +42,7 @@ const messages = {
 |   Your project structure is a ${yellow("N-API")} and your main directory 
 |   must content a ${yellow("include")} folder !
 |`,
-    npmignore: `file must contains at least the following elements :
-|
-|   test/
-|   tests/
-|   coverage/
-|   .nyc_output/
-|   .circleci/
-|   docs/
-|   jsdoc/
-|   jsdoc.json
-|   .editorconfig
-|   .eslintrc
-|   .gitignore
-|   tsconfig.json
-|   commitlint.config.js
-|   .env
-|   .travis.yml
-|   CONTRIBUTING.md
-|   CHANGELOG.md
-|`,
+    npmignore: `file doesn't contains the good informations. You should used ${cyan("psp .npmignore")} to see exact informations`,
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     readme: `file must contants following titles :
 |
