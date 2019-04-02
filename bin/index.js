@@ -65,14 +65,13 @@ function log(severity, message, file) {
 }
 
 /**
- * @async
  * @func readFileLocal
  * @description Read the file given in argument
  * @param {!String} fileName file name of the main function
  * @returns {String} utf8 String of the file
  */
 
-async function readFileLocal(fileName) {
+function readFileLocal(fileName) {
     return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
 }
 
@@ -237,10 +236,8 @@ async function main() {
                 log(E_SEV.WARN, msg.fileNotExist, file.name);
                 continue;
             }
-            else {
-                log(E_SEV.CRIT, msg.fileNotExist, file.name);
-                // Exit
-            }
+            log(E_SEV.CRIT, msg.fileNotExist, file.name);
+            // Exit
         }
         // If file is excluded, continue
         if (EXCLUDE_FILES.has(file.name)) {
