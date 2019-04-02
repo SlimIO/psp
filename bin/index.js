@@ -17,21 +17,29 @@ const msg = require("../src/messages.js");
 
 // Constants
 const PATH_MAIN_DIR = process.cwd();
-const REQUIRE_DIR = new Set(["src", "test", "benchmark", "docs"]);
 const EXCLUDE_FILES = new Set(["LICENSE"]);
+const TYPE_OF_PROJECT = { type: "" };
+const REQUIRE_DIR =
+    [
+        "src",
+        "test",
+        "benchmark",
+        "docs"
+    ];
 const README_TITLES =
     [
         "requirements",
         "getting started",
-        "usage example",
         "api",
-        "licence"
+        "license"
     ];
 const E_SEV = Object.freeze({
     CRIT: ":no_entry:",
     WARN: ":warning",
     INFO: ":bulb:"
 });
+
+// 
 
 /**
  * @func log
@@ -133,22 +141,27 @@ async function switchFile(fileName, elemMainDir) {
             }
             break;
         // README.md
-        case "README.md":
+        case "README.md": {
+            const userCtnFileLCase = userCtnFile.toLowerCase();
             for (let idx = 0; idx < README_TITLES.length; idx++) {
-                if (userCtnFile.includes(README_TITLES[idx])) {
+                if (userCtnFileLCase.includes(README_TITLES[idx])) {
                     continue;
                 }
                 log(E_SEV.CRIT, msg.readme, fileName);
+            }
+            if (TYPE_OF_PROJECT.type.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
+                log(E_SEV.CRIT, msg.readmeEx, fileName);
             }
             break;
+        }
         // .gitignore
         case ".gitignore":
-            for (let idx = 0; idx < README_TITLES.length; idx++) {
-                if (userCtnFile.includes(README_TITLES[idx])) {
-                    continue;
-                }
-                log(E_SEV.CRIT, msg.readme, fileName);
-            }
+            // for (let idx = 0; idx < README_TITLES.length; idx++) {
+            //     if (userCtnFile.includes(README_TITLES[idx])) {
+            //         continue;
+            //     }
+            //     log(E_SEV.CRIT, msg.readme, fileName);
+            // }
             break;
         default:
     }
@@ -161,10 +174,59 @@ async function switchFile(fileName, elemMainDir) {
  * @returns {void} Into the console with function log
  */
 
-// eslint-disable-next-line max-lines-per-function
 async function main() {
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(PATH_MAIN_DIR));
+
+    // If slimio manisfest doesn't installed in this project, exit
+    if (!elemMainDir.has("slimio.toml")) {
+        log(E_SEV.CRIT, msg.manifest);
+        // Exit
+    }
+
+    const manifest = Manifest.open();
+    TYPE_OF_PROJECT.type = manifest.type;
+    // If slimio.toml exists for projects structure
+    switch (manifest.type) {
+        // CLI
+        case "CLI": {
+            // If the main directory content a bin folder
+            if (!elemMainDir.has("bin")) {
+                log(E_SEV.CRIT, msg.binNotExist);
+                // Exit
+            }
+
+            try {
+                const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"), { encoding: "utf8" });
+                if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
+                    log(E_SEV.WARN, msg.shebang);
+                    break;
+                }
+            }
+            catch (error) {
+                log(E_SEV.CRIT, msg.indexJsNotExist);
+            }
+            // Infos: preferGlobal, bin, main in package.json
+            console.log(msg.rootFieldsCLI);
+            break;
+        }
+        // N-API
+        case "NAPI":
+            // If include folder doesn't exist.
+            if (!elemMainDir.has("include")) {
+                log(E_SEV.CRIT, msg.napiInclude);
+            }
+
+            // If binding.gyp file doesn't exist
+            if (!elemMainDir.has("binding.gyp")) {
+                log(E_SEV.CRIT, msg.napiBinding);
+            }
+
+            // Infos: gypfile in package.json
+            console.log(msg.rootFieldsNAPI);
+            break;
+        default:
+    }
 
     // Loop on required files array
     for (const file of requiredFiles) {
@@ -177,6 +239,7 @@ async function main() {
             }
             else {
                 log(E_SEV.CRIT, msg.fileNotExist, file.name);
+                // Exit
             }
         }
         // If file is excluded, continue
@@ -201,56 +264,6 @@ async function main() {
             default:
                 log(E_SEV.INFO, msg[dir], dir);
         }
-    }
-
-    // If slimio manisfest doesn't installed in this project, exit
-    if (!elemMainDir.has("slimio.toml")) {
-        log(E_SEV.CRIT, msg.manifest);
-    }
-
-    // If slimio.toml exists for projects structure
-    const manifest = Manifest.open();
-    switch (manifest.type) {
-        // CLI
-        case "CLI": {
-            // If the main directory content a bin folder
-            if (elemMainDir.has("bin")) {
-                try {
-                    const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"));
-                    if (ctnIndexFile.indexOf("#!/usr/bin/env node")) {
-                        log(E_SEV.WARN, msg.shebang);
-                        break;
-                    }
-                }
-                catch (error) {
-                    log(E_SEV.CRIT, msg.indexJsNotExist);
-                }
-            }
-
-            // Or not
-            else {
-                log(E_SEV.CRIT, msg.binNotExist);
-            }
-            // preferGlobal, bin, main in package.json
-            console.log(msg.rootFieldsCLI);
-            break;
-        }
-        // N-API
-        case "NAPI":
-            // If include folder doesn't exist.
-            if (!elemMainDir.has("include")) {
-                log(E_SEV.CRIT, msg.napiInclude);
-            }
-
-            // If binding.gyp file doesn't exist
-            if (!elemMainDir.has("binding.gyp")) {
-                log(E_SEV.CRIT, msg.napiBinding);
-            }
-
-            // gypfile in package.json
-            console.log(msg.rootFieldsNAPI);
-            break;
-        default:
     }
 }
 

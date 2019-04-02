@@ -68,6 +68,7 @@ const messages = {
 |   API
 |   License
 |`,
+    readmeEx: `file must content ${yellow("Usage example")} because your project is a Package.`,
     rootFieldsCLI: `|
 | ${emoji.get(":bulb:")}  : ${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}
 |

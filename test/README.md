@@ -10,6 +10,9 @@ Before running psp, it's recommanded to run the [Generator](https://github.com/S
 in progress...
 
 ## Checked
+## Requirements
+## API
+## License
 
 * #### Files
 
