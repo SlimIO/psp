@@ -3,6 +3,7 @@
 // Require Node.js Dependencies
 const { readdir, readFile } = require("fs").promises;
 const { join } = require("path");
+const { EOL } = require("os");
 
 // Require Third-party Dependencies
 const inquirer = require("inquirer");
@@ -35,10 +36,10 @@ const E_SEV = Object.freeze({
 /**
  * @func log
  * @description Log infos customs into the console
- * @param {string} severity
- * @param {string} message
- * @param {string} file
- * @returns {string} Into the console
+ * @param {!String} severity
+ * @param {!String} message
+ * @param {String} file
+ * @returns {void} Into the console
  */
 
 function log(severity, message, file) {
@@ -57,71 +58,93 @@ function log(severity, message, file) {
 
 /**
  * @async
+ * @func readFileLocal
+ * @description Read the file given in argument
+ * @param {!String} fileName file name of the main function
+ * @returns {String} utf8 String of the file
+ */
+
+async function readFileLocal(fileName) {
+    return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
+}
+
+/**
+ * @async
  * @func switchFile
- * @param {string} fileName file name of the main function
- * @param {array} elemMainDir contain array the elements of main directory
  * @description Switch all files in main directory
- * @returns {string} Into the console with function log
+ * @param {!String} fileName file name of the main function
+ * @param {!Set<String>} elemMainDir contain array the elements of main directory
+ * @returns {void} Into the console with function log
  */
 
 async function switchFile(fileName, elemMainDir) {
     // Read file
-    const extractDir = elemMainDir;
-    let contentUserFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
-    let contentLocalFile = "";
+    const userCtnFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
 
     // Switch all files
     switch (fileName) {
         // .commitlint.config.js
         case "commitlint.config.js":
-            if (!contentUserFile.indexOf("['@commitlint/config-conventional']")) {
+            if (!userCtnFile.indexOf("['@commitlint/config-conventional']")) {
                 log(E_SEV.CRIT, msg.commitLint, fileName);
             }
             break;
         // .editorconfig
-        case ".editorconfig":
-            contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
-            if (contentUserFile !== contentLocalFile) {
+        case ".editorconfig": {
+            const localCtnFile = await readFileLocal(fileName);
+            if (userCtnFile !== localCtnFile) {
                 log(E_SEV.WARN, msg.editorConf, fileName);
             }
             break;
+        }
         // .eslintrc
-        case ".eslintrc":
-            if (!contentUserFile.indexOf("'extends': '@slimio/eslint-config'")) {
+        case ".eslintrc": {
+            const userCtnFileJSON = JSON.parse(userCtnFile);
+            if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
                 log(E_SEV.CRIT, msg.eslintExtends, fileName);
             }
-            if (contentUserFile.includes("rules")) {
+            if (Reflect.get(userCtnFileJSON, "rules")) {
                 log(E_SEV.WARN, msg.eslintRulesKey, fileName);
             }
             break;
+        }
         // .npmignore & .env
-        case ".npmignore":
-            contentLocalFile = await readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
+        case ".npmignore": {
+            const localCtnFile = await readFileLocal(fileName);
             // File processing
-            contentLocalFile = contentLocalFile.split("\r\n");
-            contentLocalFile.pop();
-            contentUserFile = new Set(contentUserFile.split("\r\n"));
+            const splitLocalFile = localCtnFile.split(EOL).slice(0, -1);
+            const splitUserFile = new Set(userCtnFile.split(EOL));
             // Check
-            for (const ligne of contentLocalFile) {
-                if (!contentUserFile.has(ligne)) {
+            for (const ligne of splitLocalFile) {
+                if (!splitUserFile.has(ligne)) {
                     log(E_SEV.CRIT, msg.npmignore, fileName);
                 }
             }
             // Check .env
-            if (extractDir.has(".env") && !contentUserFile.has(".env")) {
+            if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
                 log(E_SEV.WARN, msg.env, ".env");
             }
             break;
+        }
         // npmrc
         case ".npmrc":
-            if (contentUserFile.includes("package-lock=false") && extractDir.has("package-lock.json")) {
+            if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
                 log(E_SEV.CRIT, msg.npmrc, fileName);
             }
             break;
         // README.md
         case "README.md":
             for (let idx = 0; idx < README_TITLES.length; idx++) {
-                if (contentUserFile.includes(README_TITLES[idx])) {
+                if (userCtnFile.includes(README_TITLES[idx])) {
+                    continue;
+                }
+                log(E_SEV.CRIT, msg.readme, fileName);
+            }
+            break;
+        // .gitignore
+        case ".gitignore":
+            for (let idx = 0; idx < README_TITLES.length; idx++) {
+                if (userCtnFile.includes(README_TITLES[idx])) {
                     continue;
                 }
                 log(E_SEV.CRIT, msg.readme, fileName);
@@ -135,7 +158,7 @@ async function switchFile(fileName, elemMainDir) {
  * @async
  * @func main
  * @description Extract from main directory the list of files and folders
- * @returns {string} Into the console with function log
+ * @returns {void} Into the console with function log
  */
 
 // eslint-disable-next-line max-lines-per-function
@@ -166,18 +189,17 @@ async function main() {
     }
 
     // Folder management
-    for (const dir of REQUIRE_DIR) {
-        if (!elemMainDir.has(dir)) {
-            switch (dir) {
-                case "src":
-                    log(E_SEV.CRIT, msg[dir], dir);
-                    break;
-                case "test":
-                    log(E_SEV.WARN, msg[dir], dir);
-                    break;
-                default:
-                    log(E_SEV.INFO, msg[dir], dir);
-            }
+    const filteredDirs = REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
+    for (const dir of filteredDirs) {
+        switch (dir) {
+            case "src":
+                log(E_SEV.CRIT, msg[dir], dir);
+                break;
+            case "test":
+                log(E_SEV.WARN, msg[dir], dir);
+                break;
+            default:
+                log(E_SEV.INFO, msg[dir], dir);
         }
     }
 
@@ -187,7 +209,7 @@ async function main() {
     }
 
     // If slimio.toml exists for projects structure
-    const manifest = Manifest.open().toJSON();
+    const manifest = Manifest.open();
     switch (manifest.type) {
         // CLI
         case "CLI": {

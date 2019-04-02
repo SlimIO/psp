@@ -1,4 +1,3 @@
 {
-    "extends": "@slimio/eslint-config",
-    "rules": "test"
+    "extends": "@slimio/eslint-config"
 }

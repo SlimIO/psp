@@ -31,5 +31,8 @@
     },
     {
         "name": ".npmrc"
+    },
+    {
+        "name": ".gitignore"
     }
 ]

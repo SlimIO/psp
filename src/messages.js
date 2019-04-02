@@ -16,6 +16,12 @@ const messages = {
     eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
     fileNotExist: "file doesn't exist in your main directory.",
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
+    infos: `|
+| ${emoji.get(":bulb:")}  ${cyan(": If you want exlude or include files of cheking process, use the following commands :")}
+|
+|   ${cyan("psp ex <fileName>")}
+|   ${cyan("psp in <fileName>")}
+|`,
     manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
 |
 |   ${green(".toml")} file must be created 
