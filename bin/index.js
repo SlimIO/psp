@@ -12,44 +12,22 @@ const { green } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
-const requiredFiles = require("../src/requiredFiles.json");
-const msg = require("../src/messages.js");
+const REQUIRED_ELEMS = require("../src/requiredElems.json");
+const MSG = require("../src/messages.js");
 
 // Constants
 const PATH_MAIN_DIR = process.cwd();
-const EXCLUDE_FILES = new Set(["LICENSE"]);
+const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
 const TYPE_OF_PROJECT = { type: "" };
-const REQUIRE_DIR =
-    [
-        "src",
-        "test",
-        "benchmark",
-        "docs"
-    ];
-const README_TITLES =
-    [
-        "requirements",
-        "getting started",
-        "api",
-        "license"
-    ];
-const E_SEV = Object.freeze({
-    CRIT: ":no_entry:",
-    WARN: ":warning",
-    INFO: ":bulb:"
-});
-
-// 
 
 /**
  * @func log
  * @description Log infos customs into the console
- * @param {!String} severity
- * @param {!String} message
- * @param {String} file
+ * @param {!String} severity emoji with const REQUIRED_ELEMS.E_SEV
+ * @param {!String} message message MSG module
+ * @param {String} file file name
  * @returns {void} Into the console
  */
-
 function log(severity, message, file) {
     // Messages into console
     if (file === undefined) {
@@ -59,7 +37,7 @@ function log(severity, message, file) {
         console.log("|", emoji.get(severity), " :", green(file), message);
     }
     // Exit if case critical
-    if (severity === E_SEV.CRIT) {
+    if (severity === REQUIRED_ELEMS.E_SEV.CRIT) {
         process.exit(1);
     }
 }
@@ -70,21 +48,19 @@ function log(severity, message, file) {
  * @param {!String} fileName file name of the main function
  * @returns {String} utf8 String of the file
  */
-
 function readFileLocal(fileName) {
     return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
 }
 
 /**
  * @async
- * @func switchFile
- * @description Switch all files in main directory
+ * @func checkFileContent
+ * @description Check the content of a given fileName
  * @param {!String} fileName file name of the main function
  * @param {!Set<String>} elemMainDir contain array the elements of main directory
  * @returns {void} Into the console with function log
  */
-
-async function switchFile(fileName, elemMainDir) {
+async function checkFileContent(fileName, elemMainDir) {
     // Read file
     const userCtnFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
 
@@ -93,14 +69,14 @@ async function switchFile(fileName, elemMainDir) {
         // .commitlint.config.js
         case "commitlint.config.js":
             if (!userCtnFile.indexOf("['@commitlint/config-conventional']")) {
-                log(E_SEV.CRIT, msg.commitLint, fileName);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.commitLint, fileName);
             }
             break;
         // .editorconfig
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
             if (userCtnFile !== localCtnFile) {
-                log(E_SEV.WARN, msg.editorConf, fileName);
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.editorConf, fileName);
             }
             break;
         }
@@ -108,10 +84,10 @@ async function switchFile(fileName, elemMainDir) {
         case ".eslintrc": {
             const userCtnFileJSON = JSON.parse(userCtnFile);
             if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
-                log(E_SEV.CRIT, msg.eslintExtends, fileName);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.eslintExtends, fileName);
             }
             if (Reflect.get(userCtnFileJSON, "rules")) {
-                log(E_SEV.WARN, msg.eslintRulesKey, fileName);
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.eslintRulesKey, fileName);
             }
             break;
         }
@@ -124,44 +100,43 @@ async function switchFile(fileName, elemMainDir) {
             // Check
             for (const ligne of splitLocalFile) {
                 if (!splitUserFile.has(ligne)) {
-                    log(E_SEV.CRIT, msg.npmignore, fileName);
+                    log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.npmignore, fileName);
                 }
             }
             // Check .env
             if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
-                log(E_SEV.WARN, msg.env, ".env");
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.env, ".env");
             }
             break;
         }
         // npmrc
         case ".npmrc":
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
-                log(E_SEV.CRIT, msg.npmrc, fileName);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.npmrc, fileName);
             }
             break;
         // README.md
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
-            for (let idx = 0; idx < README_TITLES.length; idx++) {
-                if (userCtnFileLCase.includes(README_TITLES[idx])) {
+            for (let idx = 0; idx < REQUIRED_ELEMS.README_TITLES.length; idx++) {
+                if (userCtnFileLCase.includes(REQUIRED_ELEMS.README_TITLES[idx])) {
                     continue;
                 }
-                log(E_SEV.CRIT, msg.readme, fileName);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readme, fileName);
             }
             if (TYPE_OF_PROJECT.type.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-                log(E_SEV.CRIT, msg.readmeEx, fileName);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readmeEx, fileName);
             }
             break;
         }
         // .gitignore
-        case ".gitignore":
-            // for (let idx = 0; idx < README_TITLES.length; idx++) {
-            //     if (userCtnFile.includes(README_TITLES[idx])) {
-            //         continue;
-            //     }
-            //     log(E_SEV.CRIT, msg.readme, fileName);
-            // }
+        case ".gitignore": {
+            const localCtnFile = await readFileLocal(fileName);
+            // Filter, remove index equal at '' & with '#'
+            const cleanLocFile = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
+            console.log(cleanLocFile);
             break;
+        }
         default:
     }
 }
@@ -179,7 +154,7 @@ async function main() {
 
     // If slimio manisfest doesn't installed in this project, exit
     if (!elemMainDir.has("slimio.toml")) {
-        log(E_SEV.CRIT, msg.manifest);
+        log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.manifest);
         // Exit
     }
 
@@ -191,75 +166,75 @@ async function main() {
         case "CLI": {
             // If the main directory content a bin folder
             if (!elemMainDir.has("bin")) {
-                log(E_SEV.CRIT, msg.binNotExist);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.binNotExist);
                 // Exit
             }
 
             try {
                 const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"), { encoding: "utf8" });
                 if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
-                    log(E_SEV.WARN, msg.shebang);
+                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.shebang);
                     break;
                 }
             }
             catch (error) {
-                log(E_SEV.CRIT, msg.indexJsNotExist);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.indexJsNotExist);
             }
             // Infos: preferGlobal, bin, main in package.json
-            console.log(msg.rootFieldsCLI);
+            console.log(MSG.rootFieldsCLI);
             break;
         }
         // N-API
         case "NAPI":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(E_SEV.CRIT, msg.napiInclude);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.napiInclude);
             }
 
             // If binding.gyp file doesn't exist
             if (!elemMainDir.has("binding.gyp")) {
-                log(E_SEV.CRIT, msg.napiBinding);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.napiBinding);
             }
 
             // Infos: gypfile in package.json
-            console.log(msg.rootFieldsNAPI);
+            console.log(MSG.rootFieldsNAPI);
             break;
         default:
     }
 
     // Loop on required files array
-    for (const file of requiredFiles) {
+    for (const file of REQUIRED_ELEMS.FILE_TO_CHECKS) {
         // If file not exist
-        if (!elemMainDir.has(file.name)) {
+        if (!elemMainDir.has(file)) {
             // If file doesn't exist
-            if (file.name === "index.d.ts" || file.name === ".npmrc") {
-                log(E_SEV.WARN, msg.fileNotExist, file.name);
+            if (file === "index.d.ts" || file === ".npmrc") {
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.fileNotExist, file);
                 continue;
             }
-            log(E_SEV.CRIT, msg.fileNotExist, file.name);
+            log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.fileNotExist, file);
             // Exit
         }
         // If file is excluded, continue
-        if (EXCLUDE_FILES.has(file.name)) {
+        if (EXCLUDE_FILES.has(file)) {
             continue;
         }
 
         // Switch all files
-        await switchFile(file.name, elemMainDir);
+        await checkFileContent(file, elemMainDir);
     }
 
     // Folder management
-    const filteredDirs = REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
+    const filteredDirs = REQUIRED_ELEMS.REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
     for (const dir of filteredDirs) {
         switch (dir) {
             case "src":
-                log(E_SEV.CRIT, msg[dir], dir);
+                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG[dir], dir);
                 break;
             case "test":
-                log(E_SEV.WARN, msg[dir], dir);
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG[dir], dir);
                 break;
             default:
-                log(E_SEV.INFO, msg[dir], dir);
+                log(REQUIRED_ELEMS.E_SEV.INFO, MSG[dir], dir);
         }
     }
 }

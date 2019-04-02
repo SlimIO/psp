@@ -1,0 +1,40 @@
+{
+    "E_SEV": 
+        {
+            "CRIT": ":no_entry:",
+            "WARN": ":warning:",
+            "INFO": ":bulb:" 
+        },
+    "EXCLUDE_FILES":
+        [
+            "LICENSE"
+        ],
+    "FILE_TO_CHECKS": 
+        [
+            "package.json",
+            ".eslintrc",
+            ".editorconfig",
+            "index.d.ts",
+            "jsdoc.json",
+            "commitlint.config.js",
+            "LICENSE",
+            ".npmignore",
+            "README.md",
+            ".npmrc",
+            ".gitignore"
+        ],
+    "README_TITLES":
+            [
+                "## requirements",
+                "## getting started",
+                "## api",
+                "## license"
+            ],
+    "REQUIRE_DIR":
+        [
+            "src",
+            "test",
+            "benchmark",
+            "docs"
+        ]
+}
