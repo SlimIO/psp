@@ -12,24 +12,24 @@ const { green, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
-const REQUIRED_ELEMS = require("../src/requiredElems.json");
-const MSG = require("../src/messages.js");
+const requiredElem = require("../src/requiredElems.json");
+const msg = require("../src/messages.js");
 
 // Constants
 const PATH_MAIN_DIR = process.cwd();
 const PROCESS_ARG = process.argv[2];
-const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
-const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
-const ACCEPT_ARGV = new Set(REQUIRED_ELEMS.ACCEPT_ARGV);
-const WARN = REQUIRED_ELEMS.E_SEV.WARN;
-const CRIT = REQUIRED_ELEMS.E_SEV.CRIT;
-const INFO = REQUIRED_ELEMS.E_SEV.INFO;
-let TYPE_OF_PROJECT = "";
+const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
+const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
+const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
+const WARN = requiredElem.E_SEV.WARN;
+const CRIT = requiredElem.E_SEV.CRIT;
+const INFO = requiredElem.E_SEV.INFO;
+let typeOfProject = "";
 
 /**
  * @func log
  * @description Log infos customs into the console
- * @param {!String} severity emoji with const REQUIRED_ELEMS.E_SEV
+ * @param {!String} severity emoji with const requiredElem.E_SEV
  * @param {!String} message message MSG module
  * @param {String} file file name
  * @returns {void} Into the console
@@ -76,14 +76,14 @@ async function checkFileContent(fileName, elemMainDir) {
         // .commitlint.config.js
         case "commitlint.config.js":
             if (userCtnFile.indexOf("\"@commitlint/config-conventional\"") === -1) {
-                log(CRIT, MSG.commitLint, fileName);
+                log(CRIT, msg.commitLint, fileName);
             }
             break;
         // .editorconfig
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
             if (userCtnFile !== localCtnFile) {
-                log(WARN, MSG.editorConf, fileName);
+                log(WARN, msg.editorConf, fileName);
             }
             break;
         }
@@ -91,10 +91,10 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".eslintrc": {
             const userCtnFileJSON = JSON.parse(userCtnFile);
             if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
-                log(CRIT, MSG.eslintExtends, fileName);
+                log(CRIT, msg.eslintExtends, fileName);
             }
             if (Reflect.has(userCtnFileJSON, "rules")) {
-                log(WARN, MSG.eslintRulesKey, fileName);
+                log(WARN, msg.eslintRulesKey, fileName);
             }
             break;
         }
@@ -107,35 +107,35 @@ async function checkFileContent(fileName, elemMainDir) {
             // Check
             for (const ligne of splitLocalFile) {
                 if (!splitUserFile.has(ligne)) {
-                    log(CRIT, MSG.npmignore, fileName);
+                    log(CRIT, msg.npmignore, fileName);
                 }
             }
             // Check .env
             if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
-                log(WARN, MSG.npmEnv, ".env");
+                log(WARN, msg.npmEnv, ".env");
             }
             break;
         }
         // npmrc
         case ".npmrc":
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
-                log(WARN, MSG.npmrc, fileName);
+                log(WARN, msg.npmrc, fileName);
             }
             break;
         // README.md
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
-            if (TYPE_OF_PROJECT === "addon") {
+            if (typeOfProject === "addon") {
                 break;
             }
-            for (let idx = 0; idx < REQUIRED_ELEMS.README_TITLES.length; idx++) {
-                if (userCtnFileLCase.includes(REQUIRED_ELEMS.README_TITLES[idx])) {
+            for (let idx = 0; idx < requiredElem.README_TITLES.length; idx++) {
+                if (userCtnFileLCase.includes(requiredElem.README_TITLES[idx])) {
                     continue;
                 }
-                log(CRIT, MSG.readme, fileName);
+                log(CRIT, msg.readme, fileName);
             }
-            if (TYPE_OF_PROJECT.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-                log(CRIT, MSG.readmeEx, fileName);
+            if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
+                log(CRIT, msg.readmeEx, fileName);
             }
             break;
         }
@@ -149,11 +149,11 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (userCtnFile.includes(index)) {
                     continue;
                 }
-                log(CRIT, MSG.gitignore, fileName);
+                log(CRIT, msg.gitignore, fileName);
             }
             // Check .env
             if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
-                log(WARN, MSG.gitEnv, ".env");
+                log(WARN, msg.gitEnv, ".env");
             }
             break;
         }
@@ -164,21 +164,21 @@ async function checkFileContent(fileName, elemMainDir) {
             const scripts = userCtnFileJSON.scripts;
             const dep = userCtnFileJSON.dependencies;
             const devDep = userCtnFileJSON.devDependencies;
-            const requiredScripts = REQUIRED_ELEMS.PKG_SCRIPTS[TYPE_OF_PROJECT];
-            const requiredDevDep = REQUIRED_ELEMS.PKG_DEVDEP;
-            const requiredOthers = REQUIRED_ELEMS.PKG_OTHERS;
+            const requiredScripts = requiredElem.PKG_SCRIPTS[typeOfProject];
+            const requiredDevDep = requiredElem.PKG_DEVDEP;
+            const requiredOthers = requiredElem.PKG_OTHERS;
             // Ckeck scripts
             for (const keyScripts of requiredScripts) {
                 if (Reflect.has(scripts, keyScripts)) {
                     continue;
                 }
-                log(WARN, MSG.pkgScripts(TYPE_OF_PROJECT, keyScripts));
+                log(WARN, msg.pkgScripts(typeOfProject, keyScripts));
             }
             // Check dependencies
-            if (TYPE_OF_PROJECT === "addon" || TYPE_OF_PROJECT === "napi") {
-                const requiredDep = REQUIRED_ELEMS.PKG_DEP[TYPE_OF_PROJECT];
+            if (typeOfProject === "addon" || typeOfProject === "napi") {
+                const requiredDep = requiredElem.PKG_DEP[typeOfProject];
                 if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-                    log(WARN, MSG.pkgDep(TYPE_OF_PROJECT, requiredDep[0], requiredDep[1]));
+                    log(WARN, msg.pkgDep(typeOfProject, requiredDep[0], requiredDep[1]));
                 }
             }
             // check dev dependencies
@@ -186,36 +186,36 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (Reflect.has(devDep, keyDepDev)) {
                     continue;
                 }
-                log(WARN, MSG.pkgDevDep(keyDepDev), fileName);
+                log(WARN, msg.pkgDevDep(keyDepDev), fileName);
             }
             // Check others fields
             for (const keyName of requiredOthers) {
                 if (Reflect.has(userCtnFileJSON, keyName)) {
                     if (keyName === "keywords" && userCtnFileJSON.keywords.length === 0) {
-                        log(WARN, MSG.pkgOthersCtn(keyName));
+                        log(WARN, msg.pkgOthersCtn(keyName));
                     }
                     if (keyName === "author" && userCtnFileJSON.author !== "SlimIO") {
-                        log(WARN, MSG.pkgOthersCtn(keyName, "SlimIO"));
+                        log(WARN, msg.pkgOthersCtn(keyName, "SlimIO"));
                     }
                     if (keyName === "license" && userCtnFileJSON.license !== "MIT") {
-                        log(WARN, MSG.pkgOthersCtn(keyName, "MIT"));
+                        log(WARN, msg.pkgOthersCtn(keyName, "MIT"));
                     }
                     if (keyName === "description" && userCtnFileJSON.description === "") {
-                        log(WARN, MSG.pkgOthersCtn(keyName));
+                        log(WARN, msg.pkgOthersCtn(keyName));
                     }
                     if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
-                        log(WARN, MSG.pkgEngines);
+                        log(WARN, msg.pkgEngines);
                     }
                     if (keyName === "husky" && !Reflect.has(userCtnFileJSON.husky.hooks, "commit-msg")) {
-                        log(WARN, MSG.pkgHusky);
+                        log(WARN, msg.pkgHusky);
                     }
                     continue;
                 }
-                log(WARN, MSG.pkgOthers(keyName), fileName);
+                log(WARN, msg.pkgOthers(keyName), fileName);
             }
             // nyc field
             if (Reflect.has(userCtnFileJSON.devDependencies, "nyc") && !Reflect.has(userCtnFileJSON, "nyc")) {
-                log(WARN, MSG.pkgNyc);
+                log(WARN, msg.pkgNyc);
             }
 
             break;
@@ -238,8 +238,8 @@ async function main() {
         }
 
         if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
-            const arrowUp = emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_UP);
-            const arrowDown = `${emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_DOWN)}\n`;
+            const arrowUp = emoji.get(requiredElem.E_SEV.ARROW_UP);
+            const arrowDown = `${emoji.get(requiredElem.E_SEV.ARROW_DOWN)}\n`;
             console.log(arrowDown, cyan(await readFileLocal(PROCESS_ARG)), arrowUp);
             process.exit();
         }
@@ -250,69 +250,69 @@ async function main() {
 
     // If slimio manisfest doesn't installed in this project, exit
     if (!elemMainDir.has("slimio.toml")) {
-        log(CRIT, MSG.manifest);
+        log(CRIT, msg.manifest);
         // Exit
     }
 
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
-    TYPE_OF_PROJECT = manifest.type.toLowerCase();
+    typeOfProject = manifest.type.toLowerCase();
     // If slimio.toml exists for projects structure
-    switch (TYPE_OF_PROJECT) {
+    switch (typeOfProject) {
         // CLI
         case "cli": {
             // If the main directory content a bin folder
             if (!elemMainDir.has("bin")) {
-                log(CRIT, MSG.binNotExist);
+                log(CRIT, msg.binNotExist);
                 // Exit
             }
 
             try {
                 const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"), { encoding: "utf8" });
                 if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
-                    log(WARN, MSG.shebang);
+                    log(WARN, msg.shebang);
                     break;
                 }
             }
             catch (error) {
-                log(CRIT, MSG.indexJsNotExist);
+                log(CRIT, msg.indexJsNotExist);
             }
             // Infos: preferGlobal, bin, main in package.json
-            console.log(MSG.rootFieldsCLI);
+            console.log(msg.rootFieldsCLI);
             break;
         }
         // N-API
         case "napi":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(CRIT, MSG.napiInclude);
+                log(CRIT, msg.napiInclude);
             }
 
             // If binding.gyp file doesn't exist
             if (!elemMainDir.has("binding.gyp")) {
-                log(CRIT, MSG.napiBinding);
+                log(CRIT, msg.napiBinding);
             }
 
             // Infos: gypfile in package.json
-            console.log(MSG.rootFieldsNAPI);
+            console.log(msg.rootFieldsNAPI);
             break;
         default:
     }
 
     // Loop on required files array
-    for (const fileName of REQUIRED_ELEMS.FILE_TO_CHECKS) {
+    for (const fileName of requiredElem.FILE_TO_CHECKS) {
         // If file not exist
         if (!elemMainDir.has(fileName)) {
             // If type === addon
-            if (fileName === "index.d.ts" && TYPE_OF_PROJECT === "addon") {
+            if (fileName === "index.d.ts" && typeOfProject === "addon") {
                 continue;
             }
             // If file doesn't exist
             if (fileName === "index.d.ts" || fileName === ".npmrc") {
-                log(WARN, MSG.fileNotExist, fileName);
+                log(WARN, msg.fileNotExist, fileName);
                 continue;
             }
-            log(CRIT, MSG.fileNotExist, fileName);
+            log(CRIT, msg.fileNotExist, fileName);
             // Exit
         }
         // If file is excluded, continue
@@ -325,7 +325,7 @@ async function main() {
     }
 
     // Folder management
-    const filteredDirs = REQUIRED_ELEMS.REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
+    const filteredDirs = requiredElem.REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
     for (const dir of filteredDirs) {
         switch (dir) {
             case "src":

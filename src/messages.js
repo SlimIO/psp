@@ -90,10 +90,10 @@ const messages = {
     },
     readme: `file must content following titles :
 |
-|   Requirements
-|   Getting Started
-|   API
-|   License
+|   ## Requirements
+|   ## Getting Started
+|   ## API
+|   ## License
 |`,
     readmeEx: `file must content ${yellow("Usage example")} because your project is a Package.`,
     rootFieldsCLI: `|
