@@ -1,4 +1,12 @@
 {
+    "ACCEPT_ARGV":
+        [
+            ".gitignore",
+            ".editorconfig",
+            ".npmignore",
+            "in",
+            "ex"
+        ],
     "E_SEV": 
         {
             "CRIT": ":no_entry:",

@@ -20,6 +20,7 @@ const PATH_MAIN_DIR = process.cwd();
 const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
+const ACCEPT_ARGV = new Set(REQUIRED_ELEMS.ACCEPT_ARGV);
 const TYPE_OF_PROJECT = { type: "" };
 
 /**
@@ -155,14 +156,19 @@ async function checkFileContent(fileName, elemMainDir) {
  * @description Extract from main directory the list of files and folders
  * @returns {void} Into the console with function log
  */
-
 async function main() {
     // Read process.argv
-    if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
-        const arrowUp = emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_UP);
-        const arrowDown = `${emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_DOWN)}\n`;
-        console.log(arrowDown, cyan(await readFileLocal(PROCESS_ARG)), arrowUp);
-        process.exit();
+    if (PROCESS_ARG !== undefined) {
+        if (!ACCEPT_ARGV.has(PROCESS_ARG)) {
+            log(REQUIRED_ELEMS.E_SEV.CRIT, "Impossible command");
+        }
+
+        if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
+            const arrowUp = emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_UP);
+            const arrowDown = `${emoji.get(REQUIRED_ELEMS.E_SEV.ARROW_DOWN)}\n`;
+            console.log(arrowDown, cyan(await readFileLocal(PROCESS_ARG)), arrowUp);
+            process.exit();
+        }
     }
 
     // Read the main directory of user

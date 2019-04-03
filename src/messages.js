@@ -12,7 +12,7 @@ const messages = {
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     env: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
     // eslint-disable-next-line max-len
-    editorConf: `file doesn't contains the good informations. You should used ${cyan("psp .editorConf")} to see exact informations`,
+    editorConf: `file doesn't contains the good informations. You should used ${cyan("psp .editorconfig")} to see exact informations`,
     eslintExtends: "file must be extends by @slimio/eslint-config.",
     eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
     fileNotExist: "file doesn't exist in your main directory.",
