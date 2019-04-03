@@ -108,7 +108,7 @@ async function checkFileContent(fileName, elemMainDir) {
             }
             // Check .env
             if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.env, ".env");
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.npmEnv, ".env");
             }
             break;
         }
@@ -144,6 +144,14 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.gitignore, fileName);
             }
+            // Check .env
+            if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.gitEnv, ".env");
+            }
+            break;
+        }
+        // .package
+        case "package.json": {
             break;
         }
         default:
