@@ -149,8 +149,9 @@ async function checkFileContent(fileName, elemMainDir) {
         }
         // jsDoc
         case "jsdoc.json": {
-            const jsdonParsed = JSON.parse(userCtnFile);
-            const include = new Set(jsdonParsed.source.include);
+            const jsdocParsed = JSON.parse(userCtnFile);
+            const include = new Set(jsdocParsed.source.include);
+
             for await (const file of getJavascriptFiles(process.cwd())) {
                 const fileName = file.split("\\").slice(-1)[0];
                 if (include.has(fileName)) {
