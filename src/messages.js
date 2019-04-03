@@ -1,4 +1,4 @@
-const { green, yellow, cyan } = require("kleur");
+const { green, yellow, cyan, red } = require("kleur");
 const emoji = require("node-emoji");
 
 const messages = {
@@ -50,15 +50,18 @@ const messages = {
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     pkgScripts(typeOfProject, keyScript) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for 'scripts' key, the ${yellow(keyScript)} property`;
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for ${green("scripts")} key, the ${yellow(keyScript)} property`;
     },
     pkgDep(typeOfProject, key1, key2) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for 'dependencies' key : 
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for ${green("dependencies")} key : 
 |        
 |   ${yellow(key1)}
 |   ${yellow(key2)}        
 |`;
+    },
+    pkgDevDep(keyDepDev) {
+        return `file must content for ${green("devDependencies")} key, the ${yellow(keyDepDev)} property`;
     },
     readme: `file must content following titles :
 |
@@ -74,7 +77,7 @@ const messages = {
 |     "main": "${green("./bin/index.js")}"    
 |     "preferGlobal": ${green(true)},
 |     "bin": {
-|        "yourAppName": "${green("./bin/index.js")}"
+|        "${red("yourAppName")}": "${green("./bin/index.js")}"
 |     }
 |     ${cyan("==> See documentation to https://docs.npmjs.com/files/package.json#bin")}
 |`,

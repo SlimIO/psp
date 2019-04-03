@@ -64,6 +64,7 @@ function readFileLocal(fileName) {
  * @param {!Set<String>} elemMainDir contain array the elements of main directory
  * @returns {void} Into the console with function log
  */
+// eslint-disable-next-line max-lines-per-function
 async function checkFileContent(fileName, elemMainDir) {
     // Read file
     const userCtnFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
@@ -179,7 +180,12 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
             }
             // check dev dependencies
-
+            for (const keyDepDev of requiredDevDep) {
+                if (Reflect.has(devDep, keyDepDev)) {
+                    continue;
+                }
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDevDep(keyDepDev), fileName);
+            }
             break;
         }
         default:

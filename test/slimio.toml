@@ -1,4 +1,4 @@
 name = "psp"
 version = "0.1.0"
-type = "Addon"
+type = "NAPI"
 dependencies = { }
