@@ -162,8 +162,9 @@ async function checkFileContent(fileName, elemMainDir) {
             const scripts = userCtnFileJSON.scripts;
             const dep = userCtnFileJSON.dependencies;
             const devDep = userCtnFileJSON.devDependencies;
-            const requiredScripts = REQUIRED_ELEMS.SCRIPTS[TYPE_OF_PROJECT];
-            const requiredDevDep = REQUIRED_ELEMS.DEVDEP;
+            const requiredScripts = REQUIRED_ELEMS.PKG_SCRIPTS[TYPE_OF_PROJECT];
+            const requiredDevDep = REQUIRED_ELEMS.PKG_DEVDEP;
+            const requiredOthers = REQUIRED_ELEMS.PKG_OTHERS;
             // Ckeck scripts
             for (const keyScripts of requiredScripts) {
                 if (Reflect.has(scripts, keyScripts)) {
@@ -173,8 +174,7 @@ async function checkFileContent(fileName, elemMainDir) {
             }
             // Check dependencies
             if (TYPE_OF_PROJECT === "addon" || TYPE_OF_PROJECT === "napi") {
-                const requiredDep = REQUIRED_ELEMS.DEP[TYPE_OF_PROJECT];
-
+                const requiredDep = REQUIRED_ELEMS.PKG_DEP[TYPE_OF_PROJECT];
                 if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
                     log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDep(TYPE_OF_PROJECT, requiredDep[0], requiredDep[1]));
                 }
@@ -185,6 +185,37 @@ async function checkFileContent(fileName, elemMainDir) {
                     continue;
                 }
                 log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDevDep(keyDepDev), fileName);
+            }
+            // Check others fields
+            for (const keyName of requiredOthers) {
+                if (Reflect.has(userCtnFileJSON, keyName)) {
+                    if (keyName === "keywords" && userCtnFileJSON.keywords.length === 0) {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    if (keyName === "author" && userCtnFileJSON.author !== "SlimIO") {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    if (keyName === "license" && userCtnFileJSON.license !== "MIT") {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    if (keyName === "description" && userCtnFileJSON.description === "") {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    if (keyName === "husky" && userCtnFileJSON.husky !== "commit-msg") {
+                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                        continue;
+                    }
+                    continue;
+                }
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
             }
             break;
         }
@@ -225,7 +256,6 @@ async function main() {
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
     TYPE_OF_PROJECT = manifest.type.toLowerCase();
-    console.log(TYPE_OF_PROJECT)
     // If slimio.toml exists for projects structure
     switch (TYPE_OF_PROJECT) {
         // CLI

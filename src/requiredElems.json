@@ -7,27 +7,6 @@
             "in",
             "ex"
         ],
-    "DEP": 
-        {
-            "napi":
-                [
-                    "node-addon-api",
-                    "node-gyp-build"
-                ],
-            "addon":
-                [
-                    "@slimio/addon",
-                    "@slimio/scheduler"
-                ]
-        },
-    "DEVDEP":
-        [
-            "@slimio/eslint-config",
-            "eslint",
-            "@commitlint/cli",
-            "@commitlint/config-conventional",
-            "husky"
-        ],
     "E_SEV": 
         {
             "CRIT": ":no_entry:",
@@ -74,7 +53,37 @@
             "benchmark",
             "docs"
         ],
-    "SCRIPTS":
+    "PKG_DEP": 
+        {
+            "napi":
+                [
+                    "node-addon-api",
+                    "node-gyp-build"
+                ],
+            "addon":
+                [
+                    "@slimio/addon",
+                    "@slimio/scheduler"
+                ]
+        },
+    "PKG_DEVDEP":
+        [
+            "@slimio/eslint-config",
+            "eslint",
+            "@commitlint/cli",
+            "@commitlint/config-conventional",
+            "husky"
+        ],
+    "PKG_OTHERS":
+        [
+            "keywords",
+            "author",
+            "license",
+            "description",
+            "engines",
+            "husky"
+        ],
+    "PKG_SCRIPTS":
         {
             "package":
                 [

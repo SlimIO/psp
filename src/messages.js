@@ -48,20 +48,23 @@ const messages = {
     npmignore: `file doesn't contains the good informations.
 |         You should used ${cyan("psp .npmignore")} to see exact informations`,
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
-    pkgScripts(typeOfProject, keyScript) {
-        // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for ${green("scripts")} key, the ${yellow(keyScript)} property`;
-    },
     pkgDep(typeOfProject, key1, key2) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for ${green("dependencies")} key : 
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key : 
 |        
-|   ${yellow(key1)}
-|   ${yellow(key2)}        
+|   "${yellow(key1)}"
+|   "${yellow(key2)}"       
 |`;
     },
     pkgDevDep(keyDepDev) {
-        return `file must content for ${green("devDependencies")} key, the ${yellow(keyDepDev)} property`;
+        return `file must content for "${green("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
+    },
+    pkgOthers(keyOthers) {
+        return `file must content "${yellow(keyOthers)}" property`;
+    },
+    pkgScripts(typeOfProject, keyScript) {
+        // eslint-disable-next-line max-len
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("scripts")}" key, the "${yellow(keyScript)}" property`;
     },
     readme: `file must content following titles :
 |
