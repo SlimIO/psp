@@ -1,140 +1,121 @@
 {
-    "ACCEPT_ARGV":
-        [
-            ".gitignore",
-            ".editorconfig",
-            ".npmignore",
-            "in",
-            "ex"
+    "ACCEPT_ARGV": [
+        ".gitignore",
+        ".editorconfig",
+        ".npmignore",
+        "in",
+        "ex"
+    ],
+    "E_SEV": {
+        "CRIT": ":no_entry:",
+        "WARN": ":warning:",
+        "INFO": ":bulb:",
+        "ARROW_UP": ":arrow_double_up:",
+        "ARROW_DOWN": ":arrow_double_down:"
+    },
+    "EXCLUDE_DIRS": [
+        "node_modules",
+        "test",
+        "tests",
+        "coverage",
+        ".vscode",
+        ".git"
+    ],
+    "EXCLUDE_FILES": [
+        "LICENSE"
+    ],
+    "FILE_TO_CHECKS": [
+        "package.json",
+        ".eslintrc",
+        ".editorconfig",
+        "index.d.ts",
+        "jsdoc.json",
+        "commitlint.config.js",
+        "LICENSE",
+        ".npmignore",
+        "README.md",
+        ".npmrc",
+        ".gitignore"
+    ],
+    "INFO_CONTENT_FILE": [
+        ".gitignore",
+        ".editorconfig",
+        ".npmignore"
+    ],
+    "README_TITLES": [
+        "## requirements",
+        "## getting started",
+        "## api",
+        "## license"
+    ],
+    "REQUIRE_DIR": [
+        "src",
+        "test",
+        "benchmark",
+        "docs"
+    ],
+    "PKG_DEP": {
+        "napi": [
+            "node-addon-api",
+            "node-gyp-build"
         ],
-    "E_SEV": 
-        {
-            "CRIT": ":no_entry:",
-            "WARN": ":warning:",
-            "INFO": ":bulb:",
-            "ARROW_UP": ":arrow_double_up:",
-            "ARROW_DOWN": ":arrow_double_down:"
-        },
-    "EXCLUDE_DIRS":
-        [
-            "node_modules",
-            "test",
-            "tests",
-            "coverage",
-            ".vscode",
-            ".git"
-        ],
-    "EXCLUDE_FILES":
-        [
-            "LICENSE"
-        ],
-    "FILE_TO_CHECKS": 
-        [
-            "package.json",
-            ".eslintrc",
-            ".editorconfig",
-            "index.d.ts",
-            "jsdoc.json",
-            "commitlint.config.js",
-            "LICENSE",
-            ".npmignore",
-            "README.md",
-            ".npmrc",
-            ".gitignore"
-        ],
-    "INFO_CONTENT_FILE":
-        [
-            ".gitignore",
-            ".editorconfig",
-            ".npmignore"
-        ],
-    "README_TITLES":
-            [
-                "## requirements",
-                "## getting started",
-                "## api",
-                "## license"
-            ],
-    "REQUIRE_DIR":
-        [
-            "src",
-            "test",
-            "benchmark",
-            "docs"
-        ],
-    "PKG_DEP": 
-        {
-            "napi":
-                [
-                    "node-addon-api",
-                    "node-gyp-build"
-                ],
-            "addon":
-                [
-                    "@slimio/addon",
-                    "@slimio/scheduler"
-                ]
-        },
-    "PKG_DEVDEP":
-        [
-            "@slimio/eslint-config",
-            "eslint",
-            "@commitlint/cli",
-            "@commitlint/config-conventional",
-            "husky"
-        ],
-    "PKG_OTHERS":
-        [
-            "keywords",
-            "author",
-            "license",
-            "description",
-            "engines",
-            "husky"
-        ],
-    "PKG_SCRIPTS":
-        {
-            "package":
-                [
-                    "start",
-                    "test",
-                    "doc",
-                    "coverage",
-                    "report",
-                    "prepublishOnly"
-                ],
-            "cli":
-                [
-                    "start",
-                    "test",
-                    "doc",
-                    "coverage",
-                    "report",
-                    "prepublishOnly"
-                ],
-            "napi":
-                [
-                    "prebuilds",
-                    "build",
-                    "test",
-                    "doc",
-                    "coverage",
-                    "report",
-                    "prepublishOnly"
-                ],
-            "addon":
-                [
-                    "test",
-                    "doc",
-                    "coverage",
-                    "report"
-                ]
-        },
-    "PROJECT_TYPE":
-        [
-            "cli",
-            "napi",
-            "addon",
-            "package"
+        "addon": [
+            "@slimio/addon",
+            "@slimio/scheduler"
         ]
+    },
+    "PKG_DEVDEP": [
+        "@slimio/eslint-config",
+        "eslint",
+        "@commitlint/cli",
+        "@commitlint/config-conventional",
+        "husky"
+    ],
+    "PKG_OTHERS": [
+        "keywords",
+        "author",
+        "license",
+        "description",
+        "engines",
+        "husky"
+    ],
+    "PKG_SCRIPTS": {
+        "package": [
+            "start",
+            "test",
+            "doc",
+            "coverage",
+            "report",
+            "prepublishOnly"
+        ],
+        "cli": [
+            "start",
+            "test",
+            "doc",
+            "coverage",
+            "report",
+            "prepublishOnly"
+        ],
+        "napi": [
+            "prebuilds",
+            "build",
+            "test",
+            "doc",
+            "coverage",
+            "report",
+            "prepublishOnly"
+        ],
+        "addon": [
+            "test",
+            "doc",
+            "coverage",
+            "report"
+        ]
+    },
+    "PROJECT_TYPE": [
+        "cli",
+        "napi",
+        "addon",
+        "package"
+    ]
 }
