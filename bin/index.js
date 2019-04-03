@@ -42,6 +42,7 @@ function log(severity, message, file) {
     else {
         console.log("|", emoji.get(severity), " :", green(file), message);
     }
+
     // Exit if case critical
     if (severity === CRIT) {
         process.exit(1);
@@ -59,6 +60,7 @@ function log(severity, message, file) {
 async function* getJavascriptFiles(dir) {
     const files = await readdir(dir);
     const tDirs = [];
+
     // Check js file main directory
     for (const file of files) {
         if (extname(file) === ".js") {
@@ -71,6 +73,7 @@ async function* getJavascriptFiles(dir) {
         }
         tDirs.push(file);
     }
+
     // Check js files in all main directory folders
     for (const name of tDirs) {
         const st = await stat(join(dir, name));
@@ -104,13 +107,12 @@ async function checkFileContent(fileName, elemMainDir) {
 
     // Switch all files
     switch (fileName) {
-        // .commitlint.config.js
         case "commitlint.config.js":
             if (userCtnFile.indexOf("\"@commitlint/config-conventional\"") === -1) {
                 log(CRIT, msg.commitLint, fileName);
             }
             break;
-        // .editorconfig
+
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
             if (userCtnFile !== localCtnFile) {
@@ -118,22 +120,24 @@ async function checkFileContent(fileName, elemMainDir) {
             }
             break;
         }
-        // .eslintrc
+
         case ".eslintrc": {
             const userCtnFileJSON = JSON.parse(userCtnFile);
             if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
                 log(CRIT, msg.eslintExtends, fileName);
             }
+
             if (Reflect.has(userCtnFileJSON, "rules")) {
                 log(WARN, msg.eslintRulesKey, fileName);
             }
             break;
         }
-        // .gitignore
+
         case ".gitignore": {
             const localCtnFile = await readFileLocal(fileName);
             // Filter, remove index equal at '' & with '#'
             const cleanLocFileToArray = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
+
             // Check
             for (const index of cleanLocFileToArray) {
                 if (userCtnFile.includes(index)) {
@@ -141,13 +145,14 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(CRIT, msg.gitignore, fileName);
             }
+
             // Check .env
             if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
                 log(WARN, msg.gitEnv, ".env");
             }
             break;
         }
-        // jsDoc
+
         case "jsdoc.json": {
             const jsdocParsed = JSON.parse(userCtnFile);
             const include = new Set(jsdocParsed.source.include);
@@ -161,31 +166,34 @@ async function checkFileContent(fileName, elemMainDir) {
             }
             break;
         }
-        // .npmignore & .env
+
         case ".npmignore": {
             const localCtnFile = await readFileLocal(fileName);
+
             // File processing
             const splitLocalFile = localCtnFile.split(EOL).slice(0, -1);
             const splitUserFile = new Set(userCtnFile.split(EOL));
+
             // Check
             for (const ligne of splitLocalFile) {
                 if (!splitUserFile.has(ligne)) {
                     log(CRIT, msg.npmignore, fileName);
                 }
             }
+
             // Check .env
             if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
                 log(WARN, msg.npmEnv, ".env");
             }
             break;
         }
-        // npmrc
+
         case ".npmrc":
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
                 log(WARN, msg.npmrc, fileName);
             }
             break;
-        // package.json
+
         case "package.json": {
             // Variables
             const userCtnFileJSON = JSON.parse(userCtnFile);
@@ -195,6 +203,7 @@ async function checkFileContent(fileName, elemMainDir) {
             const requiredScripts = requiredElem.PKG_SCRIPTS[typeOfProject];
             const requiredDevDep = requiredElem.PKG_DEVDEP;
             const requiredOthers = requiredElem.PKG_OTHERS;
+
             // Ckeck scripts
             for (const keyScripts of requiredScripts) {
                 if (Reflect.has(scripts, keyScripts)) {
@@ -209,6 +218,7 @@ async function checkFileContent(fileName, elemMainDir) {
                     log(WARN, msg.pkgDep(typeOfProject, requiredDep[0], requiredDep[1]));
                 }
             }
+
             // check dev dependencies
             for (const keyDepDev of requiredDevDep) {
                 if (Reflect.has(devDep, keyDepDev)) {
@@ -216,6 +226,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(WARN, msg.pkgDevDep(keyDepDev), fileName);
             }
+
             // Check others fields
             for (const keyName of requiredOthers) {
                 if (Reflect.has(userCtnFileJSON, keyName)) {
@@ -241,6 +252,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(WARN, msg.pkgOthers(keyName), fileName);
             }
+
             // nyc field
             if (Reflect.has(userCtnFileJSON.devDependencies, "nyc") && !Reflect.has(userCtnFileJSON, "nyc")) {
                 log(WARN, msg.pkgNyc);
@@ -254,12 +266,14 @@ async function checkFileContent(fileName, elemMainDir) {
             if (typeOfProject === "addon") {
                 break;
             }
+
             for (let idx = 0; idx < requiredElem.README_TITLES.length; idx++) {
                 if (userCtnFileLCase.includes(requiredElem.README_TITLES[idx])) {
                     continue;
                 }
                 log(CRIT, msg.readme, fileName);
             }
+
             if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
                 log(CRIT, msg.readmeEx, fileName);
             }
@@ -293,23 +307,20 @@ async function main() {
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(process.cwd()));
 
-    // If slimio manisfest doesn't installed in this project, exit
+    // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
         log(CRIT, msg.manifest);
-        // Exit
     }
 
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
     typeOfProject = manifest.type.toLowerCase();
+
     // If slimio.toml exists for projects structure
     switch (typeOfProject) {
-        // CLI
         case "cli": {
-            // If the main directory content a bin folder
             if (!elemMainDir.has("bin")) {
                 log(CRIT, msg.binNotExist);
-                // Exit
             }
 
             try {
@@ -322,11 +333,12 @@ async function main() {
             catch (error) {
                 log(CRIT, msg.indexJsNotExist);
             }
+
             // Infos: preferGlobal, bin, main in package.json
             console.log(msg.rootFieldsCLI);
             break;
         }
-        // N-API
+
         case "napi":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
@@ -346,12 +358,12 @@ async function main() {
 
     // Loop on required files array
     for (const fileName of requiredElem.FILE_TO_CHECKS) {
-        // If file not exist
         if (!elemMainDir.has(fileName)) {
             // If type === addon
             if (fileName === "index.d.ts" && typeOfProject === "addon") {
                 continue;
             }
+
             // If file doesn't exist
             if (fileName === "index.d.ts" || fileName === ".npmrc") {
                 log(WARN, msg.fileNotExist, fileName);
@@ -360,6 +372,7 @@ async function main() {
             log(CRIT, msg.fileNotExist, fileName);
             // Exit
         }
+
         // If file is excluded, continue
         if (EXCLUDE_FILES.has(fileName)) {
             continue;
