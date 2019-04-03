@@ -15,7 +15,7 @@
   "author": "SlimIO",
   "license": "MIT",
   "dependencies": {
-    "@slimio/manifest": "github:slimio/manifest",
+    "@slimio/manifest": "^0.2.1",
     "kleur": "^3.0.2",
     "node-emoji": "^1.10.0"
   },
