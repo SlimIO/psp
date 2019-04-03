@@ -21,9 +21,9 @@ const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
-const WARN = requiredElem.E_SEV.WARN;
-const CRIT = requiredElem.E_SEV.CRIT;
-const INFO = requiredElem.E_SEV.INFO;
+const { WARN, CRIT, INFO } = requiredElem.E_SEV;
+
+// Globals
 let typeOfProject = "";
 
 /**
