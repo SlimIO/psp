@@ -15,6 +15,15 @@
             "ARROW_UP": ":arrow_double_up:",
             "ARROW_DOWN": ":arrow_double_down:"
         },
+    "EXCLUDE_DIRS":
+        [
+            "node_modules",
+            "test",
+            "tests",
+            "coverage",
+            ".vscode",
+            ".git"
+        ],
     "EXCLUDE_FILES":
         [
             "LICENSE"

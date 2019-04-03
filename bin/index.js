@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { readdir, readFile } = require("fs").promises;
-const { join } = require("path");
+const { join, extname } = require("path");
 const { EOL } = require("os");
 
 // Require Third-party Dependencies
@@ -16,11 +16,11 @@ const requiredElem = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
 
 // Constants
-const PATH_MAIN_DIR = process.cwd();
 const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
+const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const WARN = requiredElem.E_SEV.WARN;
 const CRIT = requiredElem.E_SEV.CRIT;
 const INFO = requiredElem.E_SEV.INFO;
@@ -49,10 +49,42 @@ function log(severity, message, file) {
 }
 
 /**
+ * @async
+ * @generator
+ * @func getJavascriptFiles
+ * @memberof Utils
+ * @param {!String} dir root directory
+ * @returns {AsyncIterableIterator<String>}
+ */
+async function* getJavascriptFiles(dir) {
+    const files = await readdir(dir);
+    const tDirs = [];
+    // Check js file main directory
+    for (const file of files) {
+        if (extname(file) === ".js") {
+            yield join(dir, file);
+            continue;
+        }
+
+        if (EXCLUDE_DIRS.has(file)) {
+            continue;
+        }
+        tDirs.push(file);
+    }
+    // Check js files in all main directory folders
+    for (const name of tDirs) {
+        const st = await stat(join(dir, name));
+        if (st.isDirectory()) {
+            yield* getJavascriptFiles(join(dir, name));
+        }
+    }
+}
+
+/**
  * @func readFileLocal
  * @description Read the file given in argument
  * @param {!String} fileName file name of the main function
- * @returns {String} utf8 String of the file
+ * @returns {String} utf8 String of the file given in argument
  */
 function readFileLocal(fileName) {
     return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
@@ -69,7 +101,7 @@ function readFileLocal(fileName) {
 // eslint-disable-next-line max-lines-per-function
 async function checkFileContent(fileName, elemMainDir) {
     // Read file
-    const userCtnFile = await readFile(join(PATH_MAIN_DIR, fileName), { encoding: "utf8" });
+    const userCtnFile = await readFile(join(process.cwd(), fileName), { encoding: "utf8" });
 
     // Switch all files
     switch (fileName) {
@@ -98,6 +130,37 @@ async function checkFileContent(fileName, elemMainDir) {
             }
             break;
         }
+        // .gitignore
+        case ".gitignore": {
+            const localCtnFile = await readFileLocal(fileName);
+            // Filter, remove index equal at '' & with '#'
+            const cleanLocFileToArray = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
+            // Check
+            for (const index of cleanLocFileToArray) {
+                if (userCtnFile.includes(index)) {
+                    continue;
+                }
+                log(CRIT, msg.gitignore, fileName);
+            }
+            // Check .env
+            if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
+                log(WARN, msg.gitEnv, ".env");
+            }
+            break;
+        }
+        // jsDoc
+        case "jsdoc.json": {
+            const jsdonParsed = JSON.parse(userCtnFile);
+            const include = new Set(jsdonParsed.source.include);
+            for await (const file of getJavascriptFiles(process.cwd())) {
+                const fileName = file.split("\\").slice(-1)[0];
+                if (include.has(fileName)) {
+                    continue;
+                }
+                log(CRIT, msg.jsdoc, fileName);
+            }
+            break;
+        }
         // .npmignore & .env
         case ".npmignore": {
             const localCtnFile = await readFileLocal(fileName);
@@ -122,42 +185,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 log(WARN, msg.npmrc, fileName);
             }
             break;
-        // README.md
-        case "README.md": {
-            const userCtnFileLCase = userCtnFile.toLowerCase();
-            if (typeOfProject === "addon") {
-                break;
-            }
-            for (let idx = 0; idx < requiredElem.README_TITLES.length; idx++) {
-                if (userCtnFileLCase.includes(requiredElem.README_TITLES[idx])) {
-                    continue;
-                }
-                log(CRIT, msg.readme, fileName);
-            }
-            if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-                log(CRIT, msg.readmeEx, fileName);
-            }
-            break;
-        }
-        // .gitignore
-        case ".gitignore": {
-            const localCtnFile = await readFileLocal(fileName);
-            // Filter, remove index equal at '' & with '#'
-            const cleanLocFileToArray = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
-            // Check
-            for (const index of cleanLocFileToArray) {
-                if (userCtnFile.includes(index)) {
-                    continue;
-                }
-                log(CRIT, msg.gitignore, fileName);
-            }
-            // Check .env
-            if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
-                log(WARN, msg.gitEnv, ".env");
-            }
-            break;
-        }
-        // .package
+        // package.json
         case "package.json": {
             // Variables
             const userCtnFileJSON = JSON.parse(userCtnFile);
@@ -220,6 +248,23 @@ async function checkFileContent(fileName, elemMainDir) {
 
             break;
         }
+        // README.md
+        case "README.md": {
+            const userCtnFileLCase = userCtnFile.toLowerCase();
+            if (typeOfProject === "addon") {
+                break;
+            }
+            for (let idx = 0; idx < requiredElem.README_TITLES.length; idx++) {
+                if (userCtnFileLCase.includes(requiredElem.README_TITLES[idx])) {
+                    continue;
+                }
+                log(CRIT, msg.readme, fileName);
+            }
+            if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
+                log(CRIT, msg.readmeEx, fileName);
+            }
+            break;
+        }
         default:
     }
 }
@@ -246,7 +291,7 @@ async function main() {
     }
 
     // Read the main directory of user
-    const elemMainDir = new Set(await readdir(PATH_MAIN_DIR));
+    const elemMainDir = new Set(await readdir(process.cwd()));
 
     // If slimio manisfest doesn't installed in this project, exit
     if (!elemMainDir.has("slimio.toml")) {
@@ -268,7 +313,7 @@ async function main() {
             }
 
             try {
-                const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"), { encoding: "utf8" });
+                const ctnIndexFile = await readFile(join(process.cwd(), "bin", "index.js"), { encoding: "utf8" });
                 if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
                     log(WARN, msg.shebang);
                     break;

@@ -26,6 +26,7 @@ const messages = {
 |   ${cyan("psp ex <fileName>")}
 |   ${cyan("psp in <fileName>")}
 |`,
+    jsdoc: `is missing in the ${yellow("jsdoc.json")} of ${yellow("include")} field`,
     manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
 |
 |   ${green(".toml")} file must be created 
