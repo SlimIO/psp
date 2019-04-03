@@ -59,8 +59,30 @@ const messages = {
     pkgDevDep(keyDepDev) {
         return `file must content for "${green("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
     },
+    pkgEngines: `${green("engines")} field in package.json file must be following content :
+|
+|   "engines": {
+|       "node": ">=10"
+|   }
+|`,
+    pkgHusky: `${green("husky")} field in package.json file must be following content :
+|
+|   "husky": {
+|       "hooks": {
+|       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+|       }
+|   }
+|`,
+    pkgNyc: `if you use ${yellow("nyc")} dependencies, ${green("package.json")} file must content a ${yellow("nyc")} field`,
     pkgOthers(keyOthers) {
         return `file must content "${yellow(keyOthers)}" property`;
+    },
+    pkgOthersCtn(keyName, ctn) {
+        if (ctn !== undefined) {
+            return `${green(keyName)} of package.json mustn't be equal at ${yellow(ctn)}`;
+        }
+
+        return `${green(keyName)} of package.json mustn't be void`;
     },
     pkgScripts(typeOfProject, keyScript) {
         // eslint-disable-next-line max-len

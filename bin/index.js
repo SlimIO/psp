@@ -21,7 +21,9 @@ const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(REQUIRED_ELEMS.ACCEPT_ARGV);
-const PROJECT_TYPE = new Set(REQUIRED_ELEMS.PROJECT_TYPE);
+const WARN = REQUIRED_ELEMS.E_SEV.WARN;
+const CRIT = REQUIRED_ELEMS.E_SEV.CRIT;
+const INFO = REQUIRED_ELEMS.E_SEV.INFO;
 let TYPE_OF_PROJECT = "";
 
 /**
@@ -41,7 +43,7 @@ function log(severity, message, file) {
         console.log("|", emoji.get(severity), " :", green(file), message);
     }
     // Exit if case critical
-    if (severity === REQUIRED_ELEMS.E_SEV.CRIT) {
+    if (severity === CRIT) {
         process.exit(1);
     }
 }
@@ -74,14 +76,14 @@ async function checkFileContent(fileName, elemMainDir) {
         // .commitlint.config.js
         case "commitlint.config.js":
             if (userCtnFile.indexOf("\"@commitlint/config-conventional\"") === -1) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.commitLint, fileName);
+                log(CRIT, MSG.commitLint, fileName);
             }
             break;
         // .editorconfig
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
             if (userCtnFile !== localCtnFile) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.editorConf, fileName);
+                log(WARN, MSG.editorConf, fileName);
             }
             break;
         }
@@ -89,10 +91,10 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".eslintrc": {
             const userCtnFileJSON = JSON.parse(userCtnFile);
             if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.eslintExtends, fileName);
+                log(CRIT, MSG.eslintExtends, fileName);
             }
             if (Reflect.has(userCtnFileJSON, "rules")) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.eslintRulesKey, fileName);
+                log(WARN, MSG.eslintRulesKey, fileName);
             }
             break;
         }
@@ -105,19 +107,19 @@ async function checkFileContent(fileName, elemMainDir) {
             // Check
             for (const ligne of splitLocalFile) {
                 if (!splitUserFile.has(ligne)) {
-                    log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.npmignore, fileName);
+                    log(CRIT, MSG.npmignore, fileName);
                 }
             }
             // Check .env
             if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.npmEnv, ".env");
+                log(WARN, MSG.npmEnv, ".env");
             }
             break;
         }
         // npmrc
         case ".npmrc":
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.npmrc, fileName);
+                log(WARN, MSG.npmrc, fileName);
             }
             break;
         // README.md
@@ -130,10 +132,10 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (userCtnFileLCase.includes(REQUIRED_ELEMS.README_TITLES[idx])) {
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readme, fileName);
+                log(CRIT, MSG.readme, fileName);
             }
             if (TYPE_OF_PROJECT.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readmeEx, fileName);
+                log(CRIT, MSG.readmeEx, fileName);
             }
             break;
         }
@@ -147,11 +149,11 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (userCtnFile.includes(index)) {
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.gitignore, fileName);
+                log(CRIT, MSG.gitignore, fileName);
             }
             // Check .env
             if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.gitEnv, ".env");
+                log(WARN, MSG.gitEnv, ".env");
             }
             break;
         }
@@ -170,13 +172,13 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (Reflect.has(scripts, keyScripts)) {
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT, keyScripts));
+                log(WARN, MSG.pkgScripts(TYPE_OF_PROJECT, keyScripts));
             }
             // Check dependencies
             if (TYPE_OF_PROJECT === "addon" || TYPE_OF_PROJECT === "napi") {
                 const requiredDep = REQUIRED_ELEMS.PKG_DEP[TYPE_OF_PROJECT];
                 if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDep(TYPE_OF_PROJECT, requiredDep[0], requiredDep[1]));
+                    log(WARN, MSG.pkgDep(TYPE_OF_PROJECT, requiredDep[0], requiredDep[1]));
                 }
             }
             // check dev dependencies
@@ -184,39 +186,38 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (Reflect.has(devDep, keyDepDev)) {
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDevDep(keyDepDev), fileName);
+                log(WARN, MSG.pkgDevDep(keyDepDev), fileName);
             }
             // Check others fields
             for (const keyName of requiredOthers) {
                 if (Reflect.has(userCtnFileJSON, keyName)) {
                     if (keyName === "keywords" && userCtnFileJSON.keywords.length === 0) {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                        log(WARN, MSG.pkgOthersCtn(keyName));
                     }
                     if (keyName === "author" && userCtnFileJSON.author !== "SlimIO") {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                        log(WARN, MSG.pkgOthersCtn(keyName, "SlimIO"));
                     }
                     if (keyName === "license" && userCtnFileJSON.license !== "MIT") {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                        log(WARN, MSG.pkgOthersCtn(keyName, "MIT"));
                     }
                     if (keyName === "description" && userCtnFileJSON.description === "") {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                        log(WARN, MSG.pkgOthersCtn(keyName));
                     }
                     if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                        log(WARN, MSG.pkgEngines);
                     }
-                    if (keyName === "husky" && userCtnFileJSON.husky !== "commit-msg") {
-                        log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
-                        continue;
+                    if (keyName === "husky" && !Reflect.has(userCtnFileJSON.husky.hooks, "commit-msg")) {
+                        log(WARN, MSG.pkgHusky);
                     }
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgOthers(keyName), fileName);
+                log(WARN, MSG.pkgOthers(keyName), fileName);
             }
+            // nyc field
+            if (Reflect.has(userCtnFileJSON.devDependencies, "nyc") && !Reflect.has(userCtnFileJSON, "nyc")) {
+                log(WARN, MSG.pkgNyc);
+            }
+
             break;
         }
         default:
@@ -233,7 +234,7 @@ async function main() {
     // Read process.argv
     if (PROCESS_ARG !== undefined) {
         if (!ACCEPT_ARGV.has(PROCESS_ARG)) {
-            log(REQUIRED_ELEMS.E_SEV.CRIT, "Impossible command");
+            log(CRIT, "Impossible command");
         }
 
         if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
@@ -249,7 +250,7 @@ async function main() {
 
     // If slimio manisfest doesn't installed in this project, exit
     if (!elemMainDir.has("slimio.toml")) {
-        log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.manifest);
+        log(CRIT, MSG.manifest);
         // Exit
     }
 
@@ -262,19 +263,19 @@ async function main() {
         case "cli": {
             // If the main directory content a bin folder
             if (!elemMainDir.has("bin")) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.binNotExist);
+                log(CRIT, MSG.binNotExist);
                 // Exit
             }
 
             try {
                 const ctnIndexFile = await readFile(join(PATH_MAIN_DIR, "bin", "index.js"), { encoding: "utf8" });
                 if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
-                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.shebang);
+                    log(WARN, MSG.shebang);
                     break;
                 }
             }
             catch (error) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.indexJsNotExist);
+                log(CRIT, MSG.indexJsNotExist);
             }
             // Infos: preferGlobal, bin, main in package.json
             console.log(MSG.rootFieldsCLI);
@@ -284,12 +285,12 @@ async function main() {
         case "napi":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.napiInclude);
+                log(CRIT, MSG.napiInclude);
             }
 
             // If binding.gyp file doesn't exist
             if (!elemMainDir.has("binding.gyp")) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.napiBinding);
+                log(CRIT, MSG.napiBinding);
             }
 
             // Infos: gypfile in package.json
@@ -308,10 +309,10 @@ async function main() {
             }
             // If file doesn't exist
             if (fileName === "index.d.ts" || fileName === ".npmrc") {
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.fileNotExist, fileName);
+                log(WARN, MSG.fileNotExist, fileName);
                 continue;
             }
-            log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.fileNotExist, fileName);
+            log(CRIT, MSG.fileNotExist, fileName);
             // Exit
         }
         // If file is excluded, continue
@@ -328,13 +329,13 @@ async function main() {
     for (const dir of filteredDirs) {
         switch (dir) {
             case "src":
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG[dir], dir);
+                log(CRIT, MSG[dir], dir);
                 break;
             case "test":
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG[dir], dir);
+                log(WARN, MSG[dir], dir);
                 break;
             default:
-                log(REQUIRED_ELEMS.E_SEV.INFO, MSG[dir], dir);
+                log(INFO, MSG[dir], dir);
         }
     }
 }
