@@ -21,6 +21,7 @@ const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(REQUIRED_ELEMS.ACCEPT_ARGV);
+const PROJECT_TYPE = new Set(REQUIRED_ELEMS.PROJECT_TYPE);
 const TYPE_OF_PROJECT = { type: "" };
 
 /**
@@ -152,6 +153,27 @@ async function checkFileContent(fileName, elemMainDir) {
         }
         // .package
         case "package.json": {
+            // Variables
+            const userCtnFileJSON = JSON.parse(userCtnFile);
+            const scripts = userCtnFileJSON.scripts;
+            const dep = userCtnFileJSON.dependencies;
+            const requiredScripts = REQUIRED_ELEMS.SCRIPTS[TYPE_OF_PROJECT.type];
+            const requiredDevDep = REQUIRED_ELEMS.DEVDEP;
+            let requiredDep;
+            // Ckeck scripts
+            for (const keyScripts of requiredScripts) {
+                if (Reflect.has(scripts, keyScripts)) {
+                    continue;
+                }
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT.type, keyScripts));
+            }
+            // Check dependencies
+            if (TYPE_OF_PROJECT.type === "addon" || TYPE_OF_PROJECT.type === "napi") {
+                requiredDep = REQUIRED_ELEMS.DEP[TYPE_OF_PROJECT.type];
+                if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
+                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT.type, keyScripts));
+                }
+            }
             break;
         }
         default:
@@ -188,12 +210,16 @@ async function main() {
         // Exit
     }
 
+    // If type of .toml file isn't valid
     const manifest = Manifest.open();
-    TYPE_OF_PROJECT.type = manifest.type;
+    if (!PROJECT_TYPE.has(manifest.type.toLowerCase())) {
+        log(REQUIRED_ELEMS.E_SEV.CRIT, "The type of the .toml file can only contain 'NAPI', 'CLI', 'Addon', 'Package'");
+    }
+    TYPE_OF_PROJECT.type = manifest.type.toLowerCase();
     // If slimio.toml exists for projects structure
-    switch (manifest.type) {
+    switch (TYPE_OF_PROJECT.type) {
         // CLI
-        case "CLI": {
+        case "cli": {
             // If the main directory content a bin folder
             if (!elemMainDir.has("bin")) {
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.binNotExist);
@@ -215,7 +241,7 @@ async function main() {
             break;
         }
         // N-API
-        case "NAPI":
+        case "napi":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.napiInclude);

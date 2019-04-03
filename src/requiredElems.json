@@ -7,6 +7,27 @@
             "in",
             "ex"
         ],
+    "DEP": 
+        {
+            "napi":
+                [
+                    "node-addon-api",
+                    "node-gyp-build"
+                ],
+            "addon":
+                [
+                    "@slimio/addon",
+                    "@slimio/scheduler"
+                ]
+        },
+    "DEVDEP":
+        [
+            "@slimio/eslint-config",
+            "eslint",
+            "@commitlint/cli",
+            "@commitlint/config-conventional",
+            "husky"
+        ],
     "E_SEV": 
         {
             "CRIT": ":no_entry:",
@@ -52,5 +73,50 @@
             "test",
             "benchmark",
             "docs"
+        ],
+    "SCRIPTS":
+        {
+            "package":
+                [
+                    "start",
+                    "test",
+                    "doc",
+                    "coverage",
+                    "report",
+                    "prepublishOnly"
+                ],
+            "cli":
+                [
+                    "start",
+                    "test",
+                    "doc",
+                    "coverage",
+                    "report",
+                    "prepublishOnly"
+                ],
+            "napi":
+                [
+                    "prebuilds",
+                    "build",
+                    "test",
+                    "doc",
+                    "coverage",
+                    "report",
+                    "prepublishOnly"
+                ],
+            "addon":
+                [
+                    "test",
+                    "doc",
+                    "coverage",
+                    "report"
+                ]
+        },
+    "PROJECT_TYPE":
+        [
+            "cli",
+            "napi",
+            "addon",
+            "package"
         ]
 }

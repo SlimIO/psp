@@ -11,12 +11,14 @@ const messages = {
     commitLint: "file must be extends by @commitlint/config-conventional",
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     // eslint-disable-next-line max-len
-    editorConf: `file doesn't contains the good informations. You should used ${cyan("psp .editorconfig")} to see exact informations`,
+    editorConf: `file doesn't contains the good informations. 
+|         You should used ${cyan("psp .editorconfig")} to see exact informations`,
     eslintExtends: "file must be extends by @slimio/eslint-config.",
     eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
     fileNotExist: "file doesn't exist in your main directory.",
     gitEnv: `file is present in your main directory and must be present in ${yellow(".gitignore")} file`,
-    gitignore: `file doesn't contains the good informations. You should used ${cyan("psp .gitignore")} to see exact informations`,
+    gitignore: `file doesn't contains the good informations.
+|         You should used ${cyan("psp .gitignore")} to see exact informations`,
     indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
     infos: `|
 | ${emoji.get(":bulb:")}  ${cyan(": If you want exlude or include files of cheking process, use the following commands :")}
@@ -43,9 +45,13 @@ const messages = {
 |   must content a ${yellow("include")} folder !
 |`,
     npmEnv: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
-    npmignore: `file doesn't contains the good informations. You should used ${cyan("psp .npmignore")} to see exact informations`,
+    npmignore: `file doesn't contains the good informations.
+|         You should used ${cyan("psp .npmignore")} to see exact informations`,
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
-    readme: `file must contants following titles :
+    pkgScripts(typeOfProject, keyScript) {
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for 'scripts' key, the ${yellow(keyScript)} property`;
+    },
+    readme: `file must content following titles :
 |
 |   Requirements
 |   Getting Started
