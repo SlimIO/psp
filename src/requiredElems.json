@@ -8,7 +8,7 @@
     ],
     "E_SEV": {
         "CRIT": ":no_entry:",
-        "WARN": ":warning:",
+        "WARN": ":construction:",
         "INFO": ":bulb:",
         "ARROW_UP": ":arrow_double_up:",
         "ARROW_DOWN": ":arrow_double_down:"

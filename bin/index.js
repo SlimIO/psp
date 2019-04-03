@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Require Node.js Dependencies
-const { readdir, readFile } = require("fs").promises;
+const { readdir, readFile, stat } = require("fs").promises;
 const { join, extname, basename } = require("path");
 const { EOL } = require("os");
 
@@ -161,7 +161,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (fileName === "commitlint.config.js" || include.has(fileName)) {
                     continue;
                 }
-                log(CRIT, msg.jsdoc, fileName);
+                log(WARN, msg.jsdoc, fileName);
             }
             break;
         }
