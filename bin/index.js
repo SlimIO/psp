@@ -98,7 +98,6 @@ function readFileLocal(fileName) {
  * @param {!Set<String>} elemMainDir contain array the elements of main directory
  * @returns {void} Into the console with function log
  */
-// eslint-disable-next-line max-lines-per-function
 async function checkFileContent(fileName, elemMainDir) {
     // Read file
     const userCtnFile = await readFile(join(process.cwd(), fileName), { encoding: "utf8" });
