@@ -22,7 +22,7 @@ const EXCLUDE_FILES = new Set(REQUIRED_ELEMS.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(REQUIRED_ELEMS.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(REQUIRED_ELEMS.ACCEPT_ARGV);
 const PROJECT_TYPE = new Set(REQUIRED_ELEMS.PROJECT_TYPE);
-const TYPE_OF_PROJECT = { type: "" };
+let TYPE_OF_PROJECT = "";
 
 /**
  * @func log
@@ -72,7 +72,7 @@ async function checkFileContent(fileName, elemMainDir) {
     switch (fileName) {
         // .commitlint.config.js
         case "commitlint.config.js":
-            if (!userCtnFile.indexOf("['@commitlint/config-conventional']")) {
+            if (userCtnFile.indexOf("\"@commitlint/config-conventional\"") === -1) {
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.commitLint, fileName);
             }
             break;
@@ -90,7 +90,7 @@ async function checkFileContent(fileName, elemMainDir) {
             if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.eslintExtends, fileName);
             }
-            if (Reflect.get(userCtnFileJSON, "rules")) {
+            if (Reflect.has(userCtnFileJSON, "rules")) {
                 log(REQUIRED_ELEMS.E_SEV.WARN, MSG.eslintRulesKey, fileName);
             }
             break;
@@ -116,19 +116,22 @@ async function checkFileContent(fileName, elemMainDir) {
         // npmrc
         case ".npmrc":
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
-                log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.npmrc, fileName);
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.npmrc, fileName);
             }
             break;
         // README.md
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
+            if (TYPE_OF_PROJECT === "addon") {
+                break;
+            }
             for (let idx = 0; idx < REQUIRED_ELEMS.README_TITLES.length; idx++) {
                 if (userCtnFileLCase.includes(REQUIRED_ELEMS.README_TITLES[idx])) {
                     continue;
                 }
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readme, fileName);
             }
-            if (TYPE_OF_PROJECT.type.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
+            if (TYPE_OF_PROJECT.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
                 log(REQUIRED_ELEMS.E_SEV.CRIT, MSG.readmeEx, fileName);
             }
             break;
@@ -157,23 +160,26 @@ async function checkFileContent(fileName, elemMainDir) {
             const userCtnFileJSON = JSON.parse(userCtnFile);
             const scripts = userCtnFileJSON.scripts;
             const dep = userCtnFileJSON.dependencies;
-            const requiredScripts = REQUIRED_ELEMS.SCRIPTS[TYPE_OF_PROJECT.type];
+            const devDep = userCtnFileJSON.devDependencies;
+            const requiredScripts = REQUIRED_ELEMS.SCRIPTS[TYPE_OF_PROJECT];
             const requiredDevDep = REQUIRED_ELEMS.DEVDEP;
-            let requiredDep;
             // Ckeck scripts
             for (const keyScripts of requiredScripts) {
                 if (Reflect.has(scripts, keyScripts)) {
                     continue;
                 }
-                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT.type, keyScripts));
+                log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT, keyScripts));
             }
             // Check dependencies
-            if (TYPE_OF_PROJECT.type === "addon" || TYPE_OF_PROJECT.type === "napi") {
-                requiredDep = REQUIRED_ELEMS.DEP[TYPE_OF_PROJECT.type];
+            if (TYPE_OF_PROJECT === "addon" || TYPE_OF_PROJECT === "napi") {
+                const requiredDep = REQUIRED_ELEMS.DEP[TYPE_OF_PROJECT];
+
                 if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgScripts(TYPE_OF_PROJECT.type, keyScripts));
+                    log(REQUIRED_ELEMS.E_SEV.WARN, MSG.pkgDep(TYPE_OF_PROJECT, requiredDep[0], requiredDep[1]));
                 }
             }
+            // check dev dependencies
+
             break;
         }
         default:
@@ -212,12 +218,10 @@ async function main() {
 
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
-    if (!PROJECT_TYPE.has(manifest.type.toLowerCase())) {
-        log(REQUIRED_ELEMS.E_SEV.CRIT, "The type of the .toml file can only contain 'NAPI', 'CLI', 'Addon', 'Package'");
-    }
-    TYPE_OF_PROJECT.type = manifest.type.toLowerCase();
+    TYPE_OF_PROJECT = manifest.type.toLowerCase();
+    console.log(TYPE_OF_PROJECT)
     // If slimio.toml exists for projects structure
-    switch (TYPE_OF_PROJECT.type) {
+    switch (TYPE_OF_PROJECT) {
         // CLI
         case "cli": {
             // If the main directory content a bin folder
@@ -262,6 +266,10 @@ async function main() {
     for (const fileName of REQUIRED_ELEMS.FILE_TO_CHECKS) {
         // If file not exist
         if (!elemMainDir.has(fileName)) {
+            // If type === addon
+            if (fileName === "index.d.ts" && TYPE_OF_PROJECT === "addon") {
+                continue;
+            }
             // If file doesn't exist
             if (fileName === "index.d.ts" || fileName === ".npmrc") {
                 log(REQUIRED_ELEMS.E_SEV.WARN, MSG.fileNotExist, fileName);

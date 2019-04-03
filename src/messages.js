@@ -49,7 +49,16 @@ const messages = {
 |         You should used ${cyan("psp .npmignore")} to see exact informations`,
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     pkgScripts(typeOfProject, keyScript) {
+        // eslint-disable-next-line max-len
         return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for 'scripts' key, the ${yellow(keyScript)} property`;
+    },
+    pkgDep(typeOfProject, key1, key2) {
+        // eslint-disable-next-line max-len
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for 'dependencies' key : 
+|        
+|   ${yellow(key1)}
+|   ${yellow(key2)}        
+|`;
     },
     readme: `file must content following titles :
 |
