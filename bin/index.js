@@ -6,7 +6,6 @@ const { join, extname } = require("path");
 const { EOL } = require("os");
 
 // Require Third-party Dependencies
-const inquirer = require("inquirer");
 const emoji = require("node-emoji");
 const { green, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
