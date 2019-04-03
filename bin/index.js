@@ -189,9 +189,9 @@ async function checkFileContent(fileName, elemMainDir) {
         case "package.json": {
             // Variables
             const userCtnFileJSON = JSON.parse(userCtnFile);
-            const scripts = userCtnFileJSON.scripts;
-            const dep = userCtnFileJSON.dependencies;
-            const devDep = userCtnFileJSON.devDependencies;
+            const scripts = userCtnFileJSON.scripts || {};
+            const dep = userCtnFileJSON.dependencies || {};
+            const devDep = userCtnFileJSON.devDependencies || {};
             const requiredScripts = requiredElem.PKG_SCRIPTS[typeOfProject];
             const requiredDevDep = requiredElem.PKG_DEVDEP;
             const requiredOthers = requiredElem.PKG_OTHERS;
