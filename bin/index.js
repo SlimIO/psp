@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { readdir, readFile } = require("fs").promises;
-const { join, extname } = require("path");
+const { join, extname, basename } = require("path");
 const { EOL } = require("os");
 
 // Require Third-party Dependencies
@@ -157,8 +157,8 @@ async function checkFileContent(fileName, elemMainDir) {
             const include = new Set(jsdocParsed.source.include);
 
             for await (const file of getJavascriptFiles(process.cwd())) {
-                const fileName = file.split("\\").slice(-1)[0];
-                if (include.has(fileName)) {
+                const fileName = basename(file);
+                if (fileName === "commitlint.config.js" || include.has(fileName)) {
                     continue;
                 }
                 log(CRIT, msg.jsdoc, fileName);
