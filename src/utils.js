@@ -58,7 +58,7 @@ async function* getJavascriptFiles(dir) {
  * @func listContentFile
  * @description Parse files and generate an array
  * @param {!String} fileName File name parsed
- * @returns {Object}
+ * @returns {{miss:Boolean, list:Array<String>}}
  */
 async function listContentFile(fileName) {
     const localFile = await parser(join(__dirname, "..", "template", fileName));
