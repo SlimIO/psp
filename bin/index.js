@@ -8,13 +8,14 @@ const { EOL } = require("os");
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
 const { green, cyan } = require("kleur");
+const parser = require("file-ignore-parser");
 const Manifest = require("@slimio/manifest");
-
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
 
 // Constants
+const CWD = process.cwd();
 const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
@@ -102,7 +103,7 @@ function readFileLocal(fileName) {
  */
 async function checkFileContent(fileName, elemMainDir) {
     // Read file
-    const userCtnFile = await readFile(join(process.cwd(), fileName), { encoding: "utf8" });
+    const userCtnFile = await readFile(join(CWD, fileName), { encoding: "utf8" });
 
     // Switch all files
     switch (fileName) {
@@ -133,20 +134,18 @@ async function checkFileContent(fileName, elemMainDir) {
         }
 
         case ".gitignore": {
-            const localCtnFile = await readFileLocal(fileName);
-            // Filter, remove index equal at '' & with '#'
-            const cleanLocFileToArray = localCtnFile.split(EOL).filter((str) => str !== "" && !str.includes("#"));
-
+            // File processing
+            const localFile = await parser(join(__dirname, "..", "template", ".gitignore"));
+            const userFile = await parser(".gitignore");
             // Check
-            for (const index of cleanLocFileToArray) {
-                if (userCtnFile.includes(index)) {
-                    continue;
+            for (const ligne of localFile) {
+                if (!userFile.has(ligne)) {
+                    log(CRIT, msg.gitignore, fileName);
                 }
-                log(CRIT, msg.gitignore, fileName);
             }
 
             // Check .env
-            if (elemMainDir.has(".env") && !userCtnFile.includes(".env")) {
+            if (elemMainDir.has(".env") && !userFile.has(".env")) {
                 log(WARN, msg.gitEnv, ".env");
             }
             break;
@@ -155,34 +154,31 @@ async function checkFileContent(fileName, elemMainDir) {
         case "jsdoc.json": {
             const jsdocParsed = JSON.parse(userCtnFile);
             const include = new Set(jsdocParsed.source.include.map((path) => normalize(path)));
-            const cwd = process.cwd();
 
-            for await (const file of getJavascriptFiles(cwd)) {
-                const cleanPath = normalize(relative(cwd, file));
+            for await (const file of getJavascriptFiles(CWD)) {
+                const cleanPath = normalize(relative(CWD, file));
                 if (basename(file) === "commitlint.config.js" || include.has(cleanPath)) {
                     continue;
                 }
-                log(WARN, msg.jsdoc, file);
+                log(WARN, msg.jsdoc, cleanPath);
             }
             break;
         }
 
         case ".npmignore": {
-            const localCtnFile = await readFileLocal(fileName);
-
             // File processing
-            const splitLocalFile = localCtnFile.split(EOL).slice(0, -1);
-            const splitUserFile = new Set(userCtnFile.split(EOL));
+            const localFile = await parser(join(__dirname, "..", "template", ".npmignore"));
+            const userFile = await parser(".npmignore");
 
             // Check
-            for (const ligne of splitLocalFile) {
-                if (!splitUserFile.has(ligne)) {
+            for (const ligne of localFile) {
+                if (!userFile.has(ligne)) {
                     log(CRIT, msg.npmignore, fileName);
                 }
             }
 
             // Check .env
-            if (elemMainDir.has(".env") && !splitUserFile.has(".env")) {
+            if (elemMainDir.has(".env") && !userFile.has(".env")) {
                 log(WARN, msg.npmEnv, ".env");
             }
             break;
@@ -305,7 +301,7 @@ async function main() {
     }
 
     // Read the main directory of user
-    const elemMainDir = new Set(await readdir(process.cwd()));
+    const elemMainDir = new Set(await readdir(CWD));
 
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
@@ -324,7 +320,7 @@ async function main() {
             }
 
             try {
-                const ctnIndexFile = await readFile(join(process.cwd(), "bin", "index.js"), { encoding: "utf8" });
+                const ctnIndexFile = await readFile(join(CWD, "bin", "index.js"), { encoding: "utf8" });
                 if (!ctnIndexFile.includes("#!/usr/bin/env node")) {
                     log(WARN, msg.shebang);
                     break;

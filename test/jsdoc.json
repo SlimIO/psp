@@ -7,7 +7,7 @@
     },
     "source": {
         "include": [
-            "index.js"
+            "bi/index.js"
         ],
         "exclude": [
             "node_modules",
