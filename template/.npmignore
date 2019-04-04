@@ -9,6 +9,7 @@ jsdoc.json
 .editorconfig
 .eslintrc
 .gitignore
+.env
 tsconfig.json
 commitlint.config.js
 .travis.yml

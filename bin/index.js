@@ -7,7 +7,7 @@ const { EOL } = require("os");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
-const { green, cyan } = require("kleur");
+const { green, cyan, red } = require("kleur");
 const parser = require("file-ignore-parser");
 const Manifest = require("@slimio/manifest");
 // Require Internal Dependencies
@@ -21,77 +21,10 @@ const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
-const { WARN, CRIT, INFO } = requiredElem.E_SEV;
+const { WARN, CRIT, INFO, CROSS, CHECK } = requiredElem.E_SEV;
 
 // Globals
 let typeOfProject = "";
-
-/**
- * @func log
- * @description Log infos customs into the console
- * @param {!String} severity emoji with const requiredElem.E_SEV
- * @param {!String} message message MSG module
- * @param {String} file file name
- * @returns {void} Into the console
- */
-function log(severity, message, file) {
-    // Messages into console
-    if (file === undefined) {
-        console.log("|", emoji.get(severity), " :", message);
-    }
-    else {
-        console.log("|", emoji.get(severity), " :", green(file), message);
-    }
-
-    // Exit if case critical
-    if (severity === CRIT) {
-        process.exit(1);
-    }
-}
-
-/**
- * @async
- * @generator
- * @func getJavascriptFiles
- * @memberof Utils
- * @param {!String} dir root directory
- * @returns {AsyncIterableIterator<String>}
- */
-async function* getJavascriptFiles(dir) {
-    const files = await readdir(dir);
-    const tDirs = [];
-
-    // Check js file main directory
-    for (const file of files) {
-        if (extname(file) === ".js") {
-            yield join(dir, file);
-            continue;
-        }
-
-        if (EXCLUDE_DIRS.has(file)) {
-            continue;
-        }
-        tDirs.push(file);
-    }
-
-    // Check js files in all main directory folders
-    for (const name of tDirs) {
-        const st = await stat(join(dir, name));
-        if (st.isDirectory()) {
-            yield* getJavascriptFiles(join(dir, name));
-        }
-    }
-}
-
-/**
- * @func readFileLocal
- * @description Read the file given in argument
- * @param {!String} fileName file name of the main function
- * @returns {String} utf8 String of the file given in argument
- */
-function readFileLocal(fileName) {
-    return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
-}
 
 /**
  * @async
@@ -135,19 +68,7 @@ async function checkFileContent(fileName, elemMainDir) {
 
         case ".gitignore": {
             // File processing
-            const localFile = await parser(join(__dirname, "..", "template", ".gitignore"));
-            const userFile = await parser(".gitignore");
-            // Check
-            for (const ligne of localFile) {
-                if (!userFile.has(ligne)) {
-                    log(CRIT, msg.gitignore, fileName);
-                }
-            }
-
-            // Check .env
-            if (elemMainDir.has(".env") && !userFile.has(".env")) {
-                log(WARN, msg.gitEnv, ".env");
-            }
+            listContentFile("gitignore");
             break;
         }
 
@@ -167,20 +88,7 @@ async function checkFileContent(fileName, elemMainDir) {
 
         case ".npmignore": {
             // File processing
-            const localFile = await parser(join(__dirname, "..", "template", ".npmignore"));
-            const userFile = await parser(".npmignore");
-
-            // Check
-            for (const ligne of localFile) {
-                if (!userFile.has(ligne)) {
-                    log(CRIT, msg.npmignore, fileName);
-                }
-            }
-
-            // Check .env
-            if (elemMainDir.has(".env") && !userFile.has(".env")) {
-                log(WARN, msg.npmEnv, ".env");
-            }
+            listContentFile("npmignore");
             break;
         }
 
@@ -276,6 +184,83 @@ async function checkFileContent(fileName, elemMainDir) {
             break;
         }
         default:
+    }
+}
+
+/**
+ * @async
+ * @generator
+ * @func getJavascriptFiles
+ * @memberof Utils
+ * @param {!String} dir root directory
+ * @returns {AsyncIterableIterator<String>}
+ */
+async function* getJavascriptFiles(dir) {
+    const files = await readdir(dir);
+    const tDirs = [];
+
+    // Check js file main directory
+    for (const file of files) {
+        if (extname(file) === ".js") {
+            yield join(dir, file);
+            continue;
+        }
+
+        if (EXCLUDE_DIRS.has(file)) {
+            continue;
+        }
+        tDirs.push(file);
+    }
+
+    // Check js files in all main directory folders
+    for (const name of tDirs) {
+        const st = await stat(join(dir, name));
+        if (st.isDirectory()) {
+            yield* getJavascriptFiles(join(dir, name));
+        }
+    }
+}
+
+async function listContentFile(fileName) {
+    const localFile = await parser(join(__dirname, "..", "template", `.${fileName}`));
+    const userFile = await parser(`.${fileName}`);
+    const elemMainDir = new Set(await readdir(CWD));
+    const listLines = [];
+    let miss = false;
+    // Check
+    for (const line of localFile) {
+        if (!userFile.has(line)) {
+            listLines.push(`${emoji.get(CROSS)} ${red(line)}`);
+            miss = true;
+            continue;
+        }
+        listLines.push(`${emoji.get(CHECK)} ${green(line)}`);
+    }
+    if (miss) {
+        log(WARN, msg[fileName](listLines), fileName);
+    }
+}
+
+/**
+ * @func log
+ * @description Log infos customs into the console
+ * @param {!String} severity emoji with const requiredElem.E_SEV
+ * @param {!String} message message MSG module
+ * @param {String} file file name
+ * @returns {void} Into the console
+ */
+function log(severity, message, file) {
+    // Messages into console
+    if (file === undefined) {
+        console.log("|", emoji.get(severity), " :", message);
+    }
+    else {
+        console.log("|", emoji.get(severity), " :", green(file), message);
+    }
+
+    // Exit if case critical
+    if (severity === CRIT) {
+        process.exit(1);
     }
 }
 
@@ -392,6 +377,16 @@ async function main() {
                 log(INFO, MSG[dir], dir);
         }
     }
+}
+
+/**
+ * @func readFileLocal
+ * @description Read the file given in argument
+ * @param {!String} fileName file name of the main function
+ * @returns {String} utf8 String of the file given in argument
+ */
+function readFileLocal(fileName) {
+    return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
 }
 
 main().catch(console.error);
