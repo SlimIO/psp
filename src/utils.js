@@ -65,18 +65,18 @@ async function listContentFile(fileName) {
     const userFile = await parser(fileName);
     const elemMainDir = new Set(await readdir(CWD));
     const listLines = [];
-    let miss = false;
+    let missing = false;
     // Check
     for (const line of localFile) {
         if (!userFile.has(line)) {
             listLines.push(`${emoji.get(CROSS)} ${red(line)}`);
-            miss = true;
+            missing = true;
             continue;
         }
         listLines.push(`${emoji.get(CHECK)} ${green(line)}`);
     }
-    if (!miss) {
-        process.exit();
+    if (!missing) {
+        return { miss: false };
     }
 
     return { miss: true, list: listLines };
