@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
 // Require Node.js Dependencies
-const { readdir, readFile, stat } = require("fs").promises;
-const { join, extname, basename, relative, normalize } = require("path");
-const { EOL } = require("os");
+const { readdir, readFile } = require("fs").promises;
+const { join, basename, relative, normalize } = require("path");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
-const { green, cyan, red } = require("kleur");
-const parser = require("file-ignore-parser");
+const { green, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
+
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
+const { getJavascriptFiles, readFileLocal, listContentFile } = require("../src/utils.js");
 
 // Constants
 const CWD = process.cwd();
@@ -20,7 +20,6 @@ const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
-const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO, CROSS, CHECK } = requiredElem.E_SEV;
 
 // Globals
@@ -68,7 +67,11 @@ async function checkFileContent(fileName, elemMainDir) {
 
         case ".gitignore": {
             // File processing
-            listContentFile("gitignore");
+            const retList = await listContentFile(fileName);
+            if (!retList.miss) {
+                break;
+            }
+            log(WARN, msg.gitignore(retList.list), fileName);
             break;
         }
 
@@ -88,7 +91,11 @@ async function checkFileContent(fileName, elemMainDir) {
 
         case ".npmignore": {
             // File processing
-            listContentFile("npmignore");
+            const retList = await listContentFile(fileName);
+            if (!retList.miss) {
+                break;
+            }
+            log(WARN, msg.npmignore(retList.list), fileName);
             break;
         }
 
@@ -184,60 +191,6 @@ async function checkFileContent(fileName, elemMainDir) {
             break;
         }
         default:
-    }
-}
-
-/**
- * @async
- * @generator
- * @func getJavascriptFiles
- * @memberof Utils
- * @param {!String} dir root directory
- * @returns {AsyncIterableIterator<String>}
- */
-async function* getJavascriptFiles(dir) {
-    const files = await readdir(dir);
-    const tDirs = [];
-
-    // Check js file main directory
-    for (const file of files) {
-        if (extname(file) === ".js") {
-            yield join(dir, file);
-            continue;
-        }
-
-        if (EXCLUDE_DIRS.has(file)) {
-            continue;
-        }
-        tDirs.push(file);
-    }
-
-    // Check js files in all main directory folders
-    for (const name of tDirs) {
-        const st = await stat(join(dir, name));
-        if (st.isDirectory()) {
-            yield* getJavascriptFiles(join(dir, name));
-        }
-    }
-}
-
-async function listContentFile(fileName) {
-    const localFile = await parser(join(__dirname, "..", "template", `.${fileName}`));
-    const userFile = await parser(`.${fileName}`);
-    const elemMainDir = new Set(await readdir(CWD));
-    const listLines = [];
-    let miss = false;
-    // Check
-    for (const line of localFile) {
-        if (!userFile.has(line)) {
-            listLines.push(`${emoji.get(CROSS)} ${red(line)}`);
-            miss = true;
-            continue;
-        }
-        listLines.push(`${emoji.get(CHECK)} ${green(line)}`);
-    }
-    if (miss) {
-        log(WARN, msg[fileName](listLines), fileName);
     }
 }
 
@@ -377,16 +330,6 @@ async function main() {
                 log(INFO, MSG[dir], dir);
         }
     }
-}
-
-/**
- * @func readFileLocal
- * @description Read the file given in argument
- * @param {!String} fileName file name of the main function
- * @returns {String} utf8 String of the file given in argument
- */
-function readFileLocal(fileName) {
-    return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
 }
 
 main().catch(console.error);
