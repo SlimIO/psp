@@ -20,7 +20,7 @@ const PROCESS_ARG = process.argv[2];
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
-const { WARN, CRIT, INFO, CROSS, CHECK } = requiredElem.E_SEV;
+const { WARN, CRIT, INFO } = requiredElem.E_SEV;
 
 // Globals
 let typeOfProject = "";
