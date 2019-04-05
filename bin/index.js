@@ -7,7 +7,7 @@ const { join, basename, relative, normalize } = require("path");
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
 const parser = require("file-ignore-parser");
-const { cyan, red, yellow } = require("kleur");
+const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
@@ -240,6 +240,8 @@ async function main() {
             process.exit();
         }
     }
+
+    console.log(gray(`\n > Running Project Struct Policy at ${yellow(CWD)}\n`));
 
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(CWD));
