@@ -82,7 +82,7 @@ async function listContentFile(fileName) {
  * @func readFileLocal
  * @description Read the file given in argument
  * @param {!String} fileName file name of the main function
- * @returns {String} utf8 String of the file given in argument
+ * @returns {Promise<String>} utf8 String of the file given in argument
  */
 function readFileLocal(fileName) {
     return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
