@@ -58,28 +58,24 @@ async function* getJavascriptFiles(dir) {
  * @func listContentFile
  * @description Parse files and generate an array
  * @param {!String} fileName File name parsed
- * @returns {{miss:Boolean, list:Array<String>}}
+ * @returns {Promise<Array<String> | null>}
  */
 async function listContentFile(fileName) {
     const localFile = await parser(join(__dirname, "..", "template", fileName));
     const userFile = await parser(fileName);
-    const elemMainDir = new Set(await readdir(CWD));
-    const listLines = [];
+    const list = [];
     let missing = false;
-    // Check
+
     for (const line of localFile) {
         if (!userFile.has(line)) {
-            listLines.push(`${emoji.get(CROSS)} ${red(line)}`);
+            list.push(`${emoji.get(CROSS)} ${red(line)}`);
             missing = true;
             continue;
         }
-        listLines.push(`${emoji.get(CHECK)} ${green(line)}`);
-    }
-    if (!missing) {
-        return { miss: false };
+        list.push(`${emoji.get(CHECK)} ${green(line)}`);
     }
 
-    return { miss: true, list: listLines };
+    return missing ? list : null;
 }
 
 /**

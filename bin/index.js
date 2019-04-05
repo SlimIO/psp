@@ -66,12 +66,10 @@ async function checkFileContent(fileName, elemMainDir) {
         }
 
         case ".gitignore": {
-            // File processing
             const retList = await listContentFile(fileName);
-            if (!retList.miss) {
-                break;
+            if (retList !== null) {
+                log(WARN, msg.gitignore(retList.list), fileName);
             }
-            log(WARN, msg.gitignore(retList.list), fileName);
             break;
         }
 
@@ -90,12 +88,10 @@ async function checkFileContent(fileName, elemMainDir) {
         }
 
         case ".npmignore": {
-            // File processing
             const retList = await listContentFile(fileName);
-            if (!retList.miss) {
-                break;
+            if (retList !== null) {
+                log(WARN, msg.npmignore(retList.list), fileName);
             }
-            log(WARN, msg.npmignore(retList.list), fileName);
             break;
         }
 
