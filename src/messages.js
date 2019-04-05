@@ -80,9 +80,11 @@ const messages = {
     },
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     pkgDep(typeOfProject, key1, key2) {
+        const type = yellow(typeOfProject);
+        const dep = green("dependencies");
+
         return [
-            // eslint-disable-next-line max-len
-            `Your project is a ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key :`,
+            `Your project is a ${type} type and ${green("package.json")} must content for "${dep}" key :`,
             "",
             `"${yellow(key1)}"`,
             `"${yellow(key2)}"`,
@@ -122,8 +124,11 @@ const messages = {
         return `${green(keyName)} of package.json mustn't be void`;
     },
     pkgScripts(typeOfProject, keyScript) {
-        // eslint-disable-next-line max-len
-        return `Your project is a ${yellow(typeOfProject)} and ${green("package.json")} must contain the "${yellow(keyScript)}" ${green("script")}`;
+        const type = yellow(typeOfProject);
+        const key = yellow(keyScript);
+        const scr = green("script");
+
+        return `Your project is a ${type} and ${green("package.json")} must contain the "${key}" ${scr}`;
     },
     readme(listLines) {
         return [
