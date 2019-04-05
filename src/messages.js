@@ -2,7 +2,7 @@
 const { green, yellow, cyan, red } = require("kleur");
 
 const messages = {
-    benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
+    benchmark: "folder doesn't exist but he's optionnal (to measure project performance)",
     binNotExist: [
         `${yellow("CLI STRUCTURE")}`,
         "",
@@ -15,7 +15,7 @@ const messages = {
     editorConf: [
         "file doesn't contains the good informations.",
         "",
-        `You should used ${cyan("psp .editorconfig")} to see exact informations`,
+        `You should used ${cyan("psp .editorconfig")} to get more informations`,
         ""
     ],
     eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
@@ -33,7 +33,7 @@ const messages = {
             ""
         ];
     },
-    indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("./bin folder")}`,
+    indexJsNotExist: `Unable to found ${yellow("index.js file")} to ${yellow("./bin folder")}`,
     infos: [
         `${cyan(": If you want exlude or include files of cheking process, use the following commands :")}`,
         "",
@@ -56,14 +56,14 @@ const messages = {
         `${yellow("N-API STRUCTURE")}`,
         "",
         `Your project structure is a ${yellow("N-API")} and your main directory`,
-        `must content a ${yellow("binding.gyp")} file !`,
+        `must contain a ${yellow("binding.gyp")} file !`,
         ""
     ],
     napiInclude: [
         `${yellow("N-API STRUCTURE")}`,
         "",
         `Your project structure is a ${yellow("N-API")} and your main directory`,
-        `must content a ${yellow("include")} folder !`,
+        `must contain a ${yellow("include")} folder !`,
         ""
     ],
     npmEnv: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
@@ -118,7 +118,7 @@ const messages = {
     ],
     pkgNyc: `if you use ${yellow("nyc")} dependencies, ${yellow("package.json")} file must contain a ${yellow("nyc")} field`,
     pkgOthers(keyOthers) {
-        return `file must content "${yellow(keyOthers)}" property`;
+        return `file must contain "${yellow(keyOthers)}" property`;
     },
     pkgOthersCtn(keyName, ctn) {
         if (ctn !== undefined) {
@@ -162,9 +162,9 @@ const messages = {
         `"gypfile": ${green(true)},`,
         ""
     ],
-    shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
-    src: "folder doesn't exist in your main directory. Obligatory folder for your sources !",
-    test: "folder doesn't exist and is necessary to test your application."
+    shebang: `The ${yellow("index.js file")} must contain => #!/usr/bin/env node <= to first line`,
+    src: "folder doesn't exist in your main directory (Mandatory folder).",
+    test: "folder doesn't exist and is required to test your application."
 };
 
 module.exports = messages;
