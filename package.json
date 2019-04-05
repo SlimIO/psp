@@ -1,5 +1,5 @@
 {
-  "name": "@slimio/project-structure-policy",
+  "name": "@slimio/psp",
   "version": "0.1.0",
   "description": "Analyze compliance with the structural policy of a SlimIO project",
   "main": "./bin/index.js",
