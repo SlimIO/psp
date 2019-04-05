@@ -13,13 +13,13 @@ const messages = {
     commitLint: "file must be extended by @commitlint/config-conventional",
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     editorConf: [
-        "file doesn't contains the good informations.",
+        "file doesn't match our local copy.",
         "",
-        `You should used ${cyan("psp .editorconfig")} to get more informations`,
+        `Please use the following command: ${cyan("psp .editorconfig")} to get more informations`,
         ""
     ],
     eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
-    eslintRulesKey: "file contain a 'rules' object.",
+    eslintRulesKey: "file contain a 'rules' object (think about checking their validity / usefulness).",
     fileNotExist: "file doesn't exist in your current working directory.",
     gitEnv: `file is present in your main directory and must be present in ${yellow(".gitignore")} file`,
     gitExist: "file must exist in your main directory",
@@ -73,11 +73,11 @@ const messages = {
             "",
             `${listLines.join("\n|   ")}`,
             "",
-            `You should used ${cyan("psp .npmignore")} to get more informations`,
+            `Please use the following command: ${cyan("psp .npmignore")} to get more informations`,
             ""
         ];
     },
-    npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
+    npmrc: `contain the rule '${yellow("package-lock=false")}' but ${yellow("package-lock.json")} is present at the root of the project`,
     ignoreDir: [
         `is present in your main directory but not in ${yellow(".gitignore")} file`,
         `is present in your main directory but not in ${yellow(".npmignore")} file`
@@ -157,7 +157,7 @@ const messages = {
         ""
     ],
     rootFieldsNAPI: [
-        `${green("N-API project ==>")} ${yellow("Into your package.json, think about :")}`,
+        `${green("N-API project:")} ${yellow("think to add following properties to your package.json")}`,
         "",
         `"gypfile": ${green(true)},`,
         ""
