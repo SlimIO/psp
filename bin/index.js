@@ -21,6 +21,7 @@ const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
+const STR = "\n|   ";
 
 // Globals
 let typeOfProject = "";
@@ -48,7 +49,7 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
             if (userCtnFile !== localCtnFile) {
-                log(WARN, msg.editorConf, fileName);
+                log(WARN, msg.editorConf.join(STR), fileName);
             }
             break;
         }
@@ -68,7 +69,7 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".gitignore": {
             const retList = await listContentFile(fileName);
             if (retList !== null) {
-                log(WARN, msg.gitignore(retList), fileName);
+                log(WARN, msg.gitignore(retList).join(STR), fileName);
             }
             break;
         }
@@ -90,7 +91,7 @@ async function checkFileContent(fileName, elemMainDir) {
         case ".npmignore": {
             const retList = await listContentFile(fileName);
             if (retList !== null) {
-                log(WARN, msg.npmignore(retList), fileName);
+                log(WARN, msg.npmignore(retList).join(STR), fileName);
             }
             break;
         }
@@ -122,7 +123,7 @@ async function checkFileContent(fileName, elemMainDir) {
             if (typeOfProject === "addon" || typeOfProject === "napi") {
                 const requiredDep = requiredElem.PKG_DEP[typeOfProject];
                 if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-                    log(WARN, msg.pkgDep(typeOfProject, requiredDep[0], requiredDep[1]));
+                    log(WARN, msg.pkgDep(typeOfProject, requiredDep[0], requiredDep[1]).join(STR));
                 }
             }
 
@@ -150,10 +151,10 @@ async function checkFileContent(fileName, elemMainDir) {
                         log(WARN, msg.pkgOthersCtn(keyName));
                     }
                     if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
-                        log(WARN, msg.pkgEngines);
+                        log(WARN, msg.pkgEngines.join(STR));
                     }
                     if (keyName === "husky" && !Reflect.has(userCtnFileJSON.husky.hooks, "commit-msg")) {
-                        log(WARN, msg.pkgHusky);
+                        log(WARN, msg.pkgHusky.join(STR));
                     }
                     continue;
                 }
@@ -177,7 +178,7 @@ async function checkFileContent(fileName, elemMainDir) {
             }
 
             if (retList !== null) {
-                log(WARN, msg.npmignore(retList), fileName);
+                log(WARN, msg.readme(retList).join(STR), fileName);
             }
 
             if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
@@ -238,7 +239,7 @@ async function main() {
 
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
-        log(CRIT, msg.manifest);
+        log(CRIT, msg.manifest.join(STR));
     }
 
     // If type of .toml file isn't valid
@@ -249,7 +250,7 @@ async function main() {
     switch (typeOfProject) {
         case "cli": {
             if (!elemMainDir.has("bin")) {
-                log(CRIT, msg.binNotExist);
+                log(CRIT, msg.binNotExist.join(STR));
             }
 
             try {
@@ -264,23 +265,23 @@ async function main() {
             }
 
             // Infos: preferGlobal, bin, main in package.json
-            console.log(msg.rootFieldsCLI);
+            log(INFO, msg.rootFieldsCLI.join(STR));
             break;
         }
 
         case "napi":
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(CRIT, msg.napiInclude);
+                log(CRIT, msg.napiInclude.join(STR));
             }
 
             // If binding.gyp file doesn't exist
             if (!elemMainDir.has("binding.gyp")) {
-                log(CRIT, msg.napiBinding);
+                log(CRIT, msg.napiBinding.join(STR));
             }
 
             // Infos: gypfile in package.json
-            console.log(msg.rootFieldsNAPI);
+            log(INFO, msg.rootFieldsNAPI.join(STR));
             break;
         default:
     }
