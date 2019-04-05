@@ -104,13 +104,12 @@ const messages = {
         // eslint-disable-next-line max-len
         return `Your project is a ${yellow(typeOfProject)} and ${green("package.json")} must contain the "${yellow(keyScript)}" ${green("script")}`;
     },
-    readme: `file must content following titles :
+    readme(listLines) {
+        return `file must content the following titles :
 |
-|   ## Requirements
-|   ## Getting Started
-|   ## API
-|   ## License
-|`,
+|   ${listLines.join("\n|   ")}
+|`;
+    },
     readmeEx: `file must content ${yellow("Usage example")} because your project is a Package.`,
     rootFieldsCLI: `|
 | ${emoji.get(":bulb:")}  : ${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}

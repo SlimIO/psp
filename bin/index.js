@@ -170,15 +170,14 @@ async function checkFileContent(fileName, elemMainDir) {
         // README.md
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
+            const titles = new Set(requiredElem.README_TITLES);
+            const retList = await listContentFile(fileName, titles);
             if (typeOfProject === "addon") {
                 break;
             }
 
-            for (let idx = 0; idx < requiredElem.README_TITLES.length; idx++) {
-                if (userCtnFileLCase.includes(requiredElem.README_TITLES[idx])) {
-                    continue;
-                }
-                log(CRIT, msg.readme, fileName);
+            if (retList !== null) {
+                log(WARN, msg.npmignore(retList), fileName);
             }
 
             if (typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {

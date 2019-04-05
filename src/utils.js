@@ -58,16 +58,24 @@ async function* getJavascriptFiles(dir) {
  * @func listContentFile
  * @description Parse files and generate an array
  * @param {!String} fileName File name parsed
+ * @param {Set<String>} setObj If local file doesn't exist (Example, README.md)
  * @returns {Promise<Array<String> | null>}
  */
-async function listContentFile(fileName) {
-    const localFile = await parser(join(__dirname, "..", "template", fileName));
-    const userFile = await parser(fileName);
+async function listContentFile(fileName, setObj) {
     const list = [];
+    let userFile = await readFile(join(CWD, fileName));
+    let localFile = setObj;
     let missing = false;
+    let key = "includes";
+
+    if (setObj === undefined) {
+        localFile = await parser(join(__dirname, "..", "template", fileName));
+        userFile = await parser(fileName);
+        key = "has";
+    }
 
     for (const line of localFile) {
-        if (!userFile.has(line)) {
+        if (!userFile[key](line)) {
             list.push(`${emoji.get(CROSS)} ${red(line)}`);
             missing = true;
             continue;

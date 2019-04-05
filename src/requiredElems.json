@@ -45,10 +45,10 @@
         ".npmignore"
     ],
     "README_TITLES": [
-        "## requirements",
-        "## getting started",
-        "## api",
-        "## license"
+        "## Requirements",
+        "## Getting Started",
+        "## API",
+        "## License"
     ],
     "REQUIRE_DIR": [
         "src",
