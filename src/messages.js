@@ -1,11 +1,12 @@
+// Require Third-party Dependencies
 const { green, yellow, cyan, red } = require("kleur");
 const emoji = require("node-emoji");
 
 const messages = {
     benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
     binNotExist: `${yellow("CLI STRUCTURE")}
-|    
-|   Your project is a CLI and must content a ${yellow("bin folder")} 
+|
+|   Your project is a CLI and must content a ${yellow("bin folder")}
 |   with a ${yellow("index.js file")} !!
 |`,
     commitLint: "file must be extends by @commitlint/config-conventional",
@@ -37,20 +38,20 @@ const messages = {
     jsdoc: `is missing in the ${yellow("jsdoc.json")} of ${yellow("include")} field`,
     manifest: `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !
 |
-|   ${green(".toml")} file must be created 
-|   at the root of the project to determine if 
-|   your application is CLI or N-API. Go to this 
+|   ${green(".toml")} file must be created
+|   at the root of the project to determine if
+|   your application is CLI or N-API. Go to this
 |   link to install this file :
-|   ${cyan("==> https://github.com/SlimIO/Manifest")}    
+|   ${cyan("==> https://github.com/SlimIO/Manifest")}
 |`,
     napiBinding: `${yellow("N-API STRUCTURE")}
 |
-|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   Your project structure is a ${yellow("N-API")} and your main directory
 |   must content a ${yellow("binding.gyp")} file !
 |`,
     napiInclude: `${yellow("N-API STRUCTURE")}
 |
-|   Your project structure is a ${yellow("N-API")} and your main directory 
+|   Your project structure is a ${yellow("N-API")} and your main directory
 |   must content a ${yellow("include")} folder !
 |`,
     npmEnv: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
@@ -65,10 +66,10 @@ const messages = {
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     pkgDep(typeOfProject, key1, key2) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key : 
-|        
+        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key :
+|
 |   "${yellow(key1)}"
-|   "${yellow(key2)}"       
+|   "${yellow(key2)}"
 |`;
     },
     pkgDevDep(keyDepDev) {
@@ -114,7 +115,7 @@ const messages = {
     rootFieldsCLI: `|
 | ${emoji.get(":bulb:")}  : ${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}
 |
-|   "main": "${green("./bin/index.js")}"    
+|   "main": "${green("./bin/index.js")}"
 |   "preferGlobal": ${green(true)},
 |   "bin": {
 |      "${red("yourAppName")}": "${green("./bin/index.js")}"
@@ -123,7 +124,7 @@ const messages = {
 |`,
     rootFieldsNAPI: `|
 | ${emoji.get(":bulb:")}  : ${green("N-API project ==>")} ${yellow("Into your package.json, think about :")}
-|       
+|
 |   "gypfile": ${green(true)},
 |`,
     shebang: `The ${yellow("index.js file")} must content => #!/usr/bin/env node <= to first line`,
