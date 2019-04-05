@@ -1,4 +1,0 @@
-name = "psp"
-version = "0.1.0"
-type = "CLI"
-dependencies = { }
