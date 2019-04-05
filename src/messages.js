@@ -6,29 +6,29 @@ const messages = {
     benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
     binNotExist: `${yellow("CLI STRUCTURE")}
 |
-|   Your project is a CLI and must content a ${yellow("bin folder")}
-|   with a ${yellow("index.js file")} !!
+|   Your project is a CLI and must contain a ${yellow("./bin folder")}
+|   with a ${yellow("./bin/index.js file")} !!
 |`,
-    commitLint: "file must be extends by @commitlint/config-conventional",
+    commitLint: "file must be extended by @commitlint/config-conventional",
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
     // eslint-disable-next-line max-len
     editorConf: `file doesn't contains the good informations.
 |
 |         You should used ${cyan("psp .editorconfig")} to see exact informations
 |`,
-    eslintExtends: "file must be extends by @slimio/eslint-config.",
-    eslintRulesKey: "file contains a 'rules' field (specifics rules !).",
-    fileNotExist: "file doesn't exist in your main directory.",
+    eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
+    eslintRulesKey: "file contain a 'rules' object.",
+    fileNotExist: "file doesn't exist in your current working directory.",
     gitEnv: `file is present in your main directory and must be present in ${yellow(".gitignore")} file`,
     gitignore(listLines) {
-        return `file doesn't contains the good informations.
+        return `file doesn't contains the right files/directories.
 |
 |   ${listLines.join("\n|   ")}
 |
-|   You should used ${cyan("psp .gitignore")} to see exact informations
+|   You should used ${cyan("psp .gitignore")} to get more informations
 |`;
     },
-    indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("bin folder")}`,
+    indexJsNotExist: `Impossible to found ${yellow("index.js file")} to ${yellow("./bin folder")}`,
     infos: `|
 | ${emoji.get(":bulb:")}  ${cyan(": If you want exlude or include files of cheking process, use the following commands :")}
 |
@@ -56,17 +56,17 @@ const messages = {
 |`,
     npmEnv: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
     npmignore(listLines) {
-        return `file doesn't contains the good informations.
+        return `file doesn't contains right right files/directories:
 |
 |   ${listLines.join("\n|   ")}
 |
-|   You should used ${cyan("psp .npmignore")} to see exact informations
+|   You should used ${cyan("psp .npmignore")} to get more informations
 |`;
     },
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
     pkgDep(typeOfProject, key1, key2) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key :
+        return `Your project is a ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("dependencies")}" key :
 |
 |   "${yellow(key1)}"
 |   "${yellow(key2)}"
@@ -75,13 +75,13 @@ const messages = {
     pkgDevDep(keyDepDev) {
         return `file must content for "${green("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
     },
-    pkgEngines: `${green("engines")} field in package.json file must be following content :
+    pkgEngines: `${green("engines")} field in package.json file must be equal to:
 |
 |   "engines": {
 |       "node": ">=10"
 |   }
 |`,
-    pkgHusky: `${green("husky")} field in package.json file must be following content :
+    pkgHusky: `${green("husky")} field in package.json file must be equal to:
 |
 |   "husky": {
 |       "hooks": {
@@ -89,7 +89,7 @@ const messages = {
 |       }
 |   }
 |`,
-    pkgNyc: `if you use ${yellow("nyc")} dependencies, ${green("package.json")} file must content a ${yellow("nyc")} field`,
+    pkgNyc: `if you use ${yellow("nyc")} dependencies, ${green("package.json")} file must contain a ${yellow("nyc")} field`,
     pkgOthers(keyOthers) {
         return `file must content "${yellow(keyOthers)}" property`;
     },
@@ -102,7 +102,7 @@ const messages = {
     },
     pkgScripts(typeOfProject, keyScript) {
         // eslint-disable-next-line max-len
-        return `Your project is ${yellow(typeOfProject)} type and ${green("package.json")} must content for "${green("scripts")}" key, the "${yellow(keyScript)}" property`;
+        return `Your project is a ${yellow(typeOfProject)} and ${green("package.json")} must contain the "${yellow(keyScript)}" ${green("script")}`;
     },
     readme: `file must content following titles :
 |
