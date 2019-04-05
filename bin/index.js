@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 // Require Node.js Dependencies
-const { readdir, readFile } = require("fs").promises;
+const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
-const { green, cyan } = require("kleur");
+const parser = require("file-ignore-parser");
+const { cyan, red, yellow } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
@@ -17,6 +18,7 @@ const { getJavascriptFiles, readFileLocal, listContentFile } = require("../src/u
 // Constants
 const CWD = process.cwd();
 const PROCESS_ARG = process.argv[2];
+const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
@@ -199,12 +201,17 @@ async function checkFileContent(fileName, elemMainDir) {
  * @returns {void} Into the console
  */
 function log(severity, message, file) {
+    let colorFileName = yellow(file);
+    // Color
+    if (severity === CRIT) {
+        colorFileName = red(file);
+    }
     // Messages into console
     if (file === undefined) {
         console.log("|", emoji.get(severity), " :", message);
     }
     else {
-        console.log("|", emoji.get(severity), " :", green(file), message);
+        console.log("|", emoji.get(severity), " :", colorFileName, message);
     }
 
     // Exit if case critical
@@ -313,17 +320,38 @@ async function main() {
     }
 
     // Folder management
-    const filteredDirs = requiredElem.REQUIRE_DIR.filter((name) => !elemMainDir.has(name));
+    // If .gitignore doesn't exist
+    if (!elemMainDir.has(".gitignore")) {
+        log(CRIT, msg.gitExist);
+    }
+
+    const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
+    const ignoreDir = [
+        await parser(".gitignore"),
+        await parser(".npmignore")
+    ];
+
     for (const dir of filteredDirs) {
         switch (dir) {
             case "src":
-                log(CRIT, MSG[dir], dir);
+                log(CRIT, msg[dir], dir);
                 break;
             case "test":
-                log(WARN, MSG[dir], dir);
+                log(WARN, msg[dir], dir);
                 break;
             default:
-                log(INFO, MSG[dir], dir);
+                log(INFO, msg[dir], dir);
+        }
+    }
+    for (let idx = 0; idx <= 1; idx++) {
+        for (const dir of elemMainDir) {
+            const st = await stat(join(CWD, dir));
+            if (!st.isDirectory()) {
+                continue;
+            }
+            if (!ignoreDir[idx].has(`${dir}/`) && !REQUIRE_DIR[idx].includes(dir)) {
+                log(WARN, msg.ignoreDir[idx], dir);
+            }
         }
     }
 }

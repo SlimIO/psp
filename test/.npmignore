@@ -11,6 +11,7 @@ jsdoc.json
 .gitignore
 tsconfig.json
 commitlint.config.js
+.env
 .travis.yml
 CONTRIBUTING.md
 CHANGELOG.md

@@ -5,6 +5,7 @@ coverage/
 .circleci/
 docs/
 jsdoc/
+test/test.js
 jsdoc.json
 .editorconfig
 .eslintrc

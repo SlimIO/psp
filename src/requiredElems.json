@@ -51,10 +51,16 @@
         "## License"
     ],
     "REQUIRE_DIR": [
-        "src",
-        "test",
-        "benchmark",
-        "docs"
+        [
+            "src",
+            "test",
+            "benchmark",
+            "docs"
+        ],
+        [
+            "src",
+            "benchmark"
+        ]
     ],
     "PKG_DEP": {
         "napi": [

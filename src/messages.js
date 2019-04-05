@@ -1,6 +1,5 @@
 // Require Third-party Dependencies
 const { green, yellow, cyan, red } = require("kleur");
-const emoji = require("node-emoji");
 
 const messages = {
     benchmark: "folder doesn't exist but he's optionnal (To measure project performance)",
@@ -13,7 +12,6 @@ const messages = {
     ],
     commitLint: "file must be extended by @commitlint/config-conventional",
     docs: "folder doesn't exist but he's optionnal (documentation and / or specification of the project)",
-    // eslint-disable-next-line max-len
     editorConf: [
         "file doesn't contains the good informations.",
         "",
@@ -24,6 +22,7 @@ const messages = {
     eslintRulesKey: "file contain a 'rules' object.",
     fileNotExist: "file doesn't exist in your current working directory.",
     gitEnv: `file is present in your main directory and must be present in ${yellow(".gitignore")} file`,
+    gitExist: "file must exist in your main directory",
     gitignore(listLines) {
         return [
             "file doesn't contains the right files/directories.",
@@ -44,9 +43,9 @@ const messages = {
     ],
     jsdoc: `is missing in the ${yellow("jsdoc.json")} of ${yellow("include")} field`,
     manifest: [
-        `You must install the slimio manifest - ${green("npm i @slimio/manifest")} !`,
+        `You must install the slimio manifest - ${yellow("npm i @slimio/manifest")} !`,
         "",
-        `${green(".toml")} file must be created`,
+        `${red(".toml")} file must be created`,
         "at the root of the project to determine if",
         "your application is CLI or N-API. Go to this",
         "link to install this file :",
@@ -70,7 +69,7 @@ const messages = {
     npmEnv: `file is present in your main directory and must be present in ${yellow(".npmignore")} file`,
     npmignore(listLines) {
         return [
-            "file doesn't contains right right files/directories:",
+            "file doesn't contains right files/directories:",
             "",
             `${listLines.join("\n|   ")}`,
             "",
@@ -79,12 +78,17 @@ const messages = {
         ];
     },
     npmrc: `file contains ${yellow("package-lock=false")} and ${yellow("package-lock.json")} is present in your project`,
+    ignoreDir: [
+        `is present in your main directory but not in ${yellow(".gitignore")} file`,
+        `is present in your main directory but not in ${yellow(".npmignore")} file`
+    ],
     pkgDep(typeOfProject, key1, key2) {
         const type = yellow(typeOfProject);
-        const dep = green("dependencies");
+        const dep = yellow("dependencies");
+        const pkg = yellow("package.json");
 
         return [
-            `Your project is a ${type} type and ${green("package.json")} must content for "${dep}" key :`,
+            `Your project is a ${type} type and ${pkg} must content for "${dep}" key :`,
             "",
             `"${yellow(key1)}"`,
             `"${yellow(key2)}"`,
@@ -92,10 +96,10 @@ const messages = {
         ];
     },
     pkgDevDep(keyDepDev) {
-        return `file must content for "${green("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
+        return `file must content for "${yellow("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
     },
     pkgEngines: [
-        `${green("engines")} field in package.json file must be equal to:`,
+        `${yellow("engines")} field in package.json file must be equal to:`,
         "",
         "\"engines\": {",
         "   \"node\": \">=10\"",
@@ -103,7 +107,7 @@ const messages = {
         ""
     ],
     pkgHusky: [
-        `${green("husky")} field in package.json file must be equal to:`,
+        `${yellow("husky")} field in package.json file must be equal to:`,
         "",
         "\"husky\": {",
         "   \"hooks\": {",
@@ -112,27 +116,28 @@ const messages = {
         "}",
         ""
     ],
-    pkgNyc: `if you use ${yellow("nyc")} dependencies, ${green("package.json")} file must contain a ${yellow("nyc")} field`,
+    pkgNyc: `if you use ${yellow("nyc")} dependencies, ${yellow("package.json")} file must contain a ${yellow("nyc")} field`,
     pkgOthers(keyOthers) {
         return `file must content "${yellow(keyOthers)}" property`;
     },
     pkgOthersCtn(keyName, ctn) {
         if (ctn !== undefined) {
-            return `${green(keyName)} of package.json mustn't be equal at ${yellow(ctn)}`;
+            return `${yellow(keyName)} of package.json mustn't be equal at ${yellow(ctn)}`;
         }
 
-        return `${green(keyName)} of package.json mustn't be void`;
+        return `${yellow(keyName)} of package.json mustn't be void`;
     },
     pkgScripts(typeOfProject, keyScript) {
         const type = yellow(typeOfProject);
         const key = yellow(keyScript);
-        const scr = green("script");
+        const scr = yellow("script");
+        const pkg = yellow("package.json");
 
-        return `Your project is a ${type} and ${green("package.json")} must contain the "${key}" ${scr}`;
+        return `Your project is a ${type} and ${pkg} must contain the "${key}" ${scr}`;
     },
     readme(listLines) {
         return [
-            "file must content the following titles :",
+            "file must contain the following titles :",
             "",
             `${listLines.join("\n|   ")}`,
             ""
