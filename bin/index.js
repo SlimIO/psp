@@ -10,6 +10,7 @@ const parser = require("file-ignore-parser");
 const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
 const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
+const fileNormalize = require("file-normalize");
 
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
@@ -49,7 +50,7 @@ async function checkFileContent(fileName, elemMainDir) {
 
         case ".editorconfig": {
             const localCtnFile = await readFileLocal(fileName);
-            if (userCtnFile !== localCtnFile) {
+            if (fileNormalize.normalizeEOL(userCtnFile) !== fileNormalize.normalizeEOL(localCtnFile)) {
                 log(WARN, msg.editorConf.join(STR), fileName);
             }
             break;

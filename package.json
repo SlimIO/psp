@@ -18,6 +18,7 @@
     "@slimio/arg-parser": "^0.3.0",
     "@slimio/manifest": "^0.2.1",
     "file-ignore-parser": "^1.0.0",
+    "file-normalize": "^1.1.2",
     "kleur": "^3.0.2",
     "node-emoji": "^1.10.0"
   },
