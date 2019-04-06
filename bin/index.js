@@ -279,7 +279,7 @@ async function main() {
             break;
         }
 
-        case "napi":
+        case "napi": {
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
                 log(CRIT, msg.napiInclude.join(STR));
@@ -291,8 +291,13 @@ async function main() {
             }
 
             // Infos: gypfile in package.json
-            log(INFO, msg.rootFieldsNAPI.join(STR));
+            const str = await readFile(join(CWD, "package.json"));
+            const pkg = JSON.parse(str);
+            if (!Reflect.has(pkg, "gypfile")) {
+                log(WARN, msg.rootFieldsNAPI.join(STR));
+            }
             break;
+        }
         default:
     }
 

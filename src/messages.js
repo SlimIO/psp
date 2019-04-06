@@ -25,11 +25,11 @@ const messages = {
     gitExist: "file must exist in your main directory",
     gitignore(listLines) {
         return [
-            "file doesn't contains the right files/directories.",
+            "file doesn't contains right files/directories.",
             "",
             `${listLines.join("\n|   ")}`,
             "",
-            `You should used ${cyan("psp .gitignore")} to get more informations`,
+            `Please use the following command: ${cyan("psp .gitignore")} to get more informations`,
             ""
         ];
     },
