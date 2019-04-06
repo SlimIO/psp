@@ -15,7 +15,7 @@ const messages = {
     editorConf: [
         "file doesn't match our local copy.",
         "",
-        `Please use the following command: ${cyan("psp .editorconfig")} to get more informations`,
+        `Please use the following command: ${cyan("psp --editorconfig")} to get more informations`,
         ""
     ],
     eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
@@ -29,7 +29,7 @@ const messages = {
             "",
             `${listLines.join("\n|   ")}`,
             "",
-            `Please use the following command: ${cyan("psp .gitignore")} to get more informations`,
+            `Please use the following command: ${cyan("psp --gitignore")} to get more informations`,
             ""
         ];
     },
@@ -73,7 +73,7 @@ const messages = {
             "",
             `${listLines.join("\n|   ")}`,
             "",
-            `Please use the following command: ${cyan("psp .npmignore")} to get more informations`,
+            `Please use the following command: ${cyan("psp --npmignore")} to get more informations`,
             ""
         ];
     },

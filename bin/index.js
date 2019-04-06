@@ -248,8 +248,8 @@ async function main() {
             console.log("\n---");
             console.log(`File: .${file}:`);
             console.log(cyan(await readFileLocal(`.${file}`)));
+            process.exit(0);
         }
-        process.exit(0);
     }
 
     console.log(gray(`\n > Running Project Struct Policy at ${yellow(CWD)}\n`));
