@@ -3,6 +3,7 @@
 // Require Node.js Dependencies
 const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
+const assert = require("assert").strict;
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
@@ -265,9 +266,34 @@ async function main() {
         log(CRIT, msg.manifest.join(STR));
     }
 
+    const str = await readFile(join(CWD, "package.json"));
+    const pkg = JSON.parse(str);
+
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
     typeOfProject = manifest.type.toLowerCase();
+
+    // Check version of package/slimio
+    if (pkg.version !== manifest.version) {
+        log(CRIT, msg.versionDiff);
+    }
+
+    if (typeOfProject === "addon") {
+        let addon = null;
+        try {
+            const main = pkg.main || "index.js";
+            // eslint-disable-next-line
+            addon = require(join(CWD, main));
+            assert.strictEqual(addon.constructor.name, "Addon");
+        }
+        catch (err) {
+            log(CRIT, msg.exportAddon);
+        }
+
+        if (addon.name !== manifest.name) {
+            log(CRIT, msg.nameDiff);
+        }
+    }
 
     // If slimio.toml exists for projects structure
     switch (typeOfProject) {
@@ -304,8 +330,6 @@ async function main() {
             }
 
             // Infos: gypfile in package.json
-            const str = await readFile(join(CWD, "package.json"));
-            const pkg = JSON.parse(str);
             if (!Reflect.has(pkg, "gypfile")) {
                 log(WARN, msg.rootFieldsNAPI.join(STR));
             }
