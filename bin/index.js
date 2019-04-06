@@ -29,6 +29,7 @@ const STR = "\n|   ";
 // Globals
 let typeOfProject = "";
 let forceMode = false;
+const count = { crit: 0, warn: 0 };
 
 /**
  * @async
@@ -212,8 +213,13 @@ function log(severity, message, file) {
     let colorFileName = yellow(file);
     // Color
     if (severity === CRIT) {
+        count.crit++;
         colorFileName = red(file);
     }
+    else if (severity === WARN) {
+        count.warn++;
+    }
+
     // Messages into console
     if (file === undefined) {
         console.log("|", emoji.get(severity), " :", message);
@@ -385,7 +391,8 @@ async function main() {
     // If .gitignore doesn't exist
     if (!elemMainDir.has(".gitignore")) {
         log(CRIT, msg.gitExist);
-        process.exit(0);
+
+        return void 0;
     }
 
     const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
@@ -426,6 +433,14 @@ async function main() {
 
         log(WARN, msg.ignoreDir, dir);
     }
+
+    return void 0;
 }
 
-main().catch(console.error);
+main()
+    .then(() => {
+        console.log(`\n Finished with: ${yellow(count.crit)} Criticals and ${yellow(count.warn)} Warnings`);
+    })
+    .catch(console.error);
+
+
