@@ -62,7 +62,8 @@ async function checkFileContent(fileName, elemMainDir) {
             }
 
             if (Reflect.has(userCtnFileJSON, "rules")) {
-                log(WARN, msg.eslintRulesKey, fileName);
+                const keys = Object.keys(userCtnFileJSON.rules).map((row) => `${emoji.get(":arrow_right:")} ${row}`);
+                log(WARN, msg.eslintRulesKey(keys).join(STR), fileName);
             }
             break;
         }

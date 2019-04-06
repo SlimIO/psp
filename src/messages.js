@@ -19,7 +19,14 @@ const messages = {
         ""
     ],
     eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
-    eslintRulesKey: "file contain a 'rules' object (think about checking their validity / usefulness).",
+    eslintRulesKey(listLines) {
+        return [
+            "file contain a 'rules' object (think about checking their validity / usefulness).",
+            "",
+            `${listLines.join("\n|   ")}`,
+            ""
+        ];
+    },
     fileNotExist: "file doesn't exist in your current working directory.",
     gitEnv: `file is present in your main directory and must be present in ${yellow(".gitignore")} file`,
     gitExist: "file must exist in your main directory",
