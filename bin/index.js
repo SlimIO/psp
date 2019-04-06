@@ -110,7 +110,7 @@ async function checkFileContent(fileName, elemMainDir) {
             const scripts = userCtnFileJSON.scripts || {};
             const dep = userCtnFileJSON.dependencies || {};
             const devDep = userCtnFileJSON.devDependencies || {};
-            const requiredScripts = requiredElem.PKG_SCRIPTS[typeOfProject];
+            const requiredScripts = requiredElem.PKG_SCRIPTS[typeOfProject] || [];
             const requiredDevDep = requiredElem.PKG_DEVDEP;
             const requiredOthers = requiredElem.PKG_OTHERS;
 
@@ -121,6 +121,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(WARN, msg.pkgScripts(typeOfProject, keyScripts));
             }
+
             // Check dependencies
             if (typeOfProject === "addon" || typeOfProject === "napi") {
                 const requiredDep = requiredElem.PKG_DEP[typeOfProject];
