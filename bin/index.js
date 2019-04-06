@@ -346,12 +346,18 @@ async function main() {
     for (const fileName of requiredElem.FILE_TO_CHECKS) {
         if (!elemMainDir.has(fileName)) {
             // If type === addon
-            if (fileName === "index.d.ts" && (typeOfProject === "addon" || typeOfProject === "cli")) {
+            const isAddonOrCLI = typeOfProject === "addon" || typeOfProject === "cli";
+            if (fileName === "index.d.ts" && isAddonOrCLI) {
                 continue;
             }
 
             // If file doesn't exist
             if (fileName === "index.d.ts" || fileName === ".npmrc") {
+                log(WARN, msg.fileNotExist, fileName);
+                continue;
+            }
+
+            if (fileName === "jsdoc.json" && isAddonOrCLI) {
                 log(WARN, msg.fileNotExist, fileName);
                 continue;
             }
