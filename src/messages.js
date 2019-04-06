@@ -21,6 +21,7 @@ const messages = {
         `Please use the following command: ${cyan("psp --editorconfig")} to get more informations`,
         ""
     ],
+    eslintAdd: "file contains more than 2 keys (non-standard configuration)",
     eslintExtends: "file must be extended by the package '@slimio/eslint-config'",
     eslintRulesKey(listLines) {
         return [
