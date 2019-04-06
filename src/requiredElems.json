@@ -1,11 +1,4 @@
 {
-    "ACCEPT_ARGV": [
-        ".gitignore",
-        ".editorconfig",
-        ".npmignore",
-        "in",
-        "ex"
-    ],
     "E_SEV": {
         "CRIT": ":no_entry:",
         "WARN": ":construction:",
@@ -38,11 +31,6 @@
         "README.md",
         ".npmrc",
         ".gitignore"
-    ],
-    "INFO_CONTENT_FILE": [
-        ".gitignore",
-        ".editorconfig",
-        ".npmignore"
     ],
     "README_TITLES": [
         "## Requirements",

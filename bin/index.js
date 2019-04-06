@@ -7,6 +7,7 @@ const { join, basename, relative, normalize } = require("path");
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
 const parser = require("file-ignore-parser");
+const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
 const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
@@ -17,11 +18,8 @@ const { getJavascriptFiles, readFileLocal, listContentFile } = require("../src/u
 
 // Constants
 const CWD = process.cwd();
-const PROCESS_ARG = process.argv[2];
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
-const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
-const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
 const STR = "\n|   ";
@@ -228,18 +226,30 @@ function log(severity, message, file) {
  * @returns {void} Into the console with function log
  */
 async function main() {
-    // Read process.argv
-    if (PROCESS_ARG !== undefined) {
-        if (!ACCEPT_ARGV.has(PROCESS_ARG)) {
-            log(CRIT, "Impossible command");
+    {
+        const argDefs = [
+            argDefinition("-h --help", "Show help"),
+            argDefinition("--gitignore", "show gitignore help"),
+            argDefinition("--editorconfig", "show editorconfig help"),
+            argDefinition("--npmignore", "show npmignore help")
+        ];
+
+        const argv = parseArg(argDefs);
+        if (argv.get("help")) {
+            help(argDefs);
+            process.exit(0);
         }
 
-        if (INFO_CONTENT_FILE.has(PROCESS_ARG)) {
-            const arrowUp = emoji.get(requiredElem.E_SEV.ARROW_UP);
-            const arrowDown = `${emoji.get(requiredElem.E_SEV.ARROW_DOWN)}\n`;
-            console.log(arrowDown, cyan(await readFileLocal(PROCESS_ARG)), arrowUp);
-            process.exit();
+        argv.delete("help");
+        for (const [file, isAsked] of argv.entries()) {
+            if (!isAsked) {
+                continue;
+            }
+            console.log("\n---");
+            console.log(`File: .${file}:`);
+            console.log(cyan(await readFileLocal(`.${file}`)));
         }
+        process.exit(0);
     }
 
     console.log(gray(`\n > Running Project Struct Policy at ${yellow(CWD)}\n`));

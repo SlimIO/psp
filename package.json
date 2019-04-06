@@ -15,6 +15,7 @@
   "author": "SlimIO",
   "license": "MIT",
   "dependencies": {
+    "@slimio/arg-parser": "^0.3.0",
     "@slimio/manifest": "^0.2.1",
     "file-ignore-parser": "^1.0.0",
     "kleur": "^3.0.2",
