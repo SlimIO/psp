@@ -22,6 +22,7 @@ const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const INFO_CONTENT_FILE = new Set(requiredElem.INFO_CONTENT_FILE);
 const ACCEPT_ARGV = new Set(requiredElem.ACCEPT_ARGV);
+const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
 const STR = "\n|   ";
 
@@ -328,15 +329,10 @@ async function main() {
     }
 
     const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
-    const ignoreDir = [
-        await parser(".gitignore"),
-        await parser(".npmignore")
-    ];
-
     for (const dir of filteredDirs) {
         switch (dir) {
             case "src":
-                log(CRIT, msg[dir], dir);
+                log(WARN, msg[dir], dir);
                 break;
             case "test":
                 log(WARN, msg[dir], dir);
@@ -345,16 +341,30 @@ async function main() {
                 log(INFO, msg[dir], dir);
         }
     }
-    for (let idx = 0; idx <= 1; idx++) {
-        for (const dir of elemMainDir) {
-            const st = await stat(join(CWD, dir));
-            if (!st.isDirectory()) {
-                continue;
-            }
-            if (!ignoreDir[idx].has(`${dir}/`) && !REQUIRE_DIR[idx].includes(dir)) {
-                log(WARN, msg.ignoreDir[idx], dir);
-            }
+
+    const requiredSets = new Set(REQUIRE_DIR[0]);
+    const ignoredSets = await Promise.all([
+        parser(".gitignore"),
+        parser(".npmignore")
+    ]);
+    const ignoredFiles = new Set([...ignoredSets[0], ...ignoredSets[1]].map((file) => relative(CWD, file)));
+    const ignoredDirs = [...ignoredFiles]
+        .filter((file) => !file.includes("*"))
+        .filter((file) => elemMainDir.has(file))
+        .filter((file) => !requiredSets.has(file))
+        .filter((file) => !EXCLUDE_DIRS.has(file));
+
+    for (const dir of ignoredDirs) {
+        if (typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
+            continue;
         }
+
+        const st = await stat(dir);
+        if (!st.isDirectory()) {
+            continue;
+        }
+
+        log(WARN, msg.ignoreDir, dir);
     }
 }
 

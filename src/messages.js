@@ -78,10 +78,7 @@ const messages = {
         ];
     },
     npmrc: `contain the rule '${yellow("package-lock=false")}' but ${yellow("package-lock.json")} is present at the root of the project`,
-    ignoreDir: [
-        `is present in your main directory but not in ${yellow(".gitignore")} file`,
-        `is present in your main directory but not in ${yellow(".npmignore")} file`
-    ],
+    ignoreDir: "directory has been detected has a non-standard directory!",
     pkgDep(typeOfProject, key1, key2) {
         const type = yellow(typeOfProject);
         const dep = yellow("dependencies");
