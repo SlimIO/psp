@@ -346,7 +346,7 @@ async function main() {
     for (const fileName of requiredElem.FILE_TO_CHECKS) {
         if (!elemMainDir.has(fileName)) {
             // If type === addon
-            if (fileName === "index.d.ts" && typeOfProject === "addon") {
+            if (fileName === "index.d.ts" && (typeOfProject === "addon" || typeOfProject === "cli")) {
                 continue;
             }
 
@@ -355,8 +355,8 @@ async function main() {
                 log(WARN, msg.fileNotExist, fileName);
                 continue;
             }
+
             log(CRIT, msg.fileNotExist, fileName);
-            // Exit
         }
 
         // If file is excluded, continue
