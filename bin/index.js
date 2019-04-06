@@ -28,6 +28,7 @@ const STR = "\n|   ";
 
 // Globals
 let typeOfProject = "";
+let forceMode = false;
 
 /**
  * @async
@@ -222,7 +223,7 @@ function log(severity, message, file) {
     }
 
     // Exit if case critical
-    if (severity === CRIT) {
+    if (severity === CRIT && !forceMode) {
         process.exit(1);
     }
 }
@@ -239,7 +240,8 @@ async function main() {
             argDefinition("-h --help", "Show help"),
             argDefinition("--gitignore", "show gitignore help"),
             argDefinition("--editorconfig", "show editorconfig help"),
-            argDefinition("--npmignore", "show npmignore help")
+            argDefinition("--npmignore", "show npmignore help"),
+            argDefinition("--force", "Enable force mode")
         ];
 
         const argv = parseArg(argDefs);
@@ -248,7 +250,9 @@ async function main() {
             process.exit(0);
         }
 
+        forceMode = argv.get("force");
         argv.delete("help");
+        argv.delete("force");
         for (const [file, isAsked] of argv.entries()) {
             if (!isAsked) {
                 continue;
@@ -363,6 +367,9 @@ async function main() {
             }
 
             log(CRIT, msg.fileNotExist, fileName);
+            if (forceMode) {
+                continue;
+            }
         }
 
         // If file is excluded, continue
@@ -378,6 +385,7 @@ async function main() {
     // If .gitignore doesn't exist
     if (!elemMainDir.has(".gitignore")) {
         log(CRIT, msg.gitExist);
+        process.exit(0);
     }
 
     const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
