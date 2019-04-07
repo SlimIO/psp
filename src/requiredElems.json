@@ -13,6 +13,7 @@
         "test",
         "tests",
         "coverage",
+        "example",
         ".vscode",
         ".nyc_output",
         "docs",
