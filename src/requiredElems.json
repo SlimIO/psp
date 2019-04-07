@@ -15,6 +15,9 @@
         "coverage",
         ".vscode",
         ".nyc_output",
+        "docs",
+        "jsdoc",
+        "benchmark",
         ".git"
     ],
     "EXCLUDE_FILES": [
