@@ -127,6 +127,10 @@ async function checkFileContent(fileName, elemMainDir) {
                 if (Reflect.has(scripts, keyScripts)) {
                     continue;
                 }
+
+                if (keyScripts === "report" && Reflect.has(devDep, "c8")) {
+                    continue;
+                }
                 log(WARN, msg.pkgScripts(typeOfProject, keyScripts));
             }
 
