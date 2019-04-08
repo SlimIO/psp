@@ -89,11 +89,7 @@
             "prepublishOnly"
         ],
         "cli": [
-            "start",
-            "test",
             "doc",
-            "coverage",
-            "report",
             "prepublishOnly"
         ],
         "napi": [
@@ -107,9 +103,7 @@
         ],
         "addon": [
             "test",
-            "doc",
-            "coverage",
-            "report"
+            "doc"
         ]
     },
     "PROJECT_TYPE": [
