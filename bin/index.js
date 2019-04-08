@@ -187,6 +187,10 @@ async function checkFileContent(fileName, elemMainDir) {
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
             const titles = new Set(requiredElem.README_TITLES);
+            if (typeOfProject === "cli") {
+                titles.delete("## API");
+            }
+
             const retList = await listContentFile(fileName, titles);
             if (typeOfProject === "addon") {
                 break;
