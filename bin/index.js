@@ -335,8 +335,17 @@ async function main() {
                 log(CRIT, msg.indexJsNotExist);
             }
 
-            // Infos: preferGlobal, bin, main in package.json
-            log(INFO, msg.rootFieldsCLI.join(STR));
+            if (pkg.main !== "./bin/index.js") {
+                log(WARN, msg.cliMain);
+            }
+
+            if (pkg.preferGlobal !== true) {
+                log(WARN, msg.cliGlobal);
+            }
+
+            if (typeof pkg.bin !== "object") {
+                log(WARN, msg.rootFieldsCLI.join(STR));
+            }
             break;
         }
 

@@ -2,6 +2,8 @@
 const { green, yellow, cyan, red } = require("kleur");
 
 const messages = {
+    cliMain: `Package.json '${cyan("main")}' field must be equal to '${yellow("./bin/index.js")}'`,
+    cliGlobal: `Package.json '${cyan("preferGlobal")}' must be '${yellow("true")}'`,
     versionDiff: "Package version must be the same as SlimIO Manifest version",
     exportAddon: "Addon main file must export an instanceof @slimio/addon",
     nameDiff: "Addon name and SlimIO Manifest name must equal",
@@ -153,10 +155,8 @@ const messages = {
     },
     readmeEx: `file must content ${yellow("Usage example")} because your project is a Package.`,
     rootFieldsCLI: [
-        `${green("CLI project ==>")} ${yellow("Into your package.json, think about :")}`,
+        "Your project has been detected as a CLI, but no 'bin' field detected in your package.json",
         "",
-        `"main": "${green("./bin/index.js")}"`,
-        `"preferGlobal": ${green(true)},`,
         "\"bin\": {",
         `   "${red("yourAppName")}": "${green("./bin/index.js")}"`,
         "}",
