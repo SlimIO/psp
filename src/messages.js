@@ -95,10 +95,9 @@ const messages = {
     pkgDep(typeOfProject, key1, key2) {
         const type = yellow(typeOfProject);
         const dep = yellow("dependencies");
-        const pkg = yellow("package.json");
 
         return [
-            `Your project is a ${type} type and ${pkg} must content for "${dep}" key :`,
+            `Your project is a ${type} and Package.json must contain a "${dep}" property:`,
             "",
             `"${yellow(key1)}"`,
             `"${yellow(key2)}"`,
@@ -106,7 +105,7 @@ const messages = {
         ];
     },
     pkgDevDep(keyDepDev) {
-        return `file must content for "${yellow("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
+        return `file must contain for "${yellow("devDependencies")}" key, the "${yellow(keyDepDev)}" property`;
     },
     pkgEngines: [
         `${yellow("engines")} field in package.json file must be equal to:`,
@@ -153,7 +152,7 @@ const messages = {
             ""
         ];
     },
-    readmeEx: `file must content ${yellow("Usage example")} because your project is a Package.`,
+    readmeEx: `file must contain ${yellow("Usage example")} because your project is a Package.`,
     rootFieldsCLI: [
         "Your project has been detected as a CLI, but no 'bin' field detected in your package.json",
         "",
