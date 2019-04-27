@@ -95,6 +95,11 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
                 log(WARN, msg.jsdoc, cleanPath);
             }
+
+            const dest = (jsdocParsed.opts || {}).destination;
+            if (typeof dest !== "string" || dest !== "./jsdoc/") {
+                log(WARN, msg.jsdocDestination);
+            }
             break;
         }
 

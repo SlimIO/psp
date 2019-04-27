@@ -55,6 +55,7 @@ const messages = {
         ""
     ],
     jsdoc: `is missing in the ${yellow("jsdoc.json")} of ${yellow("include")} field`,
+    jsdocDestination: `jsdoc configuration ${cyan("opts.destination")} must be equal to ${yellow("./jsdoc/")}`,
     manifest: [
         `You must install the slimio manifest - ${yellow("npm i @slimio/manifest")} !`,
         "",
