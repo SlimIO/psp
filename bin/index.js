@@ -345,6 +345,18 @@ async function main() {
 
     // If slimio.toml exists for projects structure
     switch (typeOfProject) {
+        case "service": {
+            if (!elemMainDir.has(".env")) {
+                log(CRIT, msg.env, ".env");
+            }
+            const devDependencies = pkg.devDependencies || {};
+            if (!Reflect.has(devDependencies, "dotenv")) {
+                log(WARN, msg.dotenv, "package.json");
+            }
+
+            break;
+        }
+
         case "cli": {
             if (!elemMainDir.has("bin")) {
                 log(CRIT, msg.binNotExist.join(STR));
@@ -393,10 +405,11 @@ async function main() {
 
     // Loop on required files array
     const skipFiles = new Set(["index.d.ts", ".npmrc", ".travis.yml"]);
+    const skipTypes = new Set(["addon", "cli", "service"]);
     for (const fileName of requiredElem.FILE_TO_CHECKS) {
         if (!elemMainDir.has(fileName)) {
             // If type === addon
-            const isAddonOrCLI = typeOfProject === "addon" || typeOfProject === "cli";
+            const isAddonOrCLI = skipTypes.has(typeOfProject);
             if (fileName === "index.d.ts" && isAddonOrCLI) {
                 continue;
             }

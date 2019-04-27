@@ -2,6 +2,8 @@
 const { green, yellow, cyan, red } = require("kleur");
 
 const messages = {
+    env: `file is required for ${cyan("Service")} projects`,
+    dotenv: `dotenv package is required (as devDependencies) for ${cyan("Service")} projects`,
     cliGlobal: `Package.json '${cyan("preferGlobal")}' key is '${red("DEPRECATED")}' (please remove)`,
     versionDiff: "Package version must be the same as SlimIO Manifest version",
     exportAddon: "Addon main file must export an instanceof @slimio/addon",
