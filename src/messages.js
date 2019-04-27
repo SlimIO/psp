@@ -2,8 +2,7 @@
 const { green, yellow, cyan, red } = require("kleur");
 
 const messages = {
-    cliMain: `Package.json '${cyan("main")}' field must be equal to '${yellow("./bin/index.js")}'`,
-    cliGlobal: `Package.json '${cyan("preferGlobal")}' must be '${yellow("true")}'`,
+    cliGlobal: `Package.json '${cyan("preferGlobal")}' key is '${red("DEPRECATED")}' (please remove)`,
     versionDiff: "Package version must be the same as SlimIO Manifest version",
     exportAddon: "Addon main file must export an instanceof @slimio/addon",
     nameDiff: "Addon name and SlimIO Manifest name must equal",

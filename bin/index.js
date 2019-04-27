@@ -361,11 +361,7 @@ async function main() {
                 log(CRIT, msg.indexJsNotExist);
             }
 
-            if (pkg.main !== "./bin/index.js") {
-                log(WARN, msg.cliMain);
-            }
-
-            if (pkg.preferGlobal !== true) {
+            if (Reflect.has(pkg, "preferGlobal")) {
                 log(WARN, msg.cliGlobal);
             }
 
