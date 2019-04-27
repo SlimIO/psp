@@ -19,6 +19,7 @@
     "@slimio/manifest": "^0.2.1",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
+    "js-yaml": "^3.13.1",
     "kleur": "^3.0.2",
     "node-emoji": "^1.10.0"
   },

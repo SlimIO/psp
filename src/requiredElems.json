@@ -35,7 +35,8 @@
         ".npmignore",
         "README.md",
         ".npmrc",
-        ".gitignore"
+        ".gitignore",
+        ".travis.yml"
     ],
     "README_TITLES": [
         "## Requirements",

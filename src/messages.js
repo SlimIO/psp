@@ -8,6 +8,9 @@ const messages = {
     exportAddon: "Addon main file must export an instanceof @slimio/addon",
     nameDiff: "Addon name and SlimIO Manifest name must equal",
     benchmark: "folder doesn't exist but he's optionnal (to measure project performance)",
+    travis(err) {
+        return `Error detected (${cyan(err)})`;
+    },
     binNotExist: [
         `${yellow("CLI STRUCTURE")}`,
         "",
