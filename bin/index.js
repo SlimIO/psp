@@ -349,8 +349,10 @@ async function main() {
             if (!elemMainDir.has(".env")) {
                 log(CRIT, msg.env, ".env");
             }
-            const devDependencies = pkg.devDependencies || {};
-            if (!Reflect.has(devDependencies, "dotenv")) {
+
+            const devDep = pkg.devDependencies || {};
+            const dep = pkg.dependencies || {};
+            if (!Reflect.has(devDep, "dotenv") && !Reflect.has(dep, "dotenv")) {
                 log(WARN, msg.dotenv, "package.json");
             }
 
