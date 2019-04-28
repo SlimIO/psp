@@ -77,7 +77,7 @@ async function checkFileContent(fileName, elemMainDir) {
         }
 
         case ".gitignore": {
-            const retList = await listContentFile(fileName);
+            const retList = await listContentFile(fileName, void 0, typeOfProject);
             if (retList !== null) {
                 log(WARN, msg.gitignore(retList).join(STR), fileName);
             }
@@ -104,7 +104,7 @@ async function checkFileContent(fileName, elemMainDir) {
         }
 
         case ".npmignore": {
-            const retList = await listContentFile(fileName);
+            const retList = await listContentFile(fileName, void 0, typeOfProject);
             if (retList !== null) {
                 log(WARN, msg.npmignore(retList).join(STR), fileName);
             }

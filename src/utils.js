@@ -58,18 +58,32 @@ async function* getJavascriptFiles(dir) {
  * @func listContentFile
  * @description Parse files and generate an array
  * @param {!String} fileName File name parsed
- * @param {Set<String>} setObj If local file doesn't exist (Example, README.md)
+ * @param {Set<String>} [setObj] If local file doesn't exist (Example, README.md)
+ * @param {String} [type="package"] project type
  * @returns {Promise<Array<String> | null>}
  */
-async function listContentFile(fileName, setObj) {
+async function listContentFile(fileName, setObj, type = "package") {
     const list = [];
     let userFile = await readFile(join(CWD, fileName));
     let localFile = setObj;
     let missing = false;
     let key = "includes";
 
-    if (setObj === undefined) {
+    if (typeof setObj === "undefined") {
         localFile = await parser(join(__dirname, "..", "template", fileName));
+        if (fileName === ".gitignore" && type === "napi") {
+            localFile.add("build/");
+            localFile.add("prebuilds/");
+            localFile.add(".vscode/");
+            localFile.add(".exe");
+            localFile.add(".obj");
+        }
+        else if (fileName === ".npmignore" && type === "napi") {
+            localFile.add("build/");
+            localFile.add(".vscode/");
+            localFile.add("*.exe");
+            localFile.add("*.obj");
+        }
         userFile = await parser(fileName);
         key = "has";
     }
