@@ -176,7 +176,7 @@ const messages = {
     ],
     shebang: `The ${yellow("index.js file")} must contain => #!/usr/bin/env node <= to first line`,
     src: "folder doesn't exist in your main directory (Mandatory folder).",
-    test: "folder doesn't exist and is required to test your application."
+    test: "folder doesn't exist ! He is required to test your project."
 };
 
 module.exports = messages;

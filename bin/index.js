@@ -418,7 +418,7 @@ async function main() {
 
             // If file doesn't exist
             if (skipFiles.has(fileName)) {
-                log(WARN, msg.fileNotExist, fileName);
+                log(INFO, msg.fileNotExist, fileName);
                 continue;
             }
 
