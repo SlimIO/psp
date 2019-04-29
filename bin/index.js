@@ -149,14 +149,28 @@ async function checkFileContent(fileName, elemMainDir) {
             const requiredOthers = requiredElem.PKG_OTHERS;
 
             // Ckeck scripts
-            for (const keyScripts of requiredScripts) {
-                if (Reflect.has(scripts, keyScripts)) {
+            for (let [keyScripts, value] of requiredScripts) {
+                const hasC8 = Reflect.has(devDep, "c8");
+                if (keyScripts === "report" && hasC8) {
                     continue;
                 }
 
-                if (keyScripts === "report" && Reflect.has(devDep, "c8")) {
+                if (Reflect.has(scripts, keyScripts)) {
+                    if (keyScripts === "coverage") {
+                        // eslint-disable-next-line
+                        value = hasC8 ? "c8 -r=\"html\" npm test" : "nyc npm test";
+                    }
+                    else if (keyScripts === "test") {
+                        // eslint-disable-next-line
+                        value = Reflect.has(devDep, "ava") ? "ava --verbose" : "node test/test.js";
+                    }
+
+                    if (value !== null && scripts[keyScripts] !== value) {
+                        log(WARN, msg.pkgValue(keyScripts, value));
+                    }
                     continue;
                 }
+
                 log(WARN, msg.pkgScripts(typeOfProject, keyScripts));
             }
 

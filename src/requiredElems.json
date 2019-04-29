@@ -83,28 +83,28 @@
     ],
     "PKG_SCRIPTS": {
         "package": [
-            "test",
-            "doc",
-            "coverage",
-            "report",
-            "prepublishOnly"
+            ["test", null],
+            ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"],
+            ["coverage", null],
+            ["report", "nyc report --reporter=html"],
+            ["prepublishOnly", "pkg-ok"]
         ],
         "cli": [
-            "doc",
-            "prepublishOnly"
+            ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"],
+            ["prepublishOnly", "pkg-ok"]
         ],
         "napi": [
-            "prebuilds",
-            "build",
-            "test",
-            "doc",
-            "coverage",
-            "report",
-            "prepublishOnly"
+            ["prebuilds", "prebuildify --napi"],
+            ["build", "cross-env node-gyp configure && node-gyp build"],
+            ["test", null],
+            ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"],
+            ["coverage", null],
+            ["report", "nyc report --reporter=html"],
+            ["prepublishOnly", "pkg-ok"]
         ],
         "addon": [
-            "test",
-            "doc"
+            ["test", null],
+            ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"]
         ]
     },
     "PROJECT_TYPE": [

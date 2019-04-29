@@ -141,6 +141,11 @@ const messages = {
 
         return `${yellow(keyName)} of package.json mustn't be void`;
     },
+    pkgValue(key, value) {
+        const pkg = yellow("package.json");
+
+        return `${pkg} script "${yellow(key)}" must be equal to "${cyan(value)}"`;
+    },
     pkgScripts(typeOfProject, keyScript) {
         const type = yellow(typeOfProject);
         const key = yellow(keyScript);
