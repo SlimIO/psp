@@ -9,6 +9,12 @@ const messages = {
     exportAddon: "Addon main file must export an instanceof @slimio/addon",
     nameDiff: "Addon name and SlimIO Manifest name must equal",
     benchmark: "folder doesn't exist but he's optionnal (to measure project performance)",
+    missingDep(depName) {
+        return `Missing runtime dependency "${yellow(depName)}" in package.json`;
+    },
+    unusedDep(depName) {
+        return `Unused dependency "${yellow(depName)}" in package.json`;
+    },
     travis(err) {
         return `Error detected (${cyan(err)})`;
     },

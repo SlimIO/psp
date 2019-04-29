@@ -12,6 +12,7 @@ const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
 const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 const fileNormalize = require("file-normalize");
+const cherow = require("cherow");
 
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
@@ -454,6 +455,49 @@ async function main() {
 
         // Switch all files
         await checkFileContent(fileName, elemMainDir);
+    }
+
+    // Check for require statment
+    {
+        const runtimeDep = new Set();
+        for await (const file of getJavascriptFiles(CWD)) {
+            const buf = await readFile(file);
+            const { body } = cherow.parseScript(buf.toString());
+            for (const stmt of body) {
+                if (stmt.type === "VariableDeclaration") {
+                    const declaration = stmt.declarations[0];
+                    if (declaration.init.type !== "CallExpression") {
+                        continue;
+                    }
+
+                    if (declaration.init.callee.name !== "require") {
+                        continue;
+                    }
+                    const value = declaration.init.arguments[0].value;
+                    if (value.charAt(0) === ".") {
+                        continue;
+                    }
+                    runtimeDep.add(value);
+                }
+            }
+        }
+
+        const dependencies = pkg.dependencies || {};
+        for (const dep of runtimeDep) {
+            if (Reflect.has(dependencies, dep)) {
+                continue;
+            }
+
+            log(WARN, msg.missingDep(dep), "package.json");
+        }
+
+        for (const dep of Object.keys(dependencies)) {
+            if (runtimeDep.has(dep)) {
+                continue;
+            }
+
+            log(WARN, msg.unusedDep(dep), "package.json");
+        }
     }
 
     // Folder management
