@@ -4,6 +4,7 @@
 const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
 const assert = require("assert").strict;
+const repl = require("repl");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
@@ -25,6 +26,7 @@ const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
+const NODE_CORE_LIBS = new Set([...repl._builtinLibs]);
 const STR = "\n|   ";
 
 // Globals
@@ -474,7 +476,7 @@ async function main() {
                         continue;
                     }
                     const value = declaration.init.arguments[0].value;
-                    if (value.charAt(0) === ".") {
+                    if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
                         continue;
                     }
                     runtimeDep.add(value);
