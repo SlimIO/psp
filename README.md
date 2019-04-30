@@ -13,6 +13,7 @@ SlimIO - Project Structure Policy. A policy aims to accurately describe the cons
 
 ## Requirements
 - Node.js v10 or higher
+- a [SlimIO Manifest](https://github.com/SlimIO/Manifest) file at the root of the scanned project.
 
 ## Getting Started
 
