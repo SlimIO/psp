@@ -5,6 +5,7 @@ const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
 const assert = require("assert").strict;
 const repl = require("repl");
+const { EOL } = require("os");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
@@ -463,8 +464,11 @@ async function main() {
     {
         const runtimeDep = new Set();
         for await (const file of getJavascriptFiles(CWD)) {
-            const buf = await readFile(file);
-            const { body } = cherow.parseScript(buf.toString());
+            let str = await readFile(file, { encoding: "utf8" });
+            if (str.charAt(0) === "#") {
+                str = str.slice(str.indexOf("\n"));
+            }
+            const { body } = cherow.parseScript(str);
             for (const stmt of body) {
                 if (stmt.type === "VariableDeclaration") {
                     const declaration = stmt.declarations[0];
