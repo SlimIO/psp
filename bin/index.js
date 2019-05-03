@@ -494,8 +494,12 @@ async function main() {
             log(WARN, msg.missingDep(dep), "package.json");
         }
 
+        const napiDeps = new Set(["node-gyp-build", "node-addon-api"]);
         for (const dep of Object.keys(dependencies)) {
             if (runtimeDep.has(dep)) {
+                continue;
+            }
+            if (typeOfProject === "napi" && napiDeps.has(dep)) {
                 continue;
             }
 
