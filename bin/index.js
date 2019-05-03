@@ -464,11 +464,8 @@ async function main() {
     {
         const runtimeDep = new Set();
         for await (const file of getJavascriptFiles(CWD)) {
-            let str = await readFile(file, { encoding: "utf8" });
-            if (str.charAt(0) === "#") {
-                str = str.slice(str.indexOf("\n"));
-            }
-            const { body } = cherow.parseScript(str);
+            const str = await readFile(file, { encoding: "utf8" });
+            const { body } = cherow.parseScript(str, { next: true });
             for (const stmt of body) {
                 if (stmt.type === "VariableDeclaration") {
                     const declaration = stmt.declarations[0];
