@@ -466,6 +466,7 @@ async function main() {
         for await (const file of getJavascriptFiles(CWD)) {
             const str = await readFile(file, { encoding: "utf8" });
             const { body } = cherow.parseScript(str, { next: true });
+
             for (const stmt of body) {
                 if (stmt.type === "VariableDeclaration") {
                     const declaration = stmt.declarations[0];
@@ -481,6 +482,41 @@ async function main() {
                         continue;
                     }
                     runtimeDep.add(value);
+                }
+                else if (stmt.type === "ExpressionStatement") {
+                    if (stmt.expression.type !== "CallExpression") {
+                        continue;
+                    }
+
+                    if (stmt.expression.callee.type === "Identifier") {
+                        if (stmt.expression.callee.name !== "require") {
+                            continue;
+                        }
+
+                        const arg = stmt.expression.arguments[0];
+                        if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
+                            continue;
+                        }
+                        runtimeDep.add(arg.value);
+                    }
+                    else if (stmt.expression.callee.type === "MemberExpression") {
+                        const object = stmt.expression.callee.object;
+
+                        if (typeof object.callee === "undefined") {
+                            continue;
+                        }
+                        if (object.callee.type === "Identifier") {
+                            if (object.callee.name !== "require") {
+                                continue;
+                            }
+
+                            const arg = object.arguments[0];
+                            if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
+                                continue;
+                            }
+                            runtimeDep.add(arg.value);
+                        }
+                    }
                 }
             }
         }
