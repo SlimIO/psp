@@ -330,6 +330,7 @@ async function main() {
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
         log(CRIT, msg.manifest.join(STR));
+        process.exit(1);
     }
 
     const str = await readFile(join(CWD, "package.json"));
