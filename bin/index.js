@@ -464,62 +464,67 @@ async function main() {
     // Check for require statment
     {
         const runtimeDep = new Set();
-        for await (const file of getJavascriptFiles(CWD)) {
-            const str = await readFile(file, { encoding: "utf8" });
-            const { body } = cherow.parseScript(str, { next: true });
+        try {
+            for await (const file of getJavascriptFiles(CWD)) {
+                const str = await readFile(file, { encoding: "utf8" });
+                const { body } = cherow.parseScript(str, { next: true });
 
-            for (const stmt of body) {
-                if (stmt.type === "VariableDeclaration") {
-                    const declaration = stmt.declarations[0];
-                    if (declaration.init.type !== "CallExpression") {
-                        continue;
-                    }
-
-                    if (declaration.init.callee.name !== "require") {
-                        continue;
-                    }
-                    const value = declaration.init.arguments[0].value;
-                    if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
-                        continue;
-                    }
-                    runtimeDep.add(value);
-                }
-                else if (stmt.type === "ExpressionStatement") {
-                    if (stmt.expression.type !== "CallExpression") {
-                        continue;
-                    }
-
-                    if (stmt.expression.callee.type === "Identifier") {
-                        if (stmt.expression.callee.name !== "require") {
+                for (const stmt of body) {
+                    if (stmt.type === "VariableDeclaration") {
+                        const declaration = stmt.declarations[0];
+                        if (declaration.init.type !== "CallExpression") {
                             continue;
                         }
 
-                        const arg = stmt.expression.arguments[0];
-                        if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
+                        if (declaration.init.callee.name !== "require") {
                             continue;
                         }
-                        runtimeDep.add(arg.value);
+                        const value = declaration.init.arguments[0].value;
+                        if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
+                            continue;
+                        }
+                        runtimeDep.add(value);
                     }
-                    else if (stmt.expression.callee.type === "MemberExpression") {
-                        const object = stmt.expression.callee.object;
-
-                        if (typeof object.callee === "undefined") {
+                    else if (stmt.type === "ExpressionStatement") {
+                        if (stmt.expression.type !== "CallExpression") {
                             continue;
                         }
-                        if (object.callee.type === "Identifier") {
-                            if (object.callee.name !== "require") {
+
+                        if (stmt.expression.callee.type === "Identifier") {
+                            if (stmt.expression.callee.name !== "require") {
                                 continue;
                             }
 
-                            const arg = object.arguments[0];
+                            const arg = stmt.expression.arguments[0];
                             if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
                                 continue;
                             }
                             runtimeDep.add(arg.value);
                         }
+                        else if (stmt.expression.callee.type === "MemberExpression") {
+                            const object = stmt.expression.callee.object;
+
+                            if (typeof object.callee === "undefined") {
+                                continue;
+                            }
+                            if (object.callee.type === "Identifier") {
+                                if (object.callee.name !== "require") {
+                                    continue;
+                                }
+
+                                const arg = object.arguments[0];
+                                if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
+                                    continue;
+                                }
+                                runtimeDep.add(arg.value);
+                            }
+                        }
                     }
                 }
             }
+        }
+        catch (err) {
+            console.error(err);
         }
 
         const dependencies = pkg.dependencies || {};
