@@ -18,7 +18,7 @@
     "@slimio/arg-parser": "^0.3.1",
     "@slimio/manifest": "^0.4.0",
     "cherow": "^1.6.9",
-    "estree-walker": "^0.6.0",
+    "estree-walker": "^0.6.1",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
     "js-yaml": "^3.13.1",
