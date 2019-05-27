@@ -1,11 +1,10 @@
 #!/usr/bin/env node
+require("make-promises-safe");
 
 // Require Node.js Dependencies
 const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
 const assert = require("assert").strict;
-const repl = require("repl");
-const { EOL } = require("os");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
@@ -14,12 +13,12 @@ const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
 const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 const fileNormalize = require("file-normalize");
-const cherow = require("cherow");
 
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
 const { getJavascriptFiles, readFileLocal, listContentFile } = require("../src/utils.js");
+const { parseScript } = require("../src/ast.js");
 
 // Constants
 const CWD = process.cwd();
@@ -27,7 +26,6 @@ const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
-const NODE_CORE_LIBS = new Set([...repl._builtinLibs]);
 const STR = "\n|   ";
 
 // Globals
@@ -463,70 +461,18 @@ async function main() {
 
     // Check for require statment
     {
-        const runtimeDep = new Set();
-        try {
-            for await (const file of getJavascriptFiles(CWD)) {
-                const str = await readFile(file, { encoding: "utf8" });
-                const { body } = cherow.parseScript(str, { next: true });
-
-                for (const stmt of body) {
-                    if (stmt.type === "VariableDeclaration") {
-                        const declaration = stmt.declarations[0];
-                        if (declaration.init.type !== "CallExpression") {
-                            continue;
-                        }
-
-                        if (declaration.init.callee.name !== "require") {
-                            continue;
-                        }
-                        const value = declaration.init.arguments[0].value;
-                        if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
-                            continue;
-                        }
-                        runtimeDep.add(value);
-                    }
-                    else if (stmt.type === "ExpressionStatement") {
-                        if (stmt.expression.type !== "CallExpression") {
-                            continue;
-                        }
-
-                        if (stmt.expression.callee.type === "Identifier") {
-                            if (stmt.expression.callee.name !== "require") {
-                                continue;
-                            }
-
-                            const arg = stmt.expression.arguments[0];
-                            if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
-                                continue;
-                            }
-                            runtimeDep.add(arg.value);
-                        }
-                        else if (stmt.expression.callee.type === "MemberExpression") {
-                            const object = stmt.expression.callee.object;
-
-                            if (typeof object.callee === "undefined") {
-                                continue;
-                            }
-                            if (object.callee.type === "Identifier") {
-                                if (object.callee.name !== "require") {
-                                    continue;
-                                }
-
-                                const arg = object.arguments[0];
-                                if (arg.type !== "Literal" || arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
-                                    continue;
-                                }
-                                runtimeDep.add(arg.value);
-                            }
-                        }
-                    }
-                }
+        const tArr = [];
+        for await (const file of getJavascriptFiles(CWD)) {
+            try {
+                const dep = await parseScript(file);
+                tArr.push(...dep);
+            }
+            catch (err) {
+                console.error(`Failed to parse script ${file}:: ${err.message}`);
             }
         }
-        catch (err) {
-            console.error(err);
-        }
 
+        const runtimeDep = new Set(tArr);
         const dependencies = pkg.dependencies || {};
         for (const dep of runtimeDep) {
             if (Reflect.has(dependencies, dep)) {
@@ -602,6 +548,7 @@ async function main() {
 main()
     .then(() => {
         console.log(`\n Finished with: ${yellow(count.crit)} Criticals and ${yellow(count.warn)} Warnings`);
+        process.exit(0);
     })
     .catch(console.error);
 

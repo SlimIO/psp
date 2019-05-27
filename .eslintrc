@@ -2,6 +2,7 @@
     "extends": "@slimio/eslint-config",
     "rules": {
         "max-lines-per-function": "off",
-        "max-depth": "off"
+        "max-depth": "off",
+        "no-loop-func": "off"
     }
 }
