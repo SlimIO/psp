@@ -18,7 +18,10 @@ function isRequireStatment(node) {
 }
 
 function isVariableDeclarator(node) {
-    if (node.type !== "VariableDeclarator" || node.init.type !== "Literal" || node.id.type !== "Identifier") {
+    if (node.type !== "VariableDeclarator" ||
+        node.init === null ||
+        node.init.type !== "Literal" ||
+        node.id.type !== "Identifier") {
         return false;
     }
 
@@ -41,26 +44,31 @@ async function parseScript(file) {
 
     walk(body, {
         enter(node) {
-            if (isRequireStatment(node)) {
-                const arg = node.arguments[0];
-                if (arg.type === "Identifier") {
-                    if (identifiers.has(arg.name)) {
-                        const value = identifiers.get(arg.name);
-                        if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
+            try {
+                if (isRequireStatment(node)) {
+                    const arg = node.arguments[0];
+                    if (arg.type === "Identifier") {
+                        if (identifiers.has(arg.name)) {
+                            const value = identifiers.get(arg.name);
+                            if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
+                                return;
+                            }
+                            runtimeDep.add(value);
+                        }
+                    }
+                    else if (arg.type === "Literal") {
+                        if (arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
                             return;
                         }
-                        runtimeDep.add(value);
+                        runtimeDep.add(arg.value);
                     }
                 }
-                else if (arg.type === "Literal") {
-                    if (arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
-                        return;
-                    }
-                    runtimeDep.add(arg.value);
+                else if (isVariableDeclarator(node)) {
+                    identifiers.set(node.id.name, node.init.value);
                 }
             }
-            else if (isVariableDeclarator(node)) {
-                identifiers.set(node.id.name, node.init.value);
+            catch (err) {
+                // Ignore
             }
         }
     });
