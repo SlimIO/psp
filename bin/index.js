@@ -467,7 +467,7 @@ async function main() {
                 tArr.push(...dep);
             }
             catch (err) {
-                console.error(err);
+                console.error(`Failed to parse script ${file}:: ${err.message}`);
             }
         }
 
