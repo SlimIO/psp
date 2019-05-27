@@ -101,6 +101,7 @@ const messages = {
             ""
         ];
     },
+    // eslint-disable-next-line
     npmrc: `contain the rule '${yellow("package-lock=false")}' but ${yellow("package-lock.json")} is present at the root of the project`,
     ignoreDir: "directory has been detected has a non-standard directory!",
     pkgDep(typeOfProject, key1, key2) {
@@ -142,10 +143,10 @@ const messages = {
     },
     pkgOthersCtn(keyName, ctn) {
         if (ctn !== undefined) {
-            return `${yellow(keyName)} of package.json mustn't be equal at ${yellow(ctn)}`;
+            return `${yellow(keyName)} property in package.json must be equal to ${yellow(ctn)}`;
         }
 
-        return `${yellow(keyName)} of package.json mustn't be void`;
+        return `${yellow(keyName)} property in package.json mustn't be void`;
     },
     pkgValue(key, value) {
         const pkg = yellow("package.json");

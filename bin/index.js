@@ -13,7 +13,6 @@ const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
 const { cyan, red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 const fileNormalize = require("file-normalize");
-
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
 const msg = require("../src/messages.js");
