@@ -166,7 +166,7 @@ async function checkFileContent(fileName, elemMainDir) {
                         value = Reflect.has(devDep, "ava") ? "ava --verbose" : "node test/test.js";
                     }
 
-                    if (value !== null && scripts[keyScripts] !== value) {
+                    if (value !== null && !scripts[keyScripts].includes(value)) {
                         log(WARN, msg.pkgValue(keyScripts, value));
                     }
                     continue;
