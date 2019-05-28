@@ -149,7 +149,7 @@ async function checkFileContent(fileName, elemMainDir) {
             const requiredDevDep = requiredElem.PKG_DEVDEP;
             const requiredOthers = requiredElem.PKG_OTHERS;
 
-            // Ckeck scripts
+            // eslint-disable-next-line
             for (let [keyScripts, value] of requiredScripts) {
                 const hasC8 = Reflect.has(devDep, "c8");
                 if (keyScripts === "report" && hasC8) {
