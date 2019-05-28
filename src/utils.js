@@ -17,6 +17,7 @@ const requiredElem = require("../src/requiredElems.json");
 // CONSTANTS
 const CWD = process.cwd();
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
+const TPL_DIR = join(__dirname, "..", "template");
 const FILES_TRANSFORM = new Map([
     [".editorconfig", "editorconfig.txt"],
     [".gitignore", "gitignore.txt"],
@@ -75,7 +76,7 @@ async function listContentFile(fileName, setObj, type = "package") {
     let key = "includes";
 
     if (typeof setObj === "undefined") {
-        localFile = await parser(join(__dirname, "..", "template", fileName));
+        localFile = await parser(join(TPL_DIR, FILES_TRANSFORM.get(fileName) || fileName));
         if (fileName === ".gitignore" && type === "napi") {
             localFile.add("build/");
             localFile.add("prebuilds/");
@@ -113,8 +114,9 @@ async function listContentFile(fileName, setObj, type = "package") {
  */
 function readFileLocal(fileName) {
     const originalName = FILES_TRANSFORM.get(fileName) || fileName;
+    const filePath = join(TPL_DIR, originalName);
 
-    return readFile(join(__dirname, "..", "template", originalName), { encoding: "utf8" });
+    return readFile(filePath, { encoding: "utf8" });
 }
 
 module.exports = { getJavascriptFiles, readFileLocal, listContentFile };
