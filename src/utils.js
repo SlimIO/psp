@@ -14,9 +14,14 @@ const { green, red } = require("kleur");
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
 
-// Constants
+// CONSTANTS
 const CWD = process.cwd();
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
+const FILES_TRANSFORM = new Map([
+    [".editorconfig", "editorconfig.txt"],
+    [".gitignore", "gitignore.txt"],
+    [".npmignore", "npmignore.txt"]
+]);
 const { CROSS, CHECK } = requiredElem.E_SEV;
 
 /**
@@ -107,7 +112,9 @@ async function listContentFile(fileName, setObj, type = "package") {
  * @returns {Promise<String>} utf8 String of the file given in argument
  */
 function readFileLocal(fileName) {
-    return readFile(join(__dirname, "..", "template", fileName), { encoding: "utf8" });
+    const originalName = FILES_TRANSFORM.get(fileName) || fileName;
+
+    return readFile(join(__dirname, "..", "template", originalName), { encoding: "utf8" });
 }
 
 module.exports = { getJavascriptFiles, readFileLocal, listContentFile };
