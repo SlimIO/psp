@@ -146,7 +146,7 @@ const messages = {
             return `${yellow(keyName)} property in package.json must be equal to ${yellow(ctn)}`;
         }
 
-        return `${yellow(keyName)} property in package.json mustn't be void`;
+        return `${yellow(keyName)} property in package.json must not be empty`;
     },
     pkgValue(key, value) {
         const pkg = yellow("package.json");
