@@ -4,6 +4,7 @@
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 ![dep](https://img.shields.io/david/SlimIO/psp.svg)
 ![size](https://img.shields.io/github/languages/code-size/SlimIO/psp.svg)
+[![Known Vulnerabilities](https://snyk.io/test/github/SlimIO/psp/badge.svg?targetFile=package.json)](https://snyk.io/test/github/SlimIO/psp?targetFile=package.json)
 [![Build Status](https://travis-ci.com/SlimIO/psp.svg?branch=master)](https://travis-ci.com/SlimIO/psp)
 
 SlimIO - Project Structure Policy. A policy aims to accurately describe the constituent elements of a project. This CLI has been created to apply the following [Specification](https://docs.google.com/document/d/163Fb4HufSck27VW1ZWeEoDPPKGCnVKBo-6Zxbt2Bj64/edit?usp=sharing).
