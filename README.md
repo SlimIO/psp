@@ -1,7 +1,9 @@
 # Project structure policy
-![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
+![version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/SlimIO/psp/master/package.json&query=$.version&label=Version)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
+![dep](https://img.shields.io/david/SlimIO/psp.svg)
+![size](https://img.shields.io/github/languages/code-size/SlimIO/psp.svg)
 
 SlimIO - Project Structure Policy. A policy aims to accurately describe the constituent elements of a project. This CLI has been created to apply the following [Specification](https://docs.google.com/document/d/163Fb4HufSck27VW1ZWeEoDPPKGCnVKBo-6Zxbt2Bj64/edit?usp=sharing).
 
