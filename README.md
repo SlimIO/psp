@@ -54,7 +54,7 @@ $ psp --force
 |[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manifest config file|
 |[cherow](https://github.com/cherow/cherow)|⚠️Major|Low|Javascript parser|
 |[estree-walker](https://github.com/Rich-Harris/estree-walker#readme)|⚠️Major|Low|Retrieves require package|
-|[file-ignore-parser](https://github.com/fraxken/file-ignore-parser#readme)|⚠️Major|Low|Parse .ignore file|
+|[file-ignore-parser](https://github.com/fraxken/file-ignore-parser#readme)|Minor|Low|Parse .ignore file|
 |[file-normalize](https://github.com/jonschlinkert/file-normalize)|⚠️Major|Low|File normalizer|
 |[js-yaml](https://github.com/nodeca/js-yaml)|⚠️Major|Low|YAML parser/writer|
 |[kleur](https://github.com/lukeed/kleur#readme)|Minor|Low|CLI color|
