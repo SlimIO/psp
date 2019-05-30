@@ -271,10 +271,10 @@ function log(severity, message, file) {
 
     // Messages into console
     if (file === undefined) {
-        console.log("|", emoji.get(severity), " :", message);
+        console.log(`| ${emoji.get(severity)} : ${message}`);
     }
     else {
-        console.log("|", emoji.get(severity), " :", colorFileName, message);
+        console.log(`| ${emoji.get(severity)} : ${colorFileName} ${message}`);
     }
 
     // Exit if case critical
