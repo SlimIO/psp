@@ -50,6 +50,9 @@ $ psp --force
 | --npmignore | Show .npmignore file |
 | --editorconfig | Show .editorconfig file |
 
+## API
+TBC
+
 ## Dependencies
 
 |Name|Refactoring|Security Risk|Usage|
