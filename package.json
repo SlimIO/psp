@@ -11,7 +11,15 @@
     "coverage": "nyc npm test",
     "report": "nyc report --reporter=html"
   },
-  "keywords": [],
+  "keywords": [
+      "psp",
+      "tool",
+      "slimio",
+      "project-struct-policy",
+      "policy",
+      "code",
+      "quality"
+  ],
   "author": "SlimIO",
   "license": "MIT",
   "dependencies": {
