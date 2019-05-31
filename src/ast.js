@@ -50,6 +50,7 @@ async function parseScript(file) {
                     if (arg.type === "Identifier") {
                         if (identifiers.has(arg.name)) {
                             const value = identifiers.get(arg.name);
+                            // eslint-disable-next-line
                             if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
                                 return;
                             }
