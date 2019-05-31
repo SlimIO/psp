@@ -39,7 +39,10 @@ async function parseScript(file) {
     const identifiers = new Map();
     const runtimeDep = new Set();
 
-    const str = await readFile(file, { encoding: "utf8" });
+    let str = await readFile(file, { encoding: "utf8" });
+    if (str.charAt(0) === "#") {
+        str = str.slice(str.indexOf("\n"));
+    }
     const { body } = cherow.parseScript(str, { next: true });
 
     walk(body, {
