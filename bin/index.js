@@ -97,9 +97,25 @@ async function checkFileContent(fileName, elemMainDir) {
                 log(WARN, msg.jsdoc, cleanPath);
             }
 
-            const dest = (jsdocParsed.opts || {}).destination;
+            const jsdocOpts = jsdocParsed.opts || {};
+            const dest = jsdocOpts.destination;
             if (typeof dest !== "string" || dest !== "./jsdoc/") {
                 log(WARN, msg.jsdocDestination);
+            }
+
+            let theme = jsdocOpts.template || null;
+            if (theme !== null) {
+                if (theme.startsWith("node_modules/")) {
+                    theme = theme.slice("node_modules/".length);
+                }
+
+                const buf = await readFile(join(process.cwd(), "package.json"));
+                const localPackage = JSON.parse(buf);
+                const devDependencies = localPackage.devDependencies || {};
+
+                if (!Reflect.has(devDependencies, theme)) {
+                    log(WARN, msg.jsdocTheme(theme));
+                }
             }
             break;
         }
