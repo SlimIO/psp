@@ -110,7 +110,7 @@ async function checkFileContent(fileName, elemMainDir) {
                 }
 
                 const buf = await readFile(join(process.cwd(), "package.json"));
-                const localPackage = JSON.parse(buf);
+                const localPackage = JSON.parse(buf.toString());
                 const devDependencies = localPackage.devDependencies || {};
 
                 if (!Reflect.has(devDependencies, theme)) {
@@ -424,7 +424,21 @@ async function main() {
             }
 
             // If binding.gyp file doesn't exist
-            if (!elemMainDir.has("binding.gyp")) {
+            inGyp: if (elemMainDir.has("binding.gyp")) {
+                const buf = await readFile(join(CWD, "binding.gyp"));
+                const binding = JSON.parse(buf.toString());
+
+                if (!Reflect.has(binding.targets[0], "defines")) {
+                    log(WARN, msg.napiExceptions);
+                    break inGyp;
+                }
+
+                const defines = new Set(binding.targets[0].defines);
+                if (!defines.has("NAPI_DISABLE_CPP_EXCEPTIONS")) {
+                    log(WARN, msg.napiExceptions);
+                }
+            }
+            else {
                 log(CRIT, msg.napiBinding.join(STR));
             }
 

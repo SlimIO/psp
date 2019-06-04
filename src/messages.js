@@ -86,6 +86,7 @@ const messages = {
         `must contain a ${yellow("binding.gyp")} file !`,
         ""
     ],
+    napiExceptions: `N-API projects must include '${cyan("NAPI_DISABLE_CPP_EXCEPTIONS")}' in binding.gyp definitions`,
     napiInclude: [
         `${yellow("N-API STRUCTURE")}`,
         "",
