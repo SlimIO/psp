@@ -23,7 +23,7 @@
   "author": "SlimIO",
   "license": "MIT",
   "dependencies": {
-    "@slimio/arg-parser": "^0.3.1",
+    "@slimio/arg-parser": "^0.3.2",
     "@slimio/manifest": "^0.4.0",
     "cherow": "^1.6.9",
     "estree-walker": "^0.6.1",
