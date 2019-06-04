@@ -136,11 +136,13 @@ const messages = {
         "",
         "\"husky\": {",
         "   \"hooks\": {",
+        "      \"pre-push\": \"cross-env eslint index.js && npm test\"",
         "      \"commit-msg\": \"commitlint -E HUSKY_GIT_PARAMS\"",
         "    }",
         "}",
         ""
     ],
+    pkgPrepush: `pre-push husky hook in package.json must include the keywords '${cyan("eslint")}' and '${cyan("npm test")}'`,
     pkgNyc: `if you use ${yellow("nyc")} dependencies, ${yellow("package.json")} file must contain a ${yellow("nyc")} field`,
     pkgOthers(keyOthers) {
         return `file must contain "${yellow(keyOthers)}" property`;

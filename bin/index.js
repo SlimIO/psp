@@ -225,8 +225,14 @@ async function checkFileContent(fileName, elemMainDir) {
                     if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
                         log(WARN, msg.pkgEngines.join(STR));
                     }
-                    if (keyName === "husky" && !Reflect.has(userCtnFileJSON.husky.hooks, "commit-msg")) {
-                        log(WARN, msg.pkgHusky.join(STR));
+                    if (keyName === "husky") {
+                        const hooks = userCtnFileJSON.husky.hooks || {};
+                        if (!Reflect.has(hooks, "commit-msg") || !Reflect.has(hooks, "pre-push")) {
+                            log(WARN, msg.pkgHusky.join(STR));
+                        }
+                        else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
+                            log(WARN, msg.pkgPrepush);
+                        }
                     }
                     continue;
                 }
