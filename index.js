@@ -79,6 +79,9 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
         }
 
         case "jsdoc.json": {
+            if (!ctx.psp.jsdoc) {
+                break;
+            }
             const jsdocParsed = JSON.parse(userCtnFile);
             const include = new Set(jsdocParsed.source.include.map((path) => normalize(path)));
 
@@ -143,6 +146,9 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
         }
 
         case ".npmrc":
+            if (ctx.psp.npmrc === false) {
+                break;
+            }
             if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
                 log(WARN, msg.npmrc, fileName);
             }
@@ -326,6 +332,7 @@ async function psp(forceMode = false) {
     // If type of .toml file isn't valid
     const manifest = Manifest.open();
     ctx.typeOfProject = manifest.type.toLowerCase();
+    ctx.psp = manifest.psp;
 
     // Check version of package/slimio
     if (pkg.version !== manifest.version) {
@@ -438,6 +445,9 @@ async function psp(forceMode = false) {
 
             // If file doesn't exist
             if (skipFiles.has(fileName)) {
+                if (fileName === ".npmrc" && !ctx.psp.npmrc) {
+                    continue;
+                }
                 log(INFO, msg.fileNotExist, fileName);
                 continue;
             }
