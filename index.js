@@ -308,9 +308,10 @@ function logHandler(severity, message, file) {
  * @func psp
  * @param {Boolean} [forceMode=false] enable forceMode
  * @param {String} [CWD=process.cwd()] working dir where we will execute psp!
+ * @param {Boolean} [isCLI=true] enable/disable CLI mode
  * @returns {Promise<void>} Into the console with function log
  */
-async function psp(forceMode = false, CWD = process.cwd()) {
+async function psp(forceMode = false, CWD = process.cwd(), isCLI = true) {
     const ctx = {
         forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD
     };
@@ -323,7 +324,9 @@ async function psp(forceMode = false, CWD = process.cwd()) {
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
         log(CRIT, msg.manifest.join(STR));
-        process.exit(1);
+        if (isCLI) {
+            process.exit(1);
+        }
     }
 
     const str = await readFile(join(CWD, "package.json"));

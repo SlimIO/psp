@@ -5,7 +5,7 @@ declare namespace psp {
     }
 }
 
-declare function psp(forceMode?: boolean, CWD?: string): Promise<psp.count>;
+declare function psp(forceMode?: boolean, CWD?: string, isCLI?: boolean): Promise<psp.count>;
 
 export = psp;
 export as namespace psp;
