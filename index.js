@@ -488,19 +488,14 @@ async function psp(forceMode = false, CWD = process.cwd()) {
         const runtimeDep = new Set(tArr);
         const dependencies = pkg.dependencies || {};
         for (const dep of runtimeDep) {
-            if (Reflect.has(dependencies, dep)) {
-                continue;
+            if (!Reflect.has(dependencies, dep)) {
+                log(WARN, msg.missingDep(dep), "package.json");
             }
-
-            log(WARN, msg.missingDep(dep), "package.json");
         }
 
         const napiDeps = new Set(["node-gyp-build", "node-addon-api"]);
         for (const dep of Object.keys(dependencies)) {
-            if (runtimeDep.has(dep)) {
-                continue;
-            }
-            if (ctx.typeOfProject === "napi" && napiDeps.has(dep)) {
+            if (runtimeDep.has(dep) || (ctx.typeOfProject === "napi" && napiDeps.has(dep))) {
                 continue;
             }
 
