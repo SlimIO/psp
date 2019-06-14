@@ -17,7 +17,6 @@ const { getJavascriptFiles, readFileLocal, listContentFile } = require("./src/ut
 const { parseScript } = require("./src/ast.js");
 
 // CONSTANTS
-const CWD = process.cwd();
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
@@ -35,7 +34,7 @@ const STR = "\n|   ";
  */
 async function checkFileContent(fileName, elemMainDir, ctx) {
     const log = logHandler.bind(ctx);
-    const userCtnFile = await readFile(join(CWD, fileName), { encoding: "utf8" });
+    const userCtnFile = await readFile(join(ctx.CWD, fileName), { encoding: "utf8" });
 
     // Switch all files
     switch (fileName) {
@@ -85,8 +84,8 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
             const jsdocParsed = JSON.parse(userCtnFile);
             const include = new Set(jsdocParsed.source.include.map((path) => normalize(path)));
 
-            for await (const file of getJavascriptFiles(CWD)) {
-                const cleanPath = normalize(relative(CWD, file));
+            for await (const file of getJavascriptFiles(ctx.CWD)) {
+                const cleanPath = normalize(relative(ctx.CWD, file));
                 if (basename(file) === "commitlint.config.js" || include.has(cleanPath)) {
                     continue;
                 }
@@ -308,11 +307,12 @@ function logHandler(severity, message, file) {
  * @async
  * @func psp
  * @param {Boolean} [forceMode=false] enable forceMode
+ * @param {String} [CWD=process.cwd()] working dir where we will execute psp!
  * @returns {Promise<void>} Into the console with function log
  */
-async function psp(forceMode = false) {
+async function psp(forceMode = false, CWD = process.cwd()) {
     const ctx = {
-        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: ""
+        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD
     };
     const log = logHandler.bind(ctx);
     console.log(gray(`\n > Running Project Struct Policy at ${yellow(CWD)}\n`));
