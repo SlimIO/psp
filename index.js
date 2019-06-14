@@ -516,17 +516,18 @@ async function psp(forceMode = false, CWD = process.cwd()) {
         return void 0;
     }
 
-    const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
-    for (const dir of filteredDirs) {
-        switch (dir) {
-            case "src":
-                log(WARN, msg[dir], dir);
-                break;
-            case "test":
-                log(WARN, msg[dir], dir);
-                break;
-            default:
-                log(INFO, msg[dir], dir);
+    // Check directories
+    {
+        const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
+        for (const dir of filteredDirs) {
+            switch (dir) {
+                case "test":
+                case "src":
+                    log(WARN, msg[dir], dir);
+                    break;
+                default:
+                    log(INFO, msg[dir], dir);
+            }
         }
     }
 
