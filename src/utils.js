@@ -15,7 +15,6 @@ const { green, red } = require("kleur");
 const requiredElem = require("../src/requiredElems.json");
 
 // CONSTANTS
-const CWD = process.cwd();
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const TPL_DIR = join(__dirname, "..", "template");
 const FILES_TRANSFORM = new Map([
@@ -65,10 +64,13 @@ async function* getJavascriptFiles(dir) {
  * @description Parse files and generate an array
  * @param {!String} fileName File name parsed
  * @param {Set<String>} [setObj] If local file doesn't exist (Example, README.md)
- * @param {String} [type="package"] project type
+ * @param {Object} options options
+ * @param {String} [options.type="package"] project type
+ * @param {String} [options.CWD] CWD
  * @returns {Promise<Array<String> | null>}
  */
-async function listContentFile(fileName, setObj, type = "package") {
+async function listContentFile(fileName, setObj, options = Object.create(null)) {
+    const { type = "package", CWD = process.cwd() } = options;
     const list = [];
     let userFile = await readFile(join(CWD, fileName));
     let localFile = setObj;
@@ -90,7 +92,7 @@ async function listContentFile(fileName, setObj, type = "package") {
             localFile.add("*.exe");
             localFile.add("*.obj");
         }
-        userFile = await parser(fileName);
+        userFile = await parser(join(CWD, fileName));
         key = "has";
     }
 

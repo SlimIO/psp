@@ -70,7 +70,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
         }
 
         case ".gitignore": {
-            const retList = await listContentFile(fileName, void 0, ctx.typeOfProject);
+            const retList = await listContentFile(fileName, void 0, { type: ctx.typeOfProject, CWD: ctx.CWD });
             if (retList !== null) {
                 log(WARN, msg.gitignore(retList).join(STR), fileName);
             }
@@ -104,7 +104,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                     theme = theme.slice("node_modules/".length);
                 }
 
-                const buf = await readFile(join(process.cwd(), "package.json"));
+                const buf = await readFile(join(ctx.CWD, "package.json"));
                 const localPackage = JSON.parse(buf.toString());
                 const devDependencies = localPackage.devDependencies || {};
 
@@ -116,7 +116,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
         }
 
         case ".npmignore": {
-            const retList = await listContentFile(fileName, void 0, ctx.typeOfProject);
+            const retList = await listContentFile(fileName, void 0, { type: ctx.typeOfProject, CWD: ctx.CWD });
             if (retList !== null) {
                 log(WARN, msg.npmignore(retList).join(STR), fileName);
             }
@@ -252,7 +252,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                 titles.delete("## API");
             }
 
-            const retList = await listContentFile(fileName, titles);
+            const retList = await listContentFile(fileName, titles, { CWD: ctx.CWD });
             if (ctx.typeOfProject === "addon") {
                 break;
             }
@@ -282,11 +282,11 @@ function logHandler(severity, message, file) {
     let colorFileName = yellow().bold(file);
     // Color
     if (severity === CRIT) {
-        this.crit++;
+        this.count.crit++;
         colorFileName = red().bold(file);
     }
     else if (severity === WARN) {
-        this.warn++;
+        this.count.warn++;
     }
 
     // Messages into console
@@ -491,7 +491,9 @@ async function psp(options = Object.create(null)) {
                 tArr.push(...dep);
             }
             catch (err) {
-                console.error(`Failed to parse script ${file}:: ${err.message}`);
+                if (verbose) {
+                    console.error(`Failed to parse script ${file}:: ${err.message}`);
+                }
             }
         }
 
@@ -538,8 +540,8 @@ async function psp(options = Object.create(null)) {
 
     const requiredSets = new Set(REQUIRE_DIR[0]);
     const ignoredSets = await Promise.all([
-        parser(".gitignore"),
-        parser(".npmignore")
+        parser(join(CWD, ".gitignore")),
+        parser(join(CWD, ".npmignore"))
     ]);
     const ignoredFiles = new Set([...ignoredSets[0], ...ignoredSets[1]].map((file) => relative(CWD, file)));
     const ignoredDirs = [...ignoredFiles]
