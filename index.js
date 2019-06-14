@@ -279,11 +279,11 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
  * @returns {void} Into the console
  */
 function logHandler(severity, message, file) {
-    let colorFileName = yellow(file);
+    let colorFileName = yellow().bold(file);
     // Color
     if (severity === CRIT) {
         this.crit++;
-        colorFileName = red(file);
+        colorFileName = red().bold(file);
     }
     else if (severity === WARN) {
         this.warn++;
@@ -316,7 +316,7 @@ async function psp(forceMode = false, CWD = process.cwd(), isCLI = true) {
         forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD
     };
     const log = logHandler.bind(ctx);
-    console.log(gray(`\n > Running Project Struct Policy at ${yellow(CWD)}\n`));
+    console.log(gray().bold(`\n > Running Project Struct Policy at ${yellow().bold(CWD)}\n`));
 
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(CWD));

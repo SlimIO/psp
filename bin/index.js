@@ -45,6 +45,8 @@ async function main() {
     }
 
     const count = await psp(forceMode);
-    console.log(`\n Finished with: ${yellow(count.crit)} Criticals and ${yellow(count.warn)} Warnings`);
+    console.log(
+        white().bold(`\n Finished with: ${yellow().bold(count.crit)} Criticals and ${yellow().bold(count.warn)} Warnings`)
+    );
 }
 main().catch(console.error);
