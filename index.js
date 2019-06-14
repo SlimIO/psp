@@ -290,11 +290,13 @@ function logHandler(severity, message, file) {
     }
 
     // Messages into console
-    if (file === undefined) {
-        console.log(`| ${emoji.get(severity)} : ${message}`);
-    }
-    else {
-        console.log(`| ${emoji.get(severity)} : ${colorFileName} ${message}`);
+    if (this.verbose) {
+        if (file === undefined) {
+            console.log(`| ${emoji.get(severity)} : ${message}`);
+        }
+        else {
+            console.log(`| ${emoji.get(severity)} : ${colorFileName} ${message}`);
+        }
     }
 
     // Exit if case critical
@@ -306,17 +308,22 @@ function logHandler(severity, message, file) {
 /**
  * @async
  * @func psp
- * @param {Boolean} [forceMode=false] enable forceMode
- * @param {String} [CWD=process.cwd()] working dir where we will execute psp!
- * @param {Boolean} [isCLI=true] enable/disable CLI mode
+ * @param {Object} options options
+ * @param {Boolean} [options.forceMode=false] enable forceMode
+ * @param {String} [options.CWD=process.cwd()] working dir where we will execute psp!
+ * @param {Boolean} [options.isCLI=true] enable/disable CLI mode
+ * @param {Boolean} [options.verbose=true] enable/disable verbose mode
  * @returns {Promise<void>} Into the console with function log
  */
-async function psp(forceMode = false, CWD = process.cwd(), isCLI = true) {
+async function psp(options = Object.create(null)) {
+    const { forceMode = false, CWD = process.cwd(), isCLI = true, verbose = true } = options;
     const ctx = {
-        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD
+        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD, verbose
     };
     const log = logHandler.bind(ctx);
-    console.log(gray().bold(`\n > Running Project Struct Policy at ${yellow().bold(CWD)}\n`));
+    if (verbose) {
+        console.log(gray().bold(`\n > Running Project Struct Policy at ${yellow().bold(CWD)}\n`));
+    }
 
     // Read the main directory of user
     const elemMainDir = new Set(await readdir(CWD));
@@ -333,7 +340,7 @@ async function psp(forceMode = false, CWD = process.cwd(), isCLI = true) {
     const pkg = JSON.parse(str);
 
     // If type of .toml file isn't valid
-    const manifest = Manifest.open();
+    const manifest = Manifest.open(join(CWD, "slimio.toml"));
     ctx.typeOfProject = manifest.type.toLowerCase();
     ctx.psp = manifest.psp;
 

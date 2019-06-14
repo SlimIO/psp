@@ -1,11 +1,18 @@
 declare namespace psp {
-    interface count {
+    interface result {
         crit: number;
         warn: number;
     }
+
+    interface options {
+        forceMode?: boolean;
+        CWD?: string;
+        isCLI?: boolean;
+        verbose?: boolean;
+    }
 }
 
-declare function psp(forceMode?: boolean, CWD?: string, isCLI?: boolean): Promise<psp.count>;
+declare function psp(options?: psp.options): Promise<psp.result>;
 
 export = psp;
 export as namespace psp;
