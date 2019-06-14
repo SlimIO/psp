@@ -3,7 +3,7 @@ require("make-promises-safe");
 
 // Require Third-party Dependencies
 const { argDefinition, parseArg, help } = require("@slimio/arg-parser");
-const { cyan, yellow } = require("kleur");
+const { cyan, yellow, white } = require("kleur");
 
 const { readFileLocal } = require("../src/utils.js");
 const psp = require("../index.js");
@@ -13,6 +13,7 @@ async function main() {
     {
         const argDefs = [
             argDefinition("-h --help", "Show help"),
+            argDefinition("-v --version", "Show version"),
             argDefinition("--gitignore", "show gitignore help"),
             argDefinition("--editorconfig", "show editorconfig help"),
             argDefinition("--npmignore", "show npmignore help"),
@@ -20,6 +21,10 @@ async function main() {
         ];
 
         const argv = parseArg(argDefs);
+        if (argv.get("version")) {
+            console.log(white().bold("version 0.5.0"));
+            process.exit(0);
+        }
         if (argv.get("help")) {
             help(argDefs);
             process.exit(0);
