@@ -51,7 +51,22 @@ $ psp --force
 | --editorconfig | Show .editorconfig file |
 
 ## API
-TBC
+PSP is available in API mode too.
+
+```js
+const psp = require("@slimio/psp");
+
+async function main() {
+    const { warn, crit } = await psp({
+        forceMode: true, // <-- stay to true (else it will exit the process on CRIT).
+        CWD: "./dir",
+        isCLI: false, // <-- stay to false (else it will work as it was executed as a CLI).
+        verbose: false
+    });
+    console.log(`warn => ${warn}, crit => ${crit}`);
+}
+main().catch(console.error);
+```
 
 ## Dependencies
 
