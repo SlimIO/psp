@@ -1,8 +1,8 @@
 {
     "E_SEV": {
-        "CRIT": ":no_entry:",
-        "WARN": ":construction:",
-        "INFO": ":eyes:",
+        "CRIT": ":x:",
+        "WARN": ":warning:",
+        "INFO": ":rotating_light:",
         "ARROW_UP": ":arrow_double_up:",
         "ARROW_DOWN": ":arrow_double_down:",
         "CROSS": ":x:",
