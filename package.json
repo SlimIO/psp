@@ -2,7 +2,7 @@
   "name": "@slimio/psp",
   "version": "0.5.2",
   "description": "Analyze compliance with the structural policy of a SlimIO project",
-  "main": "./bin/index.js",
+  "main": "./index.js",
   "scripts": {
     "start": "node index.js",
     "prepublishOnly": "pkg-ok",
