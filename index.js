@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
@@ -25,10 +27,10 @@ const STR = "\n|   ";
 
 /**
  * @async
- * @func checkFileContent
+ * @function checkFileContent
  * @description Check the content of a given fileName
- * @param {!String} fileName file name of the main function
- * @param {!Set<String>} elemMainDir contain array the elements of main directory
+ * @param {!string} fileName file name of the main function
+ * @param {!Set<string>} elemMainDir contain array the elements of main directory
  * @param {any} ctx context
  * @returns {void} Into the console with function log
  */
@@ -271,11 +273,11 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
 }
 
 /**
- * @func logHandler
+ * @function logHandler
  * @description Log infos customs into the console
- * @param {!String} severity emoji with const requiredElem.E_SEV
- * @param {!String} message message MSG module
- * @param {String} file file name
+ * @param {!string} severity emoji with const requiredElem.E_SEV
+ * @param {!string} message message MSG module
+ * @param {string} file file name
  * @returns {void} Into the console
  */
 function logHandler(severity, message, file) {
@@ -307,12 +309,12 @@ function logHandler(severity, message, file) {
 
 /**
  * @async
- * @func psp
- * @param {Object} options options
- * @param {Boolean} [options.forceMode=false] enable forceMode
- * @param {String} [options.CWD=process.cwd()] working dir where we will execute psp!
- * @param {Boolean} [options.isCLI=true] enable/disable CLI mode
- * @param {Boolean} [options.verbose=true] enable/disable verbose mode
+ * @function psp
+ * @param {object} options options
+ * @param {boolean} [options.forceMode=false] enable forceMode
+ * @param {string} [options.CWD=process.cwd()] working dir where we will execute psp!
+ * @param {boolean} [options.isCLI=true] enable/disable CLI mode
+ * @param {boolean} [options.verbose=true] enable/disable verbose mode
  * @returns {Promise<void>} Into the console with function log
  */
 async function psp(options = Object.create(null)) {

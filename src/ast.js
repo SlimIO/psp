@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { readFile } = require("fs").promises;
 const repl = require("repl");
@@ -9,6 +11,11 @@ const cherow = require("cherow");
 // CONSTANTS
 const NODE_CORE_LIBS = new Set([...repl._builtinLibs]);
 
+/**
+ * @function isRequireStatment
+ * @param {*} node
+ * @returns {boolean}
+ */
 function isRequireStatment(node) {
     if (node.type !== "CallExpression" || node.callee.name !== "require") {
         return false;
@@ -17,6 +24,11 @@ function isRequireStatment(node) {
     return true;
 }
 
+/**
+ * @function isVariableDeclarator
+ * @param {*} node
+ * @returns {boolean}
+ */
 function isVariableDeclarator(node) {
     if (node.type !== "VariableDeclarator" ||
         node.init === null ||
@@ -30,10 +42,10 @@ function isVariableDeclarator(node) {
 
 /**
  * @async
- * @func parseScript
- * @desc Parse a script, get an AST and search for require occurence!
- * @param {!String} file file location
- * @returns {Set<String>}
+ * @function parseScript
+ * @description Parse a script, get an AST and search for require occurence!
+ * @param {!string} file file location
+ * @returns {Set<string>}
  */
 async function parseScript(file) {
     const identifiers = new Map();

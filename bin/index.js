@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 require("make-promises-safe");
 
 // Require Third-party Dependencies
@@ -8,6 +10,11 @@ const { cyan, yellow, white } = require("kleur");
 const { readFileLocal } = require("../src/utils.js");
 const psp = require("../index.js");
 
+/**
+ * @async
+ * @function main
+ * @returns {Promise<void>}
+ */
 async function main() {
     let forceMode = false;
     {

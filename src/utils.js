@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @namespace Utils
  */
@@ -27,10 +29,10 @@ const { CROSS, CHECK } = requiredElem.E_SEV;
 /**
  * @async
  * @generator
- * @func getJavascriptFiles
+ * @function getJavascriptFiles
  * @memberof Utils
- * @param {!String} dir root directory
- * @returns {AsyncIterableIterator<String>}
+ * @param {!string} dir root directory
+ * @returns {AsyncIterableIterator<string>}
  */
 async function* getJavascriptFiles(dir) {
     const files = await readdir(dir);
@@ -60,14 +62,14 @@ async function* getJavascriptFiles(dir) {
 
 /**
  * @async
- * @func listContentFile
+ * @function listContentFile
  * @description Parse files and generate an array
- * @param {!String} fileName File name parsed
- * @param {Set<String>} [setObj] If local file doesn't exist (Example, README.md)
- * @param {Object} options options
- * @param {String} [options.type="package"] project type
- * @param {String} [options.CWD] CWD
- * @returns {Promise<Array<String> | null>}
+ * @param {!string} fileName File name parsed
+ * @param {Set<string>} [setObj] If local file doesn't exist (Example, README.md)
+ * @param {object} options options
+ * @param {string} [options.type="package"] project type
+ * @param {string} [options.CWD] CWD
+ * @returns {Promise<Array<string>|null>}
  */
 async function listContentFile(fileName, setObj, options = Object.create(null)) {
     const { type = "package", CWD = process.cwd() } = options;
@@ -109,10 +111,10 @@ async function listContentFile(fileName, setObj, options = Object.create(null)) 
 }
 
 /**
- * @func readFileLocal
+ * @function readFileLocal
  * @description Read the file given in argument
- * @param {!String} fileName file name of the main function
- * @returns {Promise<String>} utf8 String of the file given in argument
+ * @param {!string} fileName file name of the main function
+ * @returns {Promise<string>} utf8 String of the file given in argument
  */
 function readFileLocal(fileName) {
     const originalName = FILES_TRANSFORM.get(fileName) || fileName;

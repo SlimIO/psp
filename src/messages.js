@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Third-party Dependencies
 const { green, yellow, cyan, red } = require("kleur");
 
