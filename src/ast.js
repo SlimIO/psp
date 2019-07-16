@@ -9,7 +9,9 @@ const { walk } = require("estree-walker");
 const cherow = require("cherow");
 
 // CONSTANTS
+const BINARY_EXPR_TYPES = new Set(["Literal", "BinaryExpression", "Identifier"]);
 const NODE_CORE_LIBS = new Set([...repl._builtinLibs]);
+NODE_CORE_LIBS.add("timers");
 
 /**
  * @function isRequireStatment
@@ -41,6 +43,42 @@ function isVariableDeclarator(node) {
 }
 
 /**
+ * @function concatBinaryExpr
+ * @param {*} node
+ * @param {Map<string, any>} identifiers
+ * @returns {string | null}
+ */
+function concatBinaryExpr(node, identifiers) {
+    const { left, right } = node;
+    if (!BINARY_EXPR_TYPES.has(left.type) || !BINARY_EXPR_TYPES.has(right.type)) {
+        return null;
+    }
+    let str = "";
+
+    for (const childNode of [left, right]) {
+        switch (childNode.type) {
+            case "BinaryExpression": {
+                const value = concatBinaryExpr(childNode, identifiers);
+                if (value !== null) {
+                    str += value;
+                }
+                break;
+            }
+            case "Literal":
+                str += childNode.value;
+                break;
+            case "Identifier":
+                if (identifiers.has(childNode.name)) {
+                    str += identifiers.get(childNode.name);
+                }
+                break;
+        }
+    }
+
+    return str;
+}
+
+/**
  * @async
  * @function parseScript
  * @description Parse a script, get an AST and search for require occurence!
@@ -50,6 +88,20 @@ function isVariableDeclarator(node) {
 async function parseScript(file) {
     const identifiers = new Map();
     const runtimeDep = new Set();
+
+    // eslint-disable-next-line
+    function addDep(value) {
+        if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
+            return;
+        }
+
+        if (value.charAt(0) === "@") {
+            runtimeDep.add(value);
+        }
+        else {
+            runtimeDep.add(value.includes("/") ? value.split("/")[0] : value);
+        }
+    }
 
     let str = await readFile(file, { encoding: "utf8" });
     if (str.charAt(0) === "#") {
@@ -64,19 +116,17 @@ async function parseScript(file) {
                     const arg = node.arguments[0];
                     if (arg.type === "Identifier") {
                         if (identifiers.has(arg.name)) {
-                            const value = identifiers.get(arg.name);
-                            // eslint-disable-next-line
-                            if (value.charAt(0) === "." || NODE_CORE_LIBS.has(value)) {
-                                return;
-                            }
-                            runtimeDep.add(value);
+                            addDep(identifiers.get(arg.name));
                         }
                     }
                     else if (arg.type === "Literal") {
-                        if (arg.value.charAt(0) === "." || NODE_CORE_LIBS.has(arg.value)) {
-                            return;
+                        addDep(arg.value);
+                    }
+                    else if (arg.type === "BinaryExpression" && arg.operator === "+") {
+                        const value = concatBinaryExpr(arg, identifiers);
+                        if (value !== null) {
+                            addDep(value);
                         }
-                        runtimeDep.add(arg.value);
                     }
                 }
                 else if (isVariableDeclarator(node)) {
