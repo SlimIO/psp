@@ -7,6 +7,7 @@
     },
     "source": {
         "include": [
+            "./index.js",
             "./bin/index.js",
             "./src/ast.js",
             "./src/messages.js",
