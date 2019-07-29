@@ -21,6 +21,13 @@
   ],
   "author": "SlimIO",
   "license": "MIT",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "src/**",
+    "template/**",
+    "bin/index.js"
+  ],
   "dependencies": {
     "@slimio/arg-parser": "^0.3.2",
     "@slimio/manifest": "^0.6.0",

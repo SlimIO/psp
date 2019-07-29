@@ -358,6 +358,7 @@ async function psp(options = Object.create(null)) {
 
     const str = await readFile(join(CWD, "package.json"));
     const pkg = JSON.parse(str);
+    const pkgHasWhiteList = Reflect.has(pkg, "files");
 
     // If type of .toml file isn't valid
     const manifest = Manifest.open(join(CWD, "slimio.toml"));
@@ -494,6 +495,11 @@ async function psp(options = Object.create(null)) {
                 continue;
             }
 
+            // Ignore npm ignore if we have a white list in package.json
+            if (fileName === ".npmignore" && pkgHasWhiteList) {
+                continue;
+            }
+
             log(CRIT, msg.fileNotExist, fileName);
             if (ctx.forceMode) {
                 continue;
@@ -568,7 +574,7 @@ async function psp(options = Object.create(null)) {
     const requiredSets = new Set(REQUIRE_DIR[0]);
     const ignoredSets = await Promise.all([
         parser(join(CWD, ".gitignore")),
-        parser(join(CWD, ".npmignore"))
+        pkgHasWhiteList ? pkg.files : parser(join(CWD, ".npmignore"))
     ]);
     const ignoredFiles = new Set([...ignoredSets[0], ...ignoredSets[1]].map((file) => relative(CWD, file)));
     const ignoredDirs = [...ignoredFiles]
