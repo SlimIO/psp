@@ -184,15 +184,16 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
             // eslint-disable-next-line
             for (let [keyScripts, value] of requiredScripts) {
                 const hasC8 = Reflect.has(devDep, "c8");
-                if (keyScripts === "report" && hasC8) {
+                const hasJest = Reflect.has(devDep, "jest");
+                if (keyScripts === "report" && (hasC8 || hasJest)) {
+                    continue;
+                }
+                if (keyScripts === "coverage" && hasJest) {
                     continue;
                 }
 
                 if (Reflect.has(scripts, keyScripts)) {
-                    if (keyScripts === "coverage" && Reflect.has(devDep, "jest")) {
-                        continue;
-                    }
-                    else if (keyScripts === "coverage") {
+                    if (keyScripts === "coverage") {
                         value = hasC8 ? "c8 -r=\"html\" npm test" : "nyc npm test";
                     }
                     else if (keyScripts === "test") {
