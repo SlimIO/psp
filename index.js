@@ -26,6 +26,22 @@ const { WARN, CRIT, INFO } = requiredElem.E_SEV;
 const STR = "\n|   ";
 
 /**
+ * @function getTestingPhrase
+ * @param {*} devDep
+ * @returns {string}
+ */
+function getTestingPhrase(devDep) {
+    if (Reflect.has(devDep, "ava")) {
+        return "ava";
+    }
+    if (Reflect.has(devDep, "jest")) {
+        return "jest";
+    }
+
+    return "node test/test.js";
+}
+
+/**
  * @async
  * @function checkFileContent
  * @description Check the content of a given fileName
@@ -173,13 +189,14 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                 }
 
                 if (Reflect.has(scripts, keyScripts)) {
-                    if (keyScripts === "coverage") {
-                        // eslint-disable-next-line
+                    if (keyScripts === "coverage" && Reflect.has(devDep, "jest")) {
+                        continue;
+                    }
+                    else if (keyScripts === "coverage") {
                         value = hasC8 ? "c8 -r=\"html\" npm test" : "nyc npm test";
                     }
                     else if (keyScripts === "test") {
-                        // eslint-disable-next-line
-                        value = Reflect.has(devDep, "ava") ? "ava --verbose" : "node test/test.js";
+                        value = getTestingPhrase(devDep);
                     }
 
                     if (value !== null && !scripts[keyScripts].includes(value)) {
