@@ -31,13 +31,13 @@
   "dependencies": {
     "@slimio/arg-parser": "^0.3.2",
     "@slimio/manifest": "^0.7.0",
-    "cherow": "^1.6.9",
     "estree-walker": "^0.6.1",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
     "js-yaml": "^3.13.1",
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.0.0",
+    "meriyah": "^1.5.0",
     "node-emoji": "^1.10.0"
   },
   "devDependencies": {
