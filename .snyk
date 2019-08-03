@@ -1,0 +1,50 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - '@commitlint/cli > @commitlint/lint > @commitlint/parse > conventional-commits-parser > lodash':
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - eslint > inquirer > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - eslint > table > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - '@slimio/eslint-config > eslint > lodash':
+        patched: '2019-08-03T08:13:39.267Z'
+    - '@slimio/eslint-config > eslint > table > lodash':
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @babel/generator > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - '@slimio/eslint-config > eslint > inquirer > lodash':
+        patched: '2019-08-03T08:13:39.267Z'
+    - nyc > istanbul-lib-instrument > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - '@commitlint/cli > @commitlint/lint > @commitlint/parse > lodash':
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @babel/core > @babel/traverse > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @babel/core > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-transform-test-files > babel-plugin-espower > @babel/generator > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - nyc > istanbul-lib-instrument > @babel/generator > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @babel/core > @babel/helpers > @babel/traverse > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - nyc > istanbul-lib-instrument > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-transform-test-files > babel-plugin-espower > @babel/generator > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-stage-4 > @babel/plugin-transform-modules-commonjs > @babel/helper-module-transforms > @babel/helper-simple-access > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - nyc > istanbul-lib-instrument > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-stage-4 > @babel/plugin-proposal-async-generator-functions > @babel/helper-remap-async-to-generator > @babel/helper-wrap-function > @babel/traverse > @babel/generator > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-stage-4 > @babel/plugin-proposal-async-generator-functions > @babel/helper-remap-async-to-generator > @babel/helper-wrap-function > @babel/traverse > @babel/generator > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
+    - ava > @ava/babel-preset-stage-4 > @babel/plugin-proposal-async-generator-functions > @babel/helper-remap-async-to-generator > @babel/helper-wrap-function > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-08-03T08:13:39.267Z'
