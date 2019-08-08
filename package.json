@@ -37,7 +37,7 @@
     "js-yaml": "^3.13.1",
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.0.0",
-    "meriyah": "^1.5.0",
+    "meriyah": "^1.6.2",
     "node-emoji": "^1.10.0"
   },
   "devDependencies": {
