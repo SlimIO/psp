@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@slimio/arg-parser": "^0.3.2",
-    "@slimio/manifest": "^0.7.0",
+    "@slimio/manifest": "^0.7.1",
     "estree-walker": "^0.6.1",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
