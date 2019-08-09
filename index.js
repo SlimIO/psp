@@ -23,6 +23,7 @@ const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const { WARN, CRIT, INFO } = requiredElem.E_SEV;
+const SKIP_FILE_CONTENT = new Set([".eslintrc", "jsdoc.json"]);
 const STR = "\n|   ";
 
 /**
@@ -51,6 +52,9 @@ function getTestingPhrase(devDep) {
  * @returns {void} Into the console with function log
  */
 async function checkFileContent(fileName, elemMainDir, ctx) {
+    if (ctx.typeOfProject === "degraded" && SKIP_FILE_CONTENT.has(fileName)) {
+        return;
+    }
     const log = logHandler.bind(ctx);
     const userCtnFile = await readFile(join(ctx.CWD, fileName), { encoding: "utf8" });
 
@@ -222,7 +226,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                 if (Reflect.has(devDep, keyDepDev)) {
                     continue;
                 }
-                log(WARN, msg.pkgDevDep(keyDepDev), fileName);
+                log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgDevDep(keyDepDev), fileName);
             }
 
             // Check others fields
@@ -249,7 +253,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                             log(WARN, msg.pkgHusky.join(STR));
                         }
                         else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
-                            log(WARN, msg.pkgPrepush);
+                            log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgPrepush);
                         }
                     }
                     continue;
@@ -268,7 +272,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
         case "README.md": {
             const userCtnFileLCase = userCtnFile.toLowerCase();
             const titles = new Set(requiredElem.README_TITLES);
-            if (ctx.typeOfProject === "cli" || ctx.typeOfProject === "service") {
+            if (ctx.typeOfProject === "cli" || ctx.typeOfProject === "service" || ctx.typeOfProject === "degraded") {
                 titles.delete("## API");
             }
 
@@ -472,12 +476,17 @@ async function psp(options = Object.create(null)) {
 
     // Loop on required files array
     const skipFiles = new Set(["index.d.ts", ".npmrc", ".travis.yml"]);
+    const skipDegraded = new Set([".eslintrc", "jsdoc.json"]);
     const skipTypes = new Set(["addon", "cli", "service"]);
     for (const fileName of requiredElem.FILE_TO_CHECKS) {
         if (!elemMainDir.has(fileName)) {
             // If type === addon
             const isAddonOrCLI = skipTypes.has(ctx.typeOfProject);
             if (fileName === "index.d.ts" && isAddonOrCLI) {
+                continue;
+            }
+
+            if (ctx.typeOfProject === "degraded" && skipDegraded.has(fileName)) {
                 continue;
             }
 
@@ -500,7 +509,7 @@ async function psp(options = Object.create(null)) {
                 continue;
             }
 
-            log(CRIT, msg.fileNotExist, fileName);
+            log(ctx.typeOfProject === "degraded" ? WARN : CRIT, msg.fileNotExist, fileName);
             if (ctx.forceMode) {
                 continue;
             }
@@ -563,7 +572,9 @@ async function psp(options = Object.create(null)) {
             switch (dir) {
                 case "test":
                 case "src":
-                    log(WARN, msg[dir], dir);
+                    if (ctx.typeOfProject !== "degraded") {
+                        log(WARN, msg[dir], dir);
+                    }
                     break;
                 default:
                     log(INFO, msg[dir], dir);
