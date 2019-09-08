@@ -11,6 +11,7 @@ const parser = require("file-ignore-parser");
 const { red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
 const fileNormalize = require("file-normalize");
+const marked = require("marked");
 
 // Require Internal Dependencies
 const requiredElem = require("./src/requiredElems.json");
@@ -274,6 +275,27 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
             const titles = new Set(requiredElem.README_TITLES);
             if (ctx.typeOfProject === "cli" || ctx.typeOfProject === "service" || ctx.typeOfProject === "degraded") {
                 titles.delete("## API");
+            }
+
+            // Check badges
+            const tokens = marked.lexer(userCtnFile);
+            if (tokens.length > 2 && tokens[1].type === "paragraph") {
+                const lines = tokens[1].text.split("\n");
+                const badges = new Set();
+                for (const text of lines) {
+                    const result = /\[?!\[([a-zA-Z\s]+)\]/g.exec(text);
+                    if (result !== null) {
+                        badges.add(result[1].toLowerCase());
+                    }
+                }
+
+                const difference = requiredElem.MD_BADGES.filter((value) => !badges.has(value));
+                if (difference.length > 0) {
+                    log(WARN, msg.missingBadges(difference), fileName);
+                }
+            }
+            else {
+                log(WARN, msg.missingBadges(requiredElem.MD_BADGES), fileName);
             }
 
             const retList = await listContentFile(fileName, titles, { CWD: ctx.CWD });

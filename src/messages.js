@@ -4,6 +4,9 @@
 const { green, yellow, cyan, red } = require("kleur");
 
 const messages = {
+    missingBadges(diff) {
+        return `Some badges are missing: ${diff.map((value) => cyan().bold(value)).join(", ")}`;
+    },
     env: `file is required for ${cyan().bold("Service")} projects`,
     dotenv: `dotenv package is required (as devDependencies) for ${cyan().bold("Service")} projects`,
     cliGlobal: `Package.json '${cyan().bold("preferGlobal")}' key is '${red("DEPRECATED")}' (please remove)`,

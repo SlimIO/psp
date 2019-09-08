@@ -113,5 +113,15 @@
         "napi",
         "addon",
         "package"
+    ],
+    "MD_BADGES": [
+        "version",
+        "maintenance",
+        "mit",
+        "dep",
+        "size",
+        "known vulnerabilities",
+        "build status",
+        "greenkeeper badge"
     ]
 }
