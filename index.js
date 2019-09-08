@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { readdir, readFile, stat } = require("fs").promises;
-const { join, basename, relative, normalize, toNamespacedPath } = require("path");
+const { join, basename, relative, normalize } = require("path");
 const assert = require("assert").strict;
 
 // Require Third-party Dependencies
@@ -549,12 +549,11 @@ async function psp(options = Object.create(null)) {
     // Check for require statment
     {
         const tArr = [];
-        const pspExcludes = ctx.psp.exclude.map((str) => relative(CWD, str));
 
         fLabel: for await (const file of getJavascriptFiles(CWD)) {
-            const fileRelative = relative(CWD, file);
-            for (const path of pspExcludes) {
-                if (fileRelative.startsWith(path)) {
+            const relativeFile = relative(CWD, file);
+            for (const path of ctx.psp.exclude) {
+                if (relativeFile.startsWith(path)) {
                     continue fLabel;
                 }
             }
@@ -571,6 +570,7 @@ async function psp(options = Object.create(null)) {
         }
 
         const runtimeDep = new Set(tArr);
+        console.log(runtimeDep);
         const dependencies = pkg.dependencies || {};
         for (const dep of runtimeDep) {
             if (!Reflect.has(dependencies, dep)) {
