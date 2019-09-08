@@ -570,7 +570,6 @@ async function psp(options = Object.create(null)) {
         }
 
         const runtimeDep = new Set(tArr);
-        console.log(runtimeDep);
         const dependencies = pkg.dependencies || {};
         for (const dep of runtimeDep) {
             if (!Reflect.has(dependencies, dep)) {
@@ -629,8 +628,14 @@ async function psp(options = Object.create(null)) {
         if (ctx.typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
             continue;
         }
+        if (dir === ".env") {
+            continue;
+        }
+        if (dir === "bin" && ctx.typeOfProject === "cli") {
+            continue;
+        }
 
-        const st = await stat(dir);
+        const st = await stat(join(CWD, dir));
         if (!st.isDirectory()) {
             continue;
         }
