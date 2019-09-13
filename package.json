@@ -38,7 +38,7 @@
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.0.0",
     "marked": "^0.7.0",
-    "meriyah": "^1.6.18",
+    "meriyah": "^1.7.0",
     "node-emoji": "^1.10.0"
   },
   "devDependencies": {
