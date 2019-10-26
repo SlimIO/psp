@@ -245,7 +245,7 @@ async function checkFileContent(fileName, elemMainDir, ctx) {
                     if (keyName === "description" && userCtnFileJSON.description === "") {
                         log(WARN, msg.pkgOthersCtn(keyName));
                     }
-                    if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=10") {
+                    if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=12") {
                         log(WARN, msg.pkgEngines.join(STR));
                     }
                     if (keyName === "husky") {
