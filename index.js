@@ -3,6 +3,7 @@
 // Require Node.js Dependencies
 const { readdir, readFile, stat } = require("fs").promises;
 const { join, basename, relative, normalize } = require("path");
+const { pathToFileURL } = require("url");
 const assert = require("assert").strict;
 
 // Require Third-party Dependencies
@@ -400,16 +401,22 @@ async function psp(options = Object.create(null)) {
         let addon = null;
         try {
             const main = pkg.main || "index.js";
-            // eslint-disable-next-line
-            addon = require(join(CWD, main));
+            if (pkg.type === "module") {
+                const addonEntryFile = pathToFileURL(join(CWD, main));
+                addon = (await import(addonEntryFile)).default;
+            }
+            else {
+                // eslint-disable-next-line
+                addon = require(join(CWD, main));
+            }
             assert.strictEqual(addon.constructor.name, "Addon");
+
+            if (addon.name !== manifest.name) {
+                log(CRIT, msg.nameDiff);
+            }
         }
         catch (err) {
             log(CRIT, msg.exportAddon);
-        }
-
-        if (addon.name !== manifest.name) {
-            log(CRIT, msg.nameDiff);
         }
     }
 

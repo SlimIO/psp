@@ -45,7 +45,7 @@
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@escommunity/minami": "^1.0.0",
-    "@slimio/eslint-config": "^3.0.3",
+    "@slimio/eslint-config": "^4.0.0-next.3",
     "ava": "^2.4.0",
     "cross-env": "^6.0.3",
     "dotenv": "^8.2.0",
