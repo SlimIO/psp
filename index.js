@@ -99,6 +99,10 @@ async function psp(options = Object.create(null)) {
     if (pkgHasWhiteList && Array.isArray(pkg.files)) {
         const matchingFiles = await globby(pkg.files);
         for (const path of pkg.files) {
+            if (path.includes("*")) {
+                continue;
+            }
+
             const someMatch = matchingFiles.some((completeName) => completeName.startsWith(path));
             if (!someMatch) {
                 log(CRIT, msg.pubNoMatch(path));
