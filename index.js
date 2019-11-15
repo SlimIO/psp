@@ -37,7 +37,6 @@ const STR = "\n|   ";
  */
 function logHandler(severity, message, file) {
     let colorFileName = yellow().bold(file);
-    // Color
     if (severity === CRIT) {
         this.count.crit++;
         colorFileName = red().bold(file);
