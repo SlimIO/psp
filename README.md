@@ -69,6 +69,9 @@ async function main() {
 main().catch(console.error);
 ```
 
+## Get a global overview of many projects
+The [SlimIO Sync](https://github.com/SlimIO/Sync) project allow to run a command to get a global overview of warnings of all projects in the current working dir.
+
 ## Dependencies
 
 |Name|Refactoring|Security Risk|Usage|
