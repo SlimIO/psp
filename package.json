@@ -39,7 +39,8 @@
     "marked": "^0.7.0",
     "meriyah": "^1.8.6",
     "node-emoji": "^1.10.0",
-    "sade": "^1.6.1"
+    "sade": "^1.6.1",
+    "semver": "^6.3.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",

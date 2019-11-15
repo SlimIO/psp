@@ -23,6 +23,9 @@ const messages = {
     travis(err) {
         return `Error detected (${cyan().bold(err)})`;
     },
+    travisRange(range) {
+        return `required Node.js engine version must respect the following range: ${cyan().bold(range)}`;
+    },
     binNotExist: [
         `${yellow().bold("CLI STRUCTURE")}`,
         "",
