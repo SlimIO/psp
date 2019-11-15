@@ -261,6 +261,7 @@ async function psp(options = Object.create(null)) {
     // Check for require statment
     {
         const tempDependenciesArray = [];
+        const isESM = Reflect.has(pkg, "type") && pkg.type === "module";
 
         for await (const file of getJavascriptFiles(CWD)) {
             const relativeFile = relative(CWD, file);
@@ -269,7 +270,7 @@ async function psp(options = Object.create(null)) {
             }
 
             try {
-                const dep = await parseScript(file);
+                const dep = await parseScript(file, { module: isESM });
                 tempDependenciesArray.push(...dep);
             }
             catch (err) {

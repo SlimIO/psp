@@ -26,6 +26,15 @@ function isRequireStatment(node) {
 }
 
 /**
+ * @function isImportStatment
+ * @param {*} node
+ * @returns {boolean}
+ */
+function isImportStatment(node) {
+    return node.type === "ImportDeclaration";
+}
+
+/**
  * @function isVariableDeclarator
  * @param {*} node
  * @returns {boolean}
@@ -82,9 +91,12 @@ function concatBinaryExpr(node, identifiers) {
  * @function parseScript
  * @description Parse a script, get an AST and search for require occurence!
  * @param {!string} file file location
+ * @param {Object} [options]
+ * @param {boolean} [options.module=false]
  * @returns {Set<string>}
  */
-async function parseScript(file) {
+async function parseScript(file, options = {}) {
+    const { module = false } = options;
     const identifiers = new Map();
     const runtimeDep = new Set();
 
@@ -106,12 +118,12 @@ async function parseScript(file) {
     if (str.charAt(0) === "#") {
         str = str.slice(str.indexOf("\n"));
     }
-    const { body } = meriyah.parseScript(str, { next: true });
+    const { body } = meriyah.parseScript(str, { next: true, module });
 
     walk(body, {
         enter(node) {
             try {
-                if (isRequireStatment(node)) {
+                if (!module && isRequireStatment(node)) {
                     const arg = node.arguments[0];
                     if (arg.type === "Identifier") {
                         if (identifiers.has(arg.name)) {
@@ -126,6 +138,13 @@ async function parseScript(file) {
                         if (value !== null) {
                             addDep(value);
                         }
+                    }
+                }
+                else if (module && isImportStatment(node)) {
+                    const source = node.source;
+
+                    if (source.type === "Literal") {
+                        addDep(source.value);
                     }
                 }
                 else if (isVariableDeclarator(node)) {
