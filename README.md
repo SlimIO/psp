@@ -73,16 +73,19 @@ main().catch(console.error);
 
 |Name|Refactoring|Security Risk|Usage|
 |---|---|---|---|
-|[@slimio/arg-parser](https://github.com/SlimIO/ArgParser#readme)|Minor|Low|CLI argument parser|
 |[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|SlimIO Manifest manager|
-|[cherow](https://github.com/cherow/cherow)|⚠️Major|Low|JavaScript parser (ESTree compliant)|
 |[estree-walker](https://github.com/Rich-Harris/estree-walker#readme)|⚠️Major|Low|Simple utility for walking an ESTree-compliant AST|
 |[file-ignore-parser](https://github.com/fraxken/file-ignore-parser#readme)|Minor|Low|Parse .ignore file|
 |[file-normalize](https://github.com/jonschlinkert/file-normalize)|⚠️Major|Low|File normalizer|
+|[globby](https://github.com/sindresorhus/globby#readme)|Minor|High|TBC|
 |[js-yaml](https://github.com/nodeca/js-yaml)|⚠️Major|Low|YAML parser/writer|
 |[kleur](https://github.com/lukeed/kleur#readme)|Minor|Low|color for TTY|
 |[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Low|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
+|[marked](https://marked.js.org)|Minor|Low|TBC|
+|[meriyah](https://github.com/meriyah/meriyah)|Minor|Low|TBC|
 |[node-emoji](https://github.com/omnidan/node-emoji#readme)|⚠️Major|Low|Emoji List|
+|[sade](https://github.com/lukeed/sade#readme)|Minor|Low|Sade is a small but powerful tool for building command-line interface (CLI) applications for Node.js that are fast, responsive, and helpful!|
+|[semver](https://github.com/npm/node-semver)|⚠️Major|Low|Semver parser/utilities for node|
 
 ## License
 MIT

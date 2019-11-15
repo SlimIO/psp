@@ -10,6 +10,7 @@ const { pathToFileURL } = require("url");
 const emoji = require("node-emoji");
 const parser = require("file-ignore-parser");
 const Manifest = require("@slimio/manifest");
+const globby = require("globby");
 const { red, yellow, gray } = require("kleur");
 
 // Require Internal Dependencies
@@ -95,6 +96,15 @@ async function psp(options = Object.create(null)) {
     const str = await readFile(join(CWD, "package.json"));
     const pkg = JSON.parse(str);
     const pkgHasWhiteList = Reflect.has(pkg, "files");
+    if (pkgHasWhiteList && Array.isArray(pkg.files)) {
+        const matchingFiles = await globby(pkg.files);
+        for (const path of pkg.files) {
+            const someMatch = matchingFiles.some((completeName) => completeName.startsWith(path));
+            if (!someMatch) {
+                log(CRIT, msg.pubNoMatch(path));
+            }
+        }
+    }
 
     // If type of .toml file isn't valid
     const manifest = Manifest.open(join(CWD, "slimio.toml"));

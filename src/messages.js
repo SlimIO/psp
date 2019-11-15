@@ -207,6 +207,9 @@ const messages = {
     test: "folder doesn't exist ! He is required to test your project.",
     eslintignore(path) {
         return `unauthorized path: ${cyan().bold(path)}`;
+    },
+    pubNoMatch(pattern) {
+        return `unable to match local file or path '${cyan().bold(pattern)}' from the package.json whitelist (files)`;
     }
 };
 
