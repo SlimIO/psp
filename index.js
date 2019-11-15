@@ -24,6 +24,7 @@ const { WARN, CRIT, INFO } = require("./src/severities");
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
+const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
 const STR = "\n|   ";
 
 /**
@@ -253,30 +254,24 @@ async function psp(options = Object.create(null)) {
             }
         }
 
-        // If file is excluded, continue
-        if (EXCLUDE_FILES.has(fileName)) {
-            continue;
+        if (!EXCLUDE_FILES.has(fileName)) {
+            await checkFileContent(fileName, logHandler.bind(ctx), ctx);
         }
-
-        // Switch all files
-        await checkFileContent(fileName, logHandler.bind(ctx), ctx);
     }
 
     // Check for require statment
     {
-        const tArr = [];
+        const tempDependenciesArray = [];
 
-        fLabel: for await (const file of getJavascriptFiles(CWD)) {
+        for await (const file of getJavascriptFiles(CWD)) {
             const relativeFile = relative(CWD, file);
-            for (const path of ctx.psp.exclude) {
-                if (relativeFile.startsWith(path)) {
-                    continue fLabel;
-                }
+            if (ctx.psp.exclude.some((path) => relativeFile.startsWith(path))) {
+                continue;
             }
 
             try {
                 const dep = await parseScript(file);
-                tArr.push(...dep);
+                tempDependenciesArray.push(...dep);
             }
             catch (err) {
                 if (verbose) {
@@ -285,7 +280,7 @@ async function psp(options = Object.create(null)) {
             }
         }
 
-        const runtimeDep = new Set(tArr);
+        const runtimeDep = new Set(tempDependenciesArray);
         const dependencies = pkg.dependencies || {};
         for (const dep of runtimeDep) {
             if (!Reflect.has(dependencies, dep)) {
@@ -293,9 +288,9 @@ async function psp(options = Object.create(null)) {
             }
         }
 
-        const napiDeps = new Set(["node-gyp-build", "node-addon-api"]);
+
         for (const dep of Object.keys(dependencies)) {
-            if (runtimeDep.has(dep) || (ctx.typeOfProject === "napi" && napiDeps.has(dep))) {
+            if (runtimeDep.has(dep) || (ctx.typeOfProject === "napi" && NAPI_DEPENDENCIES.has(dep))) {
                 continue;
             }
 
@@ -303,29 +298,28 @@ async function psp(options = Object.create(null)) {
         }
     }
 
-    // Folder management
-    // If .gitignore doesn't exist
-    if (!elemMainDir.has(".gitignore")) {
-        log(CRIT, msg.gitExist);
-
-        return void 0;
-    }
-
     // Check directories
     {
-        const filteredDirs = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
-        for (const dir of filteredDirs) {
-            switch (dir) {
+        const missingDirectories = REQUIRE_DIR[0].filter((name) => !elemMainDir.has(name));
+        for (const dirName of missingDirectories) {
+            switch (dirName) {
                 case "test":
                 case "src":
                     if (ctx.typeOfProject !== "degraded") {
-                        log(WARN, msg[dir], dir);
+                        log(WARN, msg[dirName], dirName);
                     }
                     break;
                 default:
-                    log(INFO, msg[dir], dir);
+                    log(INFO, msg[dirName], dirName);
             }
         }
+    }
+
+    // If .gitignore doesn't exist, then we dont want the next section to execute!
+    if (!elemMainDir.has(".gitignore")) {
+        log(CRIT, msg.gitExist);
+
+        return ctx.count;
     }
 
     const requiredSets = new Set(REQUIRE_DIR[0]);
@@ -344,19 +338,14 @@ async function psp(options = Object.create(null)) {
         if (ctx.typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
             continue;
         }
-        if (dir === ".env") {
-            continue;
-        }
-        if (dir === "bin" && ctx.typeOfProject === "cli") {
+        if (dir === ".env" || (dir === "bin" && ctx.typeOfProject === "cli")) {
             continue;
         }
 
         const st = await stat(join(CWD, dir));
-        if (!st.isDirectory()) {
-            continue;
+        if (st.isDirectory()) {
+            log(WARN, msg.ignoreDir, dir);
         }
-
-        log(WARN, msg.ignoreDir, dir);
     }
 
     return ctx.count;
