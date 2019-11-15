@@ -15,6 +15,7 @@ const { green, red } = require("kleur");
 
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
+const { CROSS, CHECK } = require("./severities");
 
 // CONSTANTS
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
@@ -24,7 +25,6 @@ const FILES_TRANSFORM = new Map([
     [".gitignore", "gitignore.txt"],
     [".npmignore", "npmignore.txt"]
 ]);
-const { CROSS, CHECK } = requiredElem.E_SEV;
 
 /**
  * @async

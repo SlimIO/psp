@@ -5,7 +5,8 @@
 ![dep](https://img.shields.io/david/SlimIO/psp.svg)
 ![size](https://img.shields.io/github/languages/code-size/SlimIO/psp.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/SlimIO/psp/badge.svg?targetFile=package.json)](https://snyk.io/test/github/SlimIO/psp?targetFile=package.json)
-[![Build Status](https://travis-ci.com/SlimIO/psp.svg?branch=master)](https://travis-ci.com/SlimIO/psp) [![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/psp.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.com/SlimIO/psp.svg?branch=master)](https://travis-ci.com/SlimIO/psp)
+[![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/psp.svg)](https://greenkeeper.io/)
 
 SlimIO - Project Structure Policy. A policy aims to accurately describe the constituent elements of a project. This CLI has been created to apply the following [Specification](https://docs.google.com/document/d/163Fb4HufSck27VW1ZWeEoDPPKGCnVKBo-6Zxbt2Bj64/edit?usp=sharing).
 
@@ -16,7 +17,7 @@ SlimIO - Project Structure Policy. A policy aims to accurately describe the cons
 </p>
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) v10 or higher
+- [Node.js](https://nodejs.org/en/) v12 or higher
 - a [SlimIO Manifest](https://github.com/SlimIO/Manifest) file at the root of the scanned project.
 
 ## Getting Started

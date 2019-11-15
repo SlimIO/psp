@@ -1,321 +1,30 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { readdir, readFile, stat } = require("fs").promises;
-const { join, basename, relative, normalize } = require("path");
-const { pathToFileURL } = require("url");
 const assert = require("assert").strict;
+const { readdir, readFile, stat } = require("fs").promises;
+const { join, relative } = require("path");
+const { pathToFileURL } = require("url");
 
 // Require Third-party Dependencies
 const emoji = require("node-emoji");
 const parser = require("file-ignore-parser");
-const { red, yellow, gray } = require("kleur");
 const Manifest = require("@slimio/manifest");
-const fileNormalize = require("file-normalize");
-const marked = require("marked");
+const { red, yellow, gray } = require("kleur");
 
 // Require Internal Dependencies
 const requiredElem = require("./src/requiredElems.json");
 const msg = require("./src/messages.js");
-const { getJavascriptFiles, readFileLocal, listContentFile } = require("./src/utils.js");
+const checkFileContent = require("./src/files");
+const { getJavascriptFiles } = require("./src/utils.js");
 const { parseScript } = require("./src/ast.js");
+const { WARN, CRIT, INFO } = require("./src/severities");
 
 // CONSTANTS
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
-const { WARN, CRIT, INFO } = requiredElem.E_SEV;
-const SKIP_FILE_CONTENT = new Set([".eslintrc", "jsdoc.json"]);
 const STR = "\n|   ";
-
-/**
- * @function getTestingPhrase
- * @param {*} devDep
- * @returns {string}
- */
-function getTestingPhrase(devDep) {
-    if (Reflect.has(devDep, "ava")) {
-        return "ava";
-    }
-    if (Reflect.has(devDep, "jest")) {
-        return "jest";
-    }
-
-    return "node test/test.js";
-}
-
-/**
- * @async
- * @function checkFileContent
- * @description Check the content of a given fileName
- * @param {!string} fileName file name of the main function
- * @param {!Set<string>} elemMainDir contain array the elements of main directory
- * @param {any} ctx context
- * @returns {void} Into the console with function log
- */
-async function checkFileContent(fileName, elemMainDir, ctx) {
-    if (ctx.typeOfProject === "degraded" && SKIP_FILE_CONTENT.has(fileName)) {
-        return;
-    }
-    const log = logHandler.bind(ctx);
-    const userCtnFile = await readFile(join(ctx.CWD, fileName), { encoding: "utf8" });
-
-    // Switch all files
-    switch (fileName) {
-        case "commitlint.config.js":
-            if (userCtnFile.indexOf("\"@commitlint/config-conventional\"") === -1) {
-                log(CRIT, msg.commitLint, fileName);
-            }
-            break;
-
-        case ".editorconfig": {
-            const localCtnFile = await readFileLocal(fileName);
-            if (fileNormalize.normalizeEOL(userCtnFile) !== fileNormalize.normalizeEOL(localCtnFile)) {
-                log(WARN, msg.editorConf.join(STR), fileName);
-            }
-            break;
-        }
-
-        case ".eslintrc": {
-            const userCtnFileJSON = JSON.parse(userCtnFile);
-            if (userCtnFileJSON.extends !== "@slimio/eslint-config") {
-                log(CRIT, msg.eslintExtends, fileName);
-            }
-
-            if (Reflect.has(userCtnFileJSON, "rules")) {
-                const keys = Object.keys(userCtnFileJSON.rules).map((row) => `${emoji.get(":arrow_right:")} ${row}`);
-                log(WARN, msg.eslintRulesKey(keys).join(STR), fileName);
-            }
-
-            if (Object.keys(userCtnFileJSON).length > 2) {
-                log(WARN, msg.eslintAdd, fileName);
-            }
-            break;
-        }
-
-        case ".gitignore": {
-            const retList = await listContentFile(fileName, void 0, { type: ctx.typeOfProject, CWD: ctx.CWD });
-            if (retList !== null) {
-                log(WARN, msg.gitignore(retList).join(STR), fileName);
-            }
-            break;
-        }
-
-        case "jsdoc.json": {
-            if (!ctx.psp.jsdoc) {
-                break;
-            }
-            const jsdocParsed = JSON.parse(userCtnFile);
-            const include = new Set(jsdocParsed.source.include.map((path) => normalize(path)));
-
-            for await (const file of getJavascriptFiles(ctx.CWD)) {
-                const cleanPath = normalize(relative(ctx.CWD, file));
-                if (basename(file) === "commitlint.config.js" || include.has(cleanPath)) {
-                    continue;
-                }
-                log(WARN, msg.jsdoc, cleanPath);
-            }
-
-            const jsdocOpts = jsdocParsed.opts || {};
-            const dest = jsdocOpts.destination;
-            if (typeof dest !== "string" || dest !== "./jsdoc/") {
-                log(WARN, msg.jsdocDestination);
-            }
-
-            let theme = jsdocOpts.template || null;
-            if (theme !== null) {
-                if (theme.startsWith("node_modules/")) {
-                    theme = theme.slice("node_modules/".length);
-                }
-
-                const buf = await readFile(join(ctx.CWD, "package.json"));
-                const localPackage = JSON.parse(buf.toString());
-                const devDependencies = localPackage.devDependencies || {};
-
-                if (!Reflect.has(devDependencies, theme)) {
-                    log(WARN, msg.jsdocTheme(theme));
-                }
-            }
-            break;
-        }
-
-        case ".npmignore": {
-            const retList = await listContentFile(fileName, void 0, { type: ctx.typeOfProject, CWD: ctx.CWD });
-            if (retList !== null) {
-                log(WARN, msg.npmignore(retList).join(STR), fileName);
-            }
-            break;
-        }
-
-        case ".travis.yml": {
-            // eslint-disable-next-line
-            const yaml = require("js-yaml");
-
-            try {
-                const travis = yaml.safeLoad(userCtnFile);
-
-                assert.strictEqual(travis.language, "node_js", "'language' must be equal to 'nodejs'");
-                assert.strictEqual(Reflect.has(travis, "after_failure"), true, "'after_failure' key is not mandatory");
-                assert.strictEqual(Reflect.has(travis, "node_js"), true, "'node_js' field is not mandatory");
-
-                const ver = Number(travis.node_js[0]);
-                assert.strictEqual(ver >= 10, true, "node.js version must be equal to 10 or higher");
-            }
-            catch (err) {
-                log(WARN, msg.travis(err.message), fileName);
-            }
-
-            break;
-        }
-
-        case ".npmrc":
-            if (ctx.psp.npmrc === false) {
-                break;
-            }
-            if (userCtnFile.includes("package-lock=false") && elemMainDir.has("package-lock.json")) {
-                log(WARN, msg.npmrc, fileName);
-            }
-            break;
-
-        case "package.json": {
-            // Variables
-            const userCtnFileJSON = JSON.parse(userCtnFile);
-            const scripts = userCtnFileJSON.scripts || {};
-            const dep = userCtnFileJSON.dependencies || {};
-            const devDep = userCtnFileJSON.devDependencies || {};
-            const requiredScripts = requiredElem.PKG_SCRIPTS[ctx.typeOfProject] || [];
-            const requiredDevDep = requiredElem.PKG_DEVDEP;
-            const requiredOthers = requiredElem.PKG_OTHERS;
-
-            // eslint-disable-next-line
-            for (let [keyScripts, value] of requiredScripts) {
-                const hasC8 = Reflect.has(devDep, "c8");
-                const hasJest = Reflect.has(devDep, "jest");
-                if (keyScripts === "report" && (hasC8 || hasJest)) {
-                    continue;
-                }
-                if (keyScripts === "coverage" && hasJest) {
-                    continue;
-                }
-
-                if (Reflect.has(scripts, keyScripts)) {
-                    if (keyScripts === "coverage") {
-                        value = hasC8 ? "c8 -r=\"html\" npm test" : "nyc npm test";
-                    }
-                    else if (keyScripts === "test") {
-                        value = getTestingPhrase(devDep);
-                    }
-
-                    if (value !== null && !scripts[keyScripts].includes(value)) {
-                        log(WARN, msg.pkgValue(keyScripts, value));
-                    }
-                    continue;
-                }
-
-                log(WARN, msg.pkgScripts(ctx.typeOfProject, keyScripts));
-            }
-
-            // Check dependencies
-            if (ctx.typeOfProject === "addon" || ctx.typeOfProject === "napi") {
-                const requiredDep = requiredElem.PKG_DEP[ctx.typeOfProject];
-                if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-                    log(WARN, msg.pkgDep(ctx.typeOfProject, requiredDep[0], requiredDep[1]).join(STR));
-                }
-            }
-
-            // check dev dependencies
-            for (const keyDepDev of requiredDevDep) {
-                if (Reflect.has(devDep, keyDepDev)) {
-                    continue;
-                }
-                log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgDevDep(keyDepDev), fileName);
-            }
-
-            // Check others fields
-            for (const keyName of requiredOthers) {
-                if (Reflect.has(userCtnFileJSON, keyName)) {
-                    if (keyName === "keywords" && userCtnFileJSON.keywords.length === 0) {
-                        log(WARN, msg.pkgOthersCtn(keyName));
-                    }
-                    if (keyName === "author" && userCtnFileJSON.author !== "SlimIO") {
-                        log(WARN, msg.pkgOthersCtn(keyName, "SlimIO"));
-                    }
-                    if (keyName === "license" && userCtnFileJSON.license !== "MIT") {
-                        log(WARN, msg.pkgOthersCtn(keyName, "MIT"));
-                    }
-                    if (keyName === "description" && userCtnFileJSON.description === "") {
-                        log(WARN, msg.pkgOthersCtn(keyName));
-                    }
-                    if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=12") {
-                        log(WARN, msg.pkgEngines.join(STR));
-                    }
-                    if (keyName === "husky") {
-                        const hooks = userCtnFileJSON.husky.hooks || {};
-                        if (!Reflect.has(hooks, "commit-msg") || !Reflect.has(hooks, "pre-push")) {
-                            log(WARN, msg.pkgHusky.join(STR));
-                        }
-                        else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
-                            log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgPrepush);
-                        }
-                    }
-                    continue;
-                }
-                log(WARN, msg.pkgOthers(keyName), fileName);
-            }
-
-            // nyc field
-            if (Reflect.has(userCtnFileJSON.devDependencies, "nyc") && !Reflect.has(userCtnFileJSON, "nyc")) {
-                log(WARN, msg.pkgNyc);
-            }
-
-            break;
-        }
-        // README.md
-        case "README.md": {
-            const userCtnFileLCase = userCtnFile.toLowerCase();
-            const titles = new Set(requiredElem.README_TITLES);
-            if (ctx.typeOfProject === "cli" || ctx.typeOfProject === "service" || ctx.typeOfProject === "degraded") {
-                titles.delete("## API");
-            }
-
-            // Check badges
-            const tokens = marked.lexer(userCtnFile);
-            if (tokens.length > 2 && tokens[1].type === "paragraph") {
-                const lines = tokens[1].text.split("\n");
-                const badges = new Set();
-                for (const text of lines) {
-                    const result = /\[?!\[([a-zA-Z\s]+)\]/g.exec(text);
-                    if (result !== null) {
-                        badges.add(result[1].toLowerCase());
-                    }
-                }
-
-                const difference = requiredElem.MD_BADGES.filter((value) => !badges.has(value));
-                if (difference.length > 0) {
-                    log(WARN, msg.missingBadges(difference), fileName);
-                }
-            }
-            else {
-                log(WARN, msg.missingBadges(requiredElem.MD_BADGES), fileName);
-            }
-
-            const retList = await listContentFile(fileName, titles, { CWD: ctx.CWD });
-            if (ctx.typeOfProject === "addon") {
-                break;
-            }
-
-            if (retList !== null) {
-                log(WARN, msg.readme(retList).join(STR), fileName);
-            }
-
-            if (ctx.typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-                log(CRIT, msg.readmeEx, fileName);
-            }
-            break;
-        }
-        default:
-    }
-}
 
 /**
  * @function logHandler
@@ -550,7 +259,7 @@ async function psp(options = Object.create(null)) {
         }
 
         // Switch all files
-        await checkFileContent(fileName, elemMainDir, ctx);
+        await checkFileContent(fileName, logHandler.bind(ctx), ctx);
     }
 
     // Check for require statment

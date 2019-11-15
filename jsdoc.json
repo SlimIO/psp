@@ -11,7 +11,19 @@
             "./bin/index.js",
             "./src/ast.js",
             "./src/messages.js",
-            "./src/utils.js"
+            "./src/utils.js",
+            "./src/severities.js",
+            "./src/files/index.js",
+            "./src/files/commitlint.js",
+            "./src/files/editorconfig.js",
+            "./src/files/eslint.js",
+            "./src/files/gitignore.js",
+            "./src/files/jsdoc.js",
+            "./src/files/npmignore.js",
+            "./src/files/npmrc.js",
+            "./src/files/package.js",
+            "./src/files/readme.js",
+            "./src/files/travis.js"
         ],
         "exclude": [
             "node_modules",
