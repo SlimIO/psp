@@ -18,6 +18,7 @@
     "FILE_TO_CHECKS": [
         "package.json",
         ".eslintrc",
+        ".eslintignore",
         ".editorconfig",
         "index.d.ts",
         "jsdoc.json",

@@ -213,7 +213,7 @@ async function psp(options = Object.create(null)) {
     }
 
     // Loop on required files array
-    const skipFiles = new Set(["index.d.ts", ".npmrc", ".travis.yml"]);
+    const skipFiles = new Set(["index.d.ts", ".npmrc", ".travis.yml", ".eslintignore"]);
     const skipDegraded = new Set([".eslintrc", "jsdoc.json"]);
     const skipTypes = new Set(["addon", "cli", "service"]);
     for (const fileName of requiredElem.FILE_TO_CHECKS) {

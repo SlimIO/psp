@@ -23,7 +23,8 @@
             "./src/files/npmrc.js",
             "./src/files/package.js",
             "./src/files/readme.js",
-            "./src/files/travis.js"
+            "./src/files/travis.js",
+            "./src/files/eslintignore.js"
         ],
         "exclude": [
             "node_modules",
