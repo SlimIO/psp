@@ -91,7 +91,7 @@ function concatBinaryExpr(node, identifiers) {
  * @function parseScript
  * @description Parse a script, get an AST and search for require occurence!
  * @param {!string} file file location
- * @param {Object} [options]
+ * @param {object} [options]
  * @param {boolean} [options.module=false]
  * @returns {Set<string>}
  */
