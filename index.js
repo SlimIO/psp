@@ -97,7 +97,7 @@ async function psp(options = Object.create(null)) {
     const pkg = JSON.parse(str);
     const pkgHasWhiteList = Reflect.has(pkg, "files");
     if (pkgHasWhiteList && Array.isArray(pkg.files)) {
-        const matchingFiles = await globby(pkg.files);
+        const matchingFiles = await globby(pkg.files, { cwd: CWD });
         for (const path of pkg.files) {
             if (path.includes("*")) {
                 continue;
