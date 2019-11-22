@@ -352,6 +352,9 @@ async function psp(options = Object.create(null)) {
         if (ctx.typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
             continue;
         }
+        if (ctx.typeOfProject === "service" && dir === "scripts") {
+            continue;
+        }
         if (dir === ".env" || (dir === "bin" && ctx.typeOfProject === "cli")) {
             continue;
         }
