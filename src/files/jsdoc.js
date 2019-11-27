@@ -19,6 +19,10 @@ async function execute([fileContent], log, ctx) {
 
     for await (const file of getJavascriptFiles(ctx.CWD)) {
         const cleanPath = normalize(relative(ctx.CWD, file));
+        if (ctx.psp.exclude.some((path) => cleanPath.startsWith(path))) {
+            continue;
+        }
+
         if (basename(file) === "commitlint.config.js" || include.has(cleanPath)) {
             continue;
         }
