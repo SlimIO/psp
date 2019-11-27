@@ -349,6 +349,9 @@ async function psp(options = Object.create(null)) {
         .filter((file) => !EXCLUDE_DIRS.has(file));
 
     for (const dir of ignoredDirs) {
+        if (manifest.psp.exclude.includes(dir)) {
+            continue;
+        }
         if (ctx.typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
             continue;
         }
