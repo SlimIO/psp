@@ -10,7 +10,7 @@ const meriyah = require("meriyah");
 
 // CONSTANTS
 const BINARY_EXPR_TYPES = new Set(["Literal", "BinaryExpression", "Identifier"]);
-const NODE_CORE_LIBS = new Set([...repl._builtinLibs, "timers"]);
+const NODE_CORE_LIBS = new Set([...repl._builtinLibs, "timers", "module"]);
 
 /**
  * @function isRequireStatment
