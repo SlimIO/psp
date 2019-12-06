@@ -38,7 +38,7 @@
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.1.0",
     "marked": "^0.7.0",
-    "meriyah": "^1.9.2",
+    "meriyah": "^1.9.3",
     "node-emoji": "^1.10.0",
     "sade": "^1.6.1",
     "semver": "^6.3.0"
