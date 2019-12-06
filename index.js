@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 "use strict";
 
 // Require Node.js Dependencies

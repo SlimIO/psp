@@ -1,7 +1,3 @@
 {
-    "extends": "@slimio/eslint-config",
-    "rules": {
-        "no-invalid-this": "off",
-        "no-extra-parens": "off"
-    }
+    "extends": "@slimio/eslint-config"
 }
