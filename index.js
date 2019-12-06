@@ -27,6 +27,8 @@ const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
 const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
+const DIR_NAPI_EXCLUDE = new Set(["include", "prebuilds", "build"]);
+const DIR_SERVICE_EXCLUDE = new Set(["scripts", "public", "views"]);
 const STR = "\n|   ";
 
 /**
@@ -357,10 +359,10 @@ async function psp(options = Object.create(null)) {
         if (manifest.psp.exclude.includes(dir)) {
             continue;
         }
-        if (ctx.typeOfProject === "napi" && (dir === "build" || dir === "prebuilds")) {
+        if (ctx.typeOfProject === "napi" && DIR_NAPI_EXCLUDE.has(dir)) {
             continue;
         }
-        if (ctx.typeOfProject === "service" && dir === "scripts") {
+        if (ctx.typeOfProject === "service" && DIR_SERVICE_EXCLUDE.has(dir)) {
             continue;
         }
         if (dir === ".env" || (dir === "bin" && ctx.typeOfProject === "cli")) {
