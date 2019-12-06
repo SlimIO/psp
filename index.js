@@ -8,11 +8,10 @@ const { join, relative } = require("path");
 const { pathToFileURL } = require("url");
 
 // Require Third-party Dependencies
-const emoji = require("node-emoji");
 const parser = require("file-ignore-parser");
 const Manifest = require("@slimio/manifest");
 const globby = require("globby");
-const { red, yellow, gray } = require("kleur");
+const { red, yellow, gray, white, magenta } = require("kleur");
 
 // Require Internal Dependencies
 const requiredElem = require("./src/requiredElems.json");
@@ -29,7 +28,7 @@ const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
 const DIR_NAPI_EXCLUDE = new Set(["include", "prebuilds", "build"]);
 const DIR_SERVICE_EXCLUDE = new Set(["scripts", "public", "views"]);
-const STR = "\n|   ";
+const STR = "\n  ";
 
 /**
  * @function logHandler
@@ -40,22 +39,22 @@ const STR = "\n|   ";
  * @returns {void} Into the console
  */
 function logHandler(severity, message, file) {
-    let colorFileName = yellow().bold(file);
+    const colorFileName = white().bold(file);
     if (severity === CRIT) {
         this.count.crit++;
-        colorFileName = red().bold(file);
     }
     else if (severity === WARN) {
         this.count.warn++;
     }
 
     // Messages into console
+    const finalMessage = Array.isArray(message) ? message.join(STR) : message;
     if (this.verbose) {
         if (file === undefined) {
-            console.log(`| ${emoji.get(severity)} : ${message}`);
+            console.log(` ${severity}  ${finalMessage}`);
         }
         else {
-            console.log(`| ${emoji.get(severity)} : ${colorFileName} ${message}`);
+            console.log(` ${severity}  ${colorFileName} ${finalMessage}`);
         }
     }
 
@@ -90,7 +89,7 @@ async function psp(options = Object.create(null)) {
 
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {
-        log(CRIT, msg.manifest.join(STR));
+        log(CRIT, msg.manifest);
         if (isCLI) {
             process.exit(1);
         }
@@ -164,7 +163,7 @@ async function psp(options = Object.create(null)) {
 
         case "cli": {
             if (!elemMainDir.has("bin")) {
-                log(CRIT, msg.binNotExist.join(STR));
+                log(CRIT, msg.binNotExist);
             }
 
             try {
@@ -183,7 +182,7 @@ async function psp(options = Object.create(null)) {
             }
 
             if (typeof pkg.bin !== "object") {
-                log(WARN, msg.rootFieldsCLI.join(STR));
+                log(WARN, msg.rootFieldsCLI);
             }
             break;
         }
@@ -191,7 +190,7 @@ async function psp(options = Object.create(null)) {
         case "napi": {
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(CRIT, msg.napiInclude.join(STR));
+                log(CRIT, msg.napiInclude);
             }
 
             // If binding.gyp file doesn't exist
@@ -217,12 +216,12 @@ async function psp(options = Object.create(null)) {
                 }
             }
             else {
-                log(CRIT, msg.napiBinding.join(STR));
+                log(CRIT, msg.napiBinding);
             }
 
             // Infos: gypfile in package.json
             if (!Reflect.has(pkg, "gypfile")) {
-                log(WARN, msg.rootFieldsNAPI.join(STR));
+                log(WARN, msg.rootFieldsNAPI);
             }
             break;
         }

@@ -12,7 +12,6 @@ const { editorConf } = require("../messages.js");
 const { WARN } = require("../severities");
 
 // CONSTANTS
-const STR = "\n|   ";
 const TPL_DIR = join(__dirname, "..", "..", "template");
 
 async function execute([, fileName], log, ctx) {
@@ -25,7 +24,7 @@ async function execute([, fileName], log, ctx) {
         [...localItems].filter((str) => !contentItems.has(str)));
 
     if (intersection.size > 0) {
-        log(WARN, editorConf.join(STR), fileName);
+        log(WARN, editorConf, fileName);
     }
 }
 

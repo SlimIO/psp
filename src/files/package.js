@@ -6,9 +6,6 @@ const msg = require("../messages.js");
 const requiredElem = require("../requiredElems.json");
 const { INFO, WARN } = require("../severities");
 
-// CONSTANTS
-const STR = "\n|   ";
-
 function getTestingPhrase(devDep) {
     if (Reflect.has(devDep, "ava")) {
         return "ava";
@@ -62,7 +59,7 @@ async function execute([fileContent, fileName], log, ctx) {
     if (ctx.typeOfProject === "addon" || ctx.typeOfProject === "napi") {
         const requiredDep = requiredElem.PKG_DEP[ctx.typeOfProject];
         if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-            log(WARN, msg.pkgDep(ctx.typeOfProject, requiredDep[0], requiredDep[1]).join(STR));
+            log(WARN, msg.pkgDep(ctx.typeOfProject, requiredDep[0], requiredDep[1]));
         }
     }
 
@@ -90,12 +87,12 @@ async function execute([fileContent, fileName], log, ctx) {
                 log(WARN, msg.pkgOthersCtn(keyName));
             }
             if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=12") {
-                log(WARN, msg.pkgEngines.join(STR));
+                log(WARN, msg.pkgEngines);
             }
             if (keyName === "husky") {
                 const hooks = userCtnFileJSON.husky.hooks || {};
                 if (!Reflect.has(hooks, "commit-msg") || !Reflect.has(hooks, "pre-push")) {
-                    log(WARN, msg.pkgHusky.join(STR));
+                    log(WARN, msg.pkgHusky);
                 }
                 else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
                     log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgPrepush);

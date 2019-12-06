@@ -9,13 +9,10 @@ const { readFileLocal } = require("../utils.js");
 const { WARN } = require("../severities");
 const { editorConf } = require("../messages.js");
 
-// CONSTANTS
-const STR = "\n|   ";
-
 async function execute([fileContent, fileName], log) {
     const localCtnFile = await readFileLocal(fileName);
     if (fileNormalize.normalizeEOL(fileContent) !== fileNormalize.normalizeEOL(localCtnFile)) {
-        log(WARN, editorConf.join(STR), fileName);
+        log(WARN, editorConf, fileName);
     }
 }
 

@@ -18,7 +18,7 @@ const messages = {
         return `Missing runtime dependency "${yellow().bold(depName)}" in package.json`;
     },
     unusedDep(depName) {
-        return `Unused dependency "${yellow().bold(depName)}" in package.json`;
+        return `unused dependency ${cyan().bold(depName)}`;
     },
     travis(err) {
         return `Error detected (${cyan().bold(err)})`;

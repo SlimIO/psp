@@ -10,7 +10,6 @@ const { CRIT, WARN } = require("../severities");
 
 // CONSTANTS
 const SLIMIO_ESLINT_PKG_NAME = "@slimio/eslint-config";
-const STR = "\n|   ";
 
 async function execute([fileContent, fileName], log) {
     const userCtnFileJSON = JSON.parse(fileContent);
@@ -20,7 +19,7 @@ async function execute([fileContent, fileName], log) {
 
     if (Reflect.has(userCtnFileJSON, "rules")) {
         const keys = Object.keys(userCtnFileJSON.rules).map((row) => `${emoji.get(":arrow_right:")} ${row}`);
-        log(WARN, msg.eslintRulesKey(keys).join(STR), fileName);
+        log(WARN, msg.eslintRulesKey(keys), fileName);
     }
 
     if (Object.keys(userCtnFileJSON).length > 2) {
