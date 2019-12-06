@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@slimio/manifest": "^0.7.1",
-    "estree-walker": "^0.9.0",
+    "estree-walker": "^1.0.0",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
     "globby": "^10.0.1",
