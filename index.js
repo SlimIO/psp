@@ -11,7 +11,8 @@ const { pathToFileURL } = require("url");
 const parser = require("file-ignore-parser");
 const Manifest = require("@slimio/manifest");
 const globby = require("globby");
-const { red, yellow, gray, white, magenta } = require("kleur");
+const is = require("@slimio/is");
+const { yellow, gray, white } = require("kleur");
 
 // Require Internal Dependencies
 const requiredElem = require("./src/requiredElems.json");
@@ -28,7 +29,7 @@ const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
 const DIR_NAPI_EXCLUDE = new Set(["include", "prebuilds", "build"]);
 const DIR_SERVICE_EXCLUDE = new Set(["scripts", "public", "views"]);
-const STR = "\n  ";
+const STR = "\n ";
 
 /**
  * @function logHandler
@@ -48,13 +49,19 @@ function logHandler(severity, message, file) {
     }
 
     // Messages into console
-    const finalMessage = Array.isArray(message) ? message.join(STR) : message;
     if (this.verbose) {
+        const isObject = is.plainObject(message);
+        let localMessage = isObject ? message.message : message;
+        localMessage = is.array(localMessage) ? localMessage.join(STR) : localMessage;
         if (file === undefined) {
-            console.log(` ${severity}  ${finalMessage}`);
+            console.log(` ${severity}  ${localMessage}`);
         }
         else {
-            console.log(` ${severity}  ${colorFileName} ${finalMessage}`);
+            console.log(` ${severity}  ${colorFileName} ${localMessage}`);
+        }
+
+        if (isObject && Reflect.has(message, "description")) {
+            console.log(message.description);
         }
     }
 

@@ -47,19 +47,21 @@ async function execute([fileContent, fileName], log, ctx) {
             }
 
             if (value !== null && !scripts[keyScripts].includes(value)) {
-                log(WARN, msg.pkgValue(keyScripts, value));
+                log(WARN, msg.package.badScriptValue(keyScripts, value), fileName);
             }
             continue;
         }
 
-        log(WARN, msg.pkgScripts(ctx.typeOfProject, keyScripts));
+        log(WARN, msg.package.missingScript(keyScripts), fileName);
     }
 
     // Check dependencies
-    if (ctx.typeOfProject === "addon" || ctx.typeOfProject === "napi") {
+    if (Reflect.has(requiredElem.PKG_DEP, ctx.typeOfProject)) {
         const requiredDep = requiredElem.PKG_DEP[ctx.typeOfProject];
-        if (!Reflect.has(dep, requiredDep[0]) && !Reflect.has(dep, requiredDep[1])) {
-            log(WARN, msg.pkgDep(ctx.typeOfProject, requiredDep[0], requiredDep[1]));
+        for (const depName of requiredDep) {
+            if (!Reflect.has(dep, depName)) {
+                log(WARN, msg.package.missingRequiredDep(ctx.typeOfProject, depName), fileName);
+            }
         }
     }
 
@@ -68,31 +70,31 @@ async function execute([fileContent, fileName], log, ctx) {
         if (Reflect.has(devDep, keyDepDev)) {
             continue;
         }
-        log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgDevDep(keyDepDev), fileName);
+        log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.package.missingDevDependencies(keyDepDev), fileName);
     }
 
     // Check others fields
     for (const keyName of requiredOthers) {
         if (Reflect.has(userCtnFileJSON, keyName)) {
             if (keyName === "keywords" && userCtnFileJSON.keywords.length === 0) {
-                log(WARN, msg.pkgOthersCtn(keyName));
+                log(WARN, msg.package.propertyValue(keyName), fileName);
             }
             if (keyName === "author" && userCtnFileJSON.author !== "SlimIO") {
-                log(WARN, msg.pkgOthersCtn(keyName, "SlimIO"));
+                log(WARN, msg.package.propertyValue(keyName, "SlimIO"), fileName);
             }
             if (keyName === "license" && userCtnFileJSON.license !== "MIT") {
-                log(WARN, msg.pkgOthersCtn(keyName, "MIT"));
+                log(WARN, msg.package.propertyValue(keyName, "MIT"), fileName);
             }
             if (keyName === "description" && userCtnFileJSON.description === "") {
-                log(WARN, msg.pkgOthersCtn(keyName));
+                log(WARN, msg.package.propertyValue(keyName), fileName);
             }
             if (keyName === "engines" && userCtnFileJSON.engines.node !== ">=12") {
-                log(WARN, msg.pkgEngines);
+                log(WARN, msg.package.engines, fileName);
             }
             if (keyName === "husky") {
                 const hooks = userCtnFileJSON.husky.hooks || {};
                 if (!Reflect.has(hooks, "commit-msg") || !Reflect.has(hooks, "pre-push")) {
-                    log(WARN, msg.pkgHusky);
+                    log(WARN, msg.pkgHusky, fileName);
                 }
                 else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
                     log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgPrepush);
@@ -100,12 +102,12 @@ async function execute([fileContent, fileName], log, ctx) {
             }
             continue;
         }
-        log(WARN, msg.pkgOthers(keyName), fileName);
+        log(WARN, msg.package.missingRootProperty(keyName), fileName);
     }
 
     // nyc field
     if (Reflect.has(userCtnFileJSON.devDependencies, "nyc") && !Reflect.has(userCtnFileJSON, "nyc")) {
-        log(WARN, msg.pkgNyc);
+        log(WARN, msg.package.nycPropertyRequired, fileName);
     }
 }
 

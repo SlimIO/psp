@@ -8,7 +8,7 @@ const { join } = require("path");
 const parser = require("file-ignore-parser");
 
 // Require Internal Dependencies
-const msg = require("../messages.js");
+const messages = require("../messages.js");
 const { WARN } = require("../severities");
 
 // CONSTANTS
@@ -19,7 +19,7 @@ async function execute([, fileName], log, ctx) {
 
     for (const path of TOCHECK) {
         if (items.has(path)) {
-            log(WARN, msg.eslintignore(path), fileName);
+            log(WARN, messages.files.eslintignore(path), fileName);
         }
     }
 }

@@ -8,7 +8,7 @@ const { join } = require("path");
 const parser = require("file-ignore-parser");
 
 // Require Internal Dependencies
-const { editorConf } = require("../messages.js");
+const messages = require("../messages.js");
 const { WARN } = require("../severities");
 
 // CONSTANTS
@@ -24,7 +24,7 @@ async function execute([, fileName], log, ctx) {
         [...localItems].filter((str) => !contentItems.has(str)));
 
     if (intersection.size > 0) {
-        log(WARN, editorConf, fileName);
+        log(WARN, messages.files.gitignore_content([...intersection]), fileName);
     }
 }
 

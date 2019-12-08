@@ -3,7 +3,7 @@
 
 // Require Internal Dependencies
 const { listContentFile } = require("../utils.js");
-const { npmignore } = require("../messages.js");
+const messages = require("../messages.js");
 const { WARN } = require("../severities");
 
 async function execute([, fileName], log, { CWD, typeOfProject: type }) {
@@ -11,7 +11,7 @@ async function execute([, fileName], log, { CWD, typeOfProject: type }) {
     const retList = await listContentFile(fileName, void 0, options);
 
     if (retList !== null) {
-        log(WARN, npmignore(retList), fileName);
+        log(WARN, messages.files.npmignore_content(retList), fileName);
     }
 }
 

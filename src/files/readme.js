@@ -31,11 +31,11 @@ async function execute([fileContent, fileName], log, ctx) {
 
         const difference = requiredElem.MD_BADGES.filter((value) => !badges.has(value));
         if (difference.length > 0) {
-            log(WARN, msg.missingBadges(difference), fileName);
+            log(WARN, msg.readme.missingBadges(difference), fileName);
         }
     }
     else {
-        log(WARN, msg.missingBadges(requiredElem.MD_BADGES), fileName);
+        log(WARN, msg.readme.missingBadges(requiredElem.MD_BADGES), fileName);
     }
 
     const retList = await listContentFile(fileName, titles, { CWD: ctx.CWD });
@@ -44,11 +44,11 @@ async function execute([fileContent, fileName], log, ctx) {
     }
 
     if (retList !== null) {
-        log(WARN, msg.readme(retList).join(STR), fileName);
+        log(WARN, msg.readme.requiredSections(retList), fileName);
     }
 
     if (ctx.typeOfProject.toLowerCase() === "package" && !userCtnFileLCase.includes("usage example")) {
-        log(CRIT, msg.readmeEx, fileName);
+        log(CRIT, msg.readme.requiredUsageSection, fileName);
     }
 }
 

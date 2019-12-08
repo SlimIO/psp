@@ -13,7 +13,7 @@ const yaml = require("js-yaml");
 const semver = require("semver");
 
 // Require Internal Dependencies
-const msg = require("../messages.js");
+const messages = require("../messages.js");
 const { WARN } = require("../severities");
 
 async function execute([fileContent, fileName], log, ctx) {
@@ -30,11 +30,11 @@ async function execute([fileContent, fileName], log, ctx) {
 
         const ver = semver.coerce(travis.node_js[0]).version;
         if (!semver.satisfies(ver, requiredNodeVersion)) {
-            log(WARN, msg.travisRange(requiredNodeVersion), fileName);
+            log(WARN, messages.travis.invalidRange(requiredNodeVersion), fileName);
         }
     }
     catch (err) {
-        log(WARN, msg.travis(err.message), fileName);
+        log(WARN, messages.travis.error(err.message), fileName);
     }
 }
 

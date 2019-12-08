@@ -26,7 +26,7 @@ async function execute([fileContent, fileName], log, ctx) {
     const hasLock = await hasPackageLock(ctx.CWD);
 
     if (fileContent.includes("package-lock=false") && hasLock) {
-        log(WARN, msg.npmrc, fileName);
+        log(WARN, msg.files.npmrc, fileName);
     }
 }
 

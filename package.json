@@ -29,7 +29,9 @@
     "bin/index.js"
   ],
   "dependencies": {
+    "@slimio/is": "^1.5.1",
     "@slimio/manifest": "^0.7.1",
+    "boxen": "^4.2.0",
     "estree-walker": "^1.0.0",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
@@ -60,14 +62,6 @@
   },
   "engines": {
     "node": ">=12"
-  },
-  "nyc": {
-    "check-coverage": true,
-    "per-file": false,
-    "lines": 98,
-    "statements": 98,
-    "functions": 98,
-    "branches": 90
   },
   "husky": {
     "hooks": {

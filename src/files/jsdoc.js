@@ -26,13 +26,13 @@ async function execute([fileContent], log, ctx) {
         if (basename(file) === "commitlint.config.js" || include.has(cleanPath)) {
             continue;
         }
-        log(WARN, msg.jsdoc, cleanPath);
+        log(WARN, msg.jsdoc.fileMissing, cleanPath);
     }
 
     const jsdocOpts = jsdocParsed.opts || {};
     const dest = jsdocOpts.destination;
     if (typeof dest !== "string" || dest !== "./jsdoc/") {
-        log(WARN, msg.jsdocDestination);
+        log(WARN, msg.jsdoc.destination, "jsdoc.json");
     }
 
     if (Reflect.has(jsdocOpts, "template")) {
@@ -45,7 +45,7 @@ async function execute([fileContent], log, ctx) {
         const devDependencies = localPackage.devDependencies || {};
 
         if (!Reflect.has(devDependencies, theme)) {
-            log(WARN, msg.jsdocTheme(theme));
+            log(WARN, msg.jsdoc.v(theme));
         }
     }
 }
