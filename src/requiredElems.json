@@ -28,7 +28,8 @@
         "README.md",
         ".npmrc",
         ".gitignore",
-        ".travis.yml"
+        ".travis.yml",
+        "binding.gyp"
     ],
     "README_TITLES": [
         "## Requirements",

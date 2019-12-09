@@ -144,7 +144,19 @@ const messages = {
         nycPropertyRequired: {
             message: `root property ${cyan().bold("nyc")} is required to configure the coverage`,
             description: toBox(`you may need to remove the package if you'r not using nyc for coverage (you may use c8 or jest).\nIn case you need to configure nyc, the following config should do the job:\n\n${NYC_CONFIG}`)
-        }
+        },
+        huskyHook: {
+            message: `${cyan().bold("husky.hooks")} is not configured as expected`,
+            description: toBox(objToString({
+                husky: {
+                    hooks: {
+                        "pre-push": "cross-env eslint index.js && npm test",
+                        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+                    }
+                }
+            }))
+        },
+        huskyPrepush: `husky ${cyan().bold("pre-push")} hook must include ${green().bold("eslint")} and ${green().bold("npm test")} keywords`
     },
     env: `file is required for ${cyan().bold("Service")} projects`,
     dotenv: `dotenv package is required (as devDependencies) for ${cyan().bold("Service")} projects`,
@@ -205,26 +217,6 @@ const messages = {
     ],
     npmEnv: `file is present in your main directory and must be present in ${yellow().bold(".npmignore")} file`,
     ignoreDir: "directory has been detected has a non-standard directory!",
-    pkgEngines: [
-        `${yellow().bold("engines")} field in package.json file must be equal to:`,
-        "",
-        "\"engines\": {",
-        "   \"node\": \">=12\"",
-        "}",
-        ""
-    ],
-    pkgHusky: [
-        `${white().bold("husky.hooks")} is not configured as expected`,
-        toBox(objToString({
-            husky: {
-                hooks: {
-                    "pre-push": "cross-env eslint index.js && npm test",
-                    "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-                }
-            }
-        }))
-    ],
-    pkgPrepush: `pre-push husky hook in package.json must include the keywords '${cyan().bold("eslint")}' and '${cyan().bold("npm test")}'`,
     rootFieldsCLI: [
         "Your project has been detected as a CLI, but no 'bin' field detected in your package.json",
         "",

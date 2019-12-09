@@ -94,10 +94,10 @@ async function execute([fileContent, fileName], log, ctx) {
             if (keyName === "husky") {
                 const hooks = userCtnFileJSON.husky.hooks || {};
                 if (!Reflect.has(hooks, "commit-msg") || !Reflect.has(hooks, "pre-push")) {
-                    log(WARN, msg.pkgHusky, fileName);
+                    log(WARN, msg.package.huskyHook, fileName);
                 }
                 else if (!hooks["pre-push"].includes("eslint") || !hooks["pre-push"].includes("npm test")) {
-                    log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.pkgPrepush);
+                    log(ctx.typeOfProject === "degraded" ? INFO : WARN, msg.package.huskyPrepush, fileName);
                 }
             }
             continue;

@@ -201,28 +201,7 @@ async function psp(options = Object.create(null)) {
             }
 
             // If binding.gyp file doesn't exist
-            inGyp: if (elemMainDir.has("binding.gyp")) {
-                try {
-                    const buf = await readFile(join(CWD, "binding.gyp"));
-                    const binding = JSON.parse(buf.toString());
-
-                    if (!Reflect.has(binding.targets[0], "defines")) {
-                        log(WARN, msg.napiExceptions);
-                        break inGyp;
-                    }
-
-                    const defines = new Set(binding.targets[0].defines);
-                    if (!defines.has("NAPI_DISABLE_CPP_EXCEPTIONS")) {
-                        log(WARN, msg.napiExceptions);
-                    }
-                }
-                catch (err) {
-                    if (ctx.verbose) {
-                        console.log("Failed to read/parse binding.gyp file");
-                    }
-                }
-            }
-            else {
+            if (!elemMainDir.has("binding.gyp")) {
                 log(CRIT, msg.napiBinding);
             }
 
