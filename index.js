@@ -41,6 +41,10 @@ const STR = "\n ";
  */
 function logHandler(severity, message, file) {
     const colorFileName = white().bold(file);
+    if (severity === INFO && !this.showInformation) {
+        return;
+    }
+
     if (severity === CRIT) {
         this.count.crit++;
     }
@@ -60,7 +64,7 @@ function logHandler(severity, message, file) {
             console.log(` ${severity}  ${colorFileName} ${localMessage}`);
         }
 
-        if (isObject && Reflect.has(message, "description")) {
+        if ((this.showDescription || severity === CRIT) && isObject && Reflect.has(message, "description")) {
             console.log(message.description);
         }
     }
@@ -79,12 +83,22 @@ function logHandler(severity, message, file) {
  * @param {string} [options.CWD=process.cwd()] working dir where we will execute psp!
  * @param {boolean} [options.isCLI=true] enable/disable CLI mode
  * @param {boolean} [options.verbose=true] enable/disable verbose mode
+ * @param {boolean} [options.showDescription=false] enable/disable description of warnings
+ * @param {boolean} [options.showInformation=false] show information warnings!
  * @returns {Promise<void>} Into the console with function log
  */
 async function psp(options = Object.create(null)) {
-    const { forceMode = false, CWD = process.cwd(), isCLI = true, verbose = true } = options;
+    const {
+        forceMode = false,
+        CWD = process.cwd(),
+        isCLI = true,
+        verbose = true,
+        showDescription = false,
+        showInformation = false
+    } = options;
+
     const ctx = {
-        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD, verbose
+        forceMode, count: { crit: 0, warn: 0 }, typeOfProject: "", CWD, verbose, showDescription, showInformation
     };
     const log = logHandler.bind(ctx);
     if (verbose) {
