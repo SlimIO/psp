@@ -46,7 +46,7 @@ const messages = {
             return {
                 message: [
                     "file doesn't contains the right files and/or directories.\n",
-                    `${lines.join("\n|   ")}`
+                    `${lines.join("\n ")}`
                 ],
                 description: toBox(`Run the following cmd ${cyan().bold("psp --gitignore")} to get the right content!`)
             };
@@ -57,7 +57,7 @@ const messages = {
             return {
                 message: [
                     "file doesn't contains the right files and/or directories.\n",
-                    `${lines.join("\n|   ")}`
+                    `${lines.join("\n ")}`
                 ],
                 description: toBox(`Run the following cmd ${cyan().bold("psp --npmignore")} to get the right content!`)
             };
@@ -168,6 +168,7 @@ const messages = {
             message: `missing root property ${cyan().bold("gypfile")} which must be equal to ${green().bold("true")}`
         }
     },
+    duplicatedWhiteList: "package.json whitelist and .npmignore detected (you may choose one of them but not both)",
     env: `file is required for ${cyan().bold("Service")} projects`,
     dotenv: `dotenv package is required (as devDependencies) for ${cyan().bold("Service")} projects`,
     cliGlobal: `Package.json '${cyan().bold("preferGlobal")}' key is '${red("DEPRECATED")}' (please remove)`,

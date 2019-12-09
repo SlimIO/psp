@@ -8,7 +8,5 @@ module.exports = {
     WARN: kleur.magenta().bold("WARN"),
     INFO: kleur.green().bold("INFO"),
     ARROW_UP: ":arrow_double_up:",
-    ARROW_DOWN: ":arrow_double_down:",
-    CROSS: ":x:",
-    CHECK: ":heavy_check_mark:"
+    ARROW_DOWN: ":arrow_double_down:"
 };

@@ -1,9 +1,6 @@
 "use strict";
 /* eslint-disable jsdoc/require-jsdoc */
 
-// Require Third-party Dependencies
-const emoji = require("node-emoji");
-
 // Require Internal Dependencies
 const messages = require("../messages.js");
 const { CRIT, WARN } = require("../severities");

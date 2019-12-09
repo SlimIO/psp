@@ -106,6 +106,10 @@ async function psp(options = Object.create(null)) {
     const pkg = JSON.parse(str);
     const pkgHasWhiteList = Reflect.has(pkg, "files");
     if (pkgHasWhiteList && Array.isArray(pkg.files)) {
+        if (elemMainDir.has(".npmignore")) {
+            log(CRIT, msg.duplicatedWhiteList, ".npmignore");
+        }
+
         const matchingFiles = await globby(pkg.files, { cwd: CWD });
         for (const path of pkg.files) {
             if (path.includes("*")) {
@@ -128,29 +132,6 @@ async function psp(options = Object.create(null)) {
     // Check version of package/slimio
     if (pkg.version !== manifest.version) {
         log(CRIT, msg.versionDiff);
-    }
-
-    if (ctx.typeOfProject === "addon") {
-        let addon = null;
-        try {
-            const main = pkg.main || "index.js";
-            if (pkg.type === "module") {
-                const addonEntryFile = pathToFileURL(join(CWD, main));
-                addon = (await import(addonEntryFile)).default;
-            }
-            else {
-                // eslint-disable-next-line
-                addon = require(join(CWD, main));
-            }
-            assert.strictEqual(addon.constructor.name, "Addon");
-
-            if (addon.name !== manifest.name) {
-                log(CRIT, msg.nameDiff);
-            }
-        }
-        catch (err) {
-            log(CRIT, msg.exportAddon);
-        }
     }
 
     // If slimio.toml exists for projects structure
@@ -212,7 +193,29 @@ async function psp(options = Object.create(null)) {
             }
             break;
         }
-        default:
+
+        case "addon": {
+            let addon = null;
+            try {
+                const main = pkg.main || "index.js";
+                if (pkg.type === "module") {
+                    const addonEntryFile = pathToFileURL(join(CWD, main));
+                    addon = (await import(addonEntryFile)).default;
+                }
+                else {
+                    // eslint-disable-next-line
+                    addon = require(join(CWD, main));
+                }
+                assert.strictEqual(addon.constructor.name, "Addon");
+
+                if (addon.name !== manifest.name) {
+                    log(CRIT, msg.nameDiff);
+                }
+            }
+            catch (err) {
+                log(CRIT, msg.exportAddon);
+            }
+        }
     }
 
     // Loop on required files array

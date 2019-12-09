@@ -10,12 +10,10 @@ const { join, extname } = require("path");
 
 // Require Third-party Dependencies
 const parser = require("file-ignore-parser");
-const emoji = require("node-emoji");
 const { green, red } = require("kleur");
 
 // Require Internal Dependencies
 const requiredElem = require("../src/requiredElems.json");
-const { CROSS, CHECK } = require("./severities");
 
 // CONSTANTS
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
@@ -100,11 +98,11 @@ async function listContentFile(fileName, setObj, options = Object.create(null)) 
 
     for (const line of localFile) {
         if (!userFile[key](line)) {
-            list.push(`${emoji.get(CROSS)} ${red(line)}`);
+            list.push(green(line));
             missing = true;
             continue;
         }
-        list.push(`${emoji.get(CHECK)} ${green(line)}`);
+        list.push(red(line));
     }
 
     return missing ? list : null;
