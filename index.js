@@ -197,17 +197,17 @@ async function psp(options = Object.create(null)) {
         case "napi": {
             // If include folder doesn't exist.
             if (!elemMainDir.has("include")) {
-                log(CRIT, msg.napiInclude);
+                log(CRIT, msg.gyp.missingIncludeDir);
             }
 
             // If binding.gyp file doesn't exist
             if (!elemMainDir.has("binding.gyp")) {
-                log(CRIT, msg.napiBinding);
+                log(CRIT, msg.gyp.missingGyp, "binding.gyp");
             }
 
             // Infos: gypfile in package.json
             if (!Reflect.has(pkg, "gypfile")) {
-                log(WARN, msg.rootFieldsNAPI);
+                log(WARN, msg.gyp.missingRootGypProperty, "package.json");
             }
             break;
         }
@@ -227,6 +227,10 @@ async function psp(options = Object.create(null)) {
             // If type === addon
             const isAddonOrCLI = skipTypes.has(ctx.typeOfProject);
             if (fileName === "index.d.ts" && isAddonOrCLI) {
+                continue;
+            }
+
+            if (fileName === "binding.gyp" && ctx.typeOfProject !== "napi") {
                 continue;
             }
 

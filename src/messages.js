@@ -158,6 +158,14 @@ const messages = {
         },
         huskyPrepush: `husky ${cyan().bold("pre-push")} hook must include ${green().bold("eslint")} and ${green().bold("npm test")} keywords`
     },
+    gyp: {
+        disableExceptions: `N-API must include ${cyan().bold("NAPI_DISABLE_CPP_EXCEPTIONS")} as a definition`,
+        missingGyp: "every N-API project must have a gyp configuration at the root",
+        missingIncludeDir: "missing include directory which must contain N-API headers",
+        missingRootGypProperty: {
+            message: `missing root property ${cyan().bold("gypfile")} which must be equal to ${green().bold("true")}`
+        }
+    },
     env: `file is required for ${cyan().bold("Service")} projects`,
     dotenv: `dotenv package is required (as devDependencies) for ${cyan().bold("Service")} projects`,
     cliGlobal: `Package.json '${cyan().bold("preferGlobal")}' key is '${red("DEPRECATED")}' (please remove)`,
@@ -200,21 +208,6 @@ const messages = {
         `${cyan().bold("==> https://github.com/SlimIO/Manifest")}`,
         ""
     ],
-    napiBinding: [
-        `${yellow().bold("N-API STRUCTURE")}`,
-        "",
-        `Your project structure is a ${yellow().bold("N-API")} and your main directory`,
-        `must contain a ${yellow().bold("binding.gyp")} file !`,
-        ""
-    ],
-    napiExceptions: `N-API projects must include '${cyan().bold("NAPI_DISABLE_CPP_EXCEPTIONS")}' in binding.gyp definitions`,
-    napiInclude: [
-        `${yellow().bold("N-API STRUCTURE")}`,
-        "",
-        `Your project structure is a ${yellow().bold("N-API")} and your main directory`,
-        `must contain a ${yellow().bold("include")} folder !`,
-        ""
-    ],
     npmEnv: `file is present in your main directory and must be present in ${yellow().bold(".npmignore")} file`,
     ignoreDir: "directory has been detected has a non-standard directory!",
     rootFieldsCLI: [
@@ -227,17 +220,11 @@ const messages = {
         `${cyan().bold("==> See documentation to https://docs.npmjs.com/files/package.json#bin")}`,
         ""
     ],
-    rootFieldsNAPI: [
-        `${green("N-API project:")} ${yellow().bold("think to add following properties to your package.json")}`,
-        "",
-        `"gypfile": ${green(true)},`,
-        ""
-    ],
     shebang: `The ${yellow().bold("index.js file")} must contain => #!/usr/bin/env node <= to first line`,
     src: "folder doesn't exist in your main directory (Mandatory folder).",
     test: "folder doesn't exist ! He is required to test your project.",
     pubNoMatch(pattern) {
-        return `unable to match local file or path '${cyan().bold(pattern)}' from the package.json whitelist (files)`;
+        return `unable to match local file or path ${cyan().bold(pattern)} from the package.json whitelist (files)`;
     }
 };
 
