@@ -97,7 +97,9 @@ const messages = {
         },
         invalidRange(range) {
             return `required Node.js engine version must respect the package.json range which is ${cyan().bold(range)}`;
-        }
+        },
+        mustBeWindows: "os must be configured / include Windows as expected by the SlimIO manifest",
+        beforeScript: `before_script must be configured with a ${cyan().bold("touch .env")} command`
     },
     readme: {
         requiredSections(sections) {

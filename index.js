@@ -122,6 +122,7 @@ async function psp(options = Object.create(null)) {
     // If type of .toml file isn't valid
     const manifest = Manifest.open(join(CWD, "slimio.toml"));
     ctx.typeOfProject = manifest.type.toLowerCase();
+    ctx.platform = manifest.platform;
     ctx.psp = manifest.psp;
 
     // Check version of package/slimio

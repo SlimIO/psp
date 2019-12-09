@@ -32,6 +32,15 @@ async function execute([fileContent, fileName], log, ctx) {
         if (!semver.satisfies(ver, requiredNodeVersion)) {
             log(WARN, messages.travis.invalidRange(requiredNodeVersion), fileName);
         }
+
+        if (ctx.typeOfProject === "service" && !Reflect.has(travis, "before_script")) {
+            log(CRIT, messages.travis.beforeScript, fileName);
+        }
+
+        const os = new Set(travis.os || []);
+        if (ctx.platform === "Windows" && !os.has("windows")) {
+            log(CRIT, messages.travis.mustBeWindows, fileName);
+        }
     }
     catch (err) {
         log(WARN, messages.travis.error(err.message), fileName);
