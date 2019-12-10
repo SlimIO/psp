@@ -5,10 +5,20 @@
 const { green, yellow, cyan, red, white, gray } = require("kleur");
 const boxen = require("boxen");
 
+/**
+ * @function objToString
+ * @param {*} obj
+ * @returns {string}
+ */
 function objToString(obj) {
     return `${JSON.stringify(obj, null, 2)}`;
 }
 
+/**
+ * @function toBox
+ * @param {!string} str
+ * @returns {string}
+ */
 function toBox(str) {
     return boxen(str, { padding: { left: 3, right: 3, top: 1, bottom: 1 }, margin: 1, borderStyle: "bold" });
 }
