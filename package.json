@@ -1,6 +1,6 @@
 {
   "name": "@slimio/psp",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "Analyze compliance with the structural policy of a SlimIO project",
   "main": "./index.js",
   "scripts": {
