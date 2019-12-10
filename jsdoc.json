@@ -24,7 +24,8 @@
             "./src/files/package.js",
             "./src/files/readme.js",
             "./src/files/travis.js",
-            "./src/files/eslintignore.js"
+            "./src/files/eslintignore.js",
+            "./src/files/gyp.js"
         ],
         "exclude": [
             "node_modules",
