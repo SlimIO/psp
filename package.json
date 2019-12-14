@@ -42,7 +42,7 @@
     "marked": "^0.7.0",
     "meriyah": "^1.9.3",
     "sade": "^1.6.1",
-    "semver": "^6.3.0"
+    "semver": "^7.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
