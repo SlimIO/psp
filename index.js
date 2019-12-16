@@ -310,15 +310,17 @@ async function psp(options = Object.create(null)) {
 
         const runtimeDep = new Set(tempDependenciesArray);
         const dependencies = pkg.dependencies || {};
+        const { disabled_dependency } = ctx.psp;
         for (const dep of runtimeDep) {
-            if (!Reflect.has(dependencies, dep)) {
+            if (!Reflect.has(dependencies, dep) && !disabled_dependency.includes(dep)) {
                 log(WARN, msg.missingDep(dep), "package.json");
             }
         }
 
 
         for (const dep of Object.keys(dependencies)) {
-            if (runtimeDep.has(dep) || (ctx.typeOfProject === "napi" && NAPI_DEPENDENCIES.has(dep))) {
+            if (disabled_dependency.includes(dep) || runtimeDep.has(dep) || (ctx.typeOfProject === "napi"
+            && NAPI_DEPENDENCIES.has(dep))) {
                 continue;
             }
 
