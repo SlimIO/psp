@@ -40,7 +40,7 @@
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.1.0",
     "marked": "^0.8.0",
-    "meriyah": "^1.9.3",
+    "meriyah": "^1.9.4",
     "sade": "^1.6.1",
     "semver": "^6.3.0"
   },
