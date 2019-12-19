@@ -12,15 +12,15 @@ async function execute([fileContent, fileName], log, ctx) {
     try {
         const binding = JSON.parse(fileContent);
 
-        if (Reflect.has(binding.targets[0], "defines")) {
-            const defines = new Set(binding.targets[0].defines);
-            if (!defines.has("NAPI_DISABLE_CPP_EXCEPTIONS")) {
-                log(WARN, messages.gyp.disableExceptions, fileName);
-            }
-        }
-        else {
-            log(WARN, messages.gyp.disableExceptions, fileName);
-        }
+        // if (Reflect.has(binding.targets[0], "defines")) {
+        //     const defines = new Set(binding.targets[0].defines);
+        //     if (!defines.has("NAPI_DISABLE_CPP_EXCEPTIONS")) {
+        //         log(WARN, messages.gyp.disableExceptions, fileName);
+        //     }
+        // }
+        // else {
+        //     log(WARN, messages.gyp.disableExceptions, fileName);
+        // }
     }
     catch (err) {
         if (ctx.verbose) {
