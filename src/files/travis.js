@@ -14,7 +14,7 @@ const semver = require("semver");
 
 // Require Internal Dependencies
 const messages = require("../messages.js");
-const { WARN } = require("../severities");
+const { WARN, CRIT } = require("../severities");
 
 async function execute([fileContent, fileName], log, ctx) {
     const buf = await readFile(join(ctx.CWD, "package.json"));
