@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@slimio/is": "^1.5.1",
-    "@slimio/manifest": "^0.8.0",
+    "@slimio/manifest": "^0.9.1",
     "boxen": "^4.2.0",
     "estree-walker": "^1.0.0",
     "file-ignore-parser": "^1.0.0",
