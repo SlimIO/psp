@@ -35,7 +35,7 @@
     "estree-walker": "^1.0.0",
     "file-ignore-parser": "^1.0.0",
     "file-normalize": "^1.1.2",
-    "globby": "^10.0.1",
+    "globby": "^11.0.0",
     "js-yaml": "^3.13.1",
     "kleur": "^3.0.2",
     "make-promises-safe": "^5.1.0",
