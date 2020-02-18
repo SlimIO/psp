@@ -116,8 +116,17 @@ async function psp(options = Object.create(null)) {
         }
     }
 
-    const str = await readFile(join(CWD, "package.json"));
-    const pkg = JSON.parse(str);
+    let pkg;
+    try {
+        const str = await readFile(join(CWD, "package.json"));
+        pkg = JSON.parse(str);
+    }
+    catch (error) {
+        log(CRIT, error.message, "package.json");
+
+        return ctx.count;
+    }
+
     const pkgHasWhiteList = Reflect.has(pkg, "files");
     if (pkgHasWhiteList && Array.isArray(pkg.files)) {
         if (elemMainDir.has(".npmignore")) {
