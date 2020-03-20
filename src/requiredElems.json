@@ -114,7 +114,6 @@
         "dep",
         "size",
         "known vulnerabilities",
-        "build status",
-        "greenkeeper badge"
+        "build status"
     ]
 }
