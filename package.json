@@ -33,7 +33,7 @@
     "@slimio/manifest": "^0.9.1",
     "boxen": "^4.2.0",
     "estree-walker": "^2.0.1",
-    "file-ignore-parser": "^1.0.0",
+    "file-ignore-parser": "^2.0.0",
     "file-normalize": "^1.1.2",
     "globby": "^11.0.0",
     "js-yaml": "^3.13.1",
