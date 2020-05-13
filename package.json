@@ -8,7 +8,9 @@
     "test": "ava --verbose",
     "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
     "coverage": "nyc npm test",
-    "report": "nyc report --reporter=html"
+    "report": "nyc report --reporter=html",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "psp",
@@ -42,7 +44,8 @@
     "marked": "^1.0.0",
     "meriyah": "^1.9.12",
     "sade": "^1.7.3",
-    "semver": "^7.3.2"
+    "semver": "^7.3.2",
+    "snyk": "^1.320.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -86,5 +89,6 @@
   "bugs": {
     "url": "https://github.com/SlimIO/psp/issues"
   },
-  "homepage": "https://github.com/SlimIO/psp#readme"
+  "homepage": "https://github.com/SlimIO/psp#readme",
+  "snyk": true
 }
