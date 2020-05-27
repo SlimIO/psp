@@ -5,9 +5,9 @@
   "main": "./index.js",
   "scripts": {
     "prepublishOnly": "pkg-ok",
-    "test": "ava --verbose",
+    "test": "nyc --reporter=lcov ava --verbose",
     "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
-    "coverage": "nyc npm test",
+    "coverage": "codecov",
     "report": "nyc report --reporter=html"
   },
   "keywords": [
@@ -51,6 +51,7 @@
     "@slimio/eslint-config": "^4.1.0",
     "@types/node": "^14.0.1",
     "ava": "^3.8.2",
+    "codecov": "^3.7.0",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
