@@ -106,7 +106,7 @@ async function psp(options = Object.create(null)) {
     }
 
     // Read the main directory of user
-    const elemMainDir = new Set(await readdir(CWD));
+    const elemMainDir = new Set((await readdir(CWD)).map((file) => file.toLowerCase()));
 
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {

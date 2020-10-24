@@ -23,9 +23,9 @@
         "index.d.ts",
         "jsdoc.json",
         "commitlint.config.js",
-        "LICENSE",
+        "license",
         ".npmignore",
-        "README.md",
+        "readme.md",
         ".npmrc",
         ".gitignore",
         ".travis.yml",
@@ -79,7 +79,7 @@
         "package": [
             ["test", null],
             ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"],
-            ["coverage", null],
+            ["coverage", "codecov"],
             ["report", "nyc report --reporter=html"],
             ["prepublishOnly", "pkg-ok"]
         ],
@@ -92,7 +92,7 @@
             ["build", "cross-env node-gyp configure && node-gyp build"],
             ["test", null],
             ["doc", "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"],
-            ["coverage", null],
+            ["coverage", "codecov"],
             ["report", "nyc report --reporter=html"],
             ["prepublishOnly", "pkg-ok"]
         ],

@@ -34,15 +34,9 @@ async function execute([fileContent, fileName], log, ctx) {
         if (keyScripts === "report" && (hasC8 || hasJest)) {
             continue;
         }
-        if (keyScripts === "coverage" && hasJest) {
-            continue;
-        }
 
         if (Reflect.has(scripts, keyScripts)) {
-            if (keyScripts === "coverage") {
-                value = hasC8 ? "c8 -r=\"html\" npm test" : "nyc npm test";
-            }
-            else if (keyScripts === "test") {
+            if (keyScripts === "test") {
                 value = getTestingPhrase(devDep);
             }
 
