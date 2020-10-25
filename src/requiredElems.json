@@ -13,7 +13,7 @@
         ".git"
     ],
     "EXCLUDE_FILES": [
-        "LICENSE"
+        "license"
     ],
     "FILE_TO_CHECKS": [
         "package.json",

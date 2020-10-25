@@ -24,7 +24,7 @@ const { WARN, CRIT, INFO } = require("./src/severities");
 
 // CONSTANTS
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
-const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
+const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES.map((file) => file.toLowerCase()));
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
 const DIR_NAPI_EXCLUDE = new Set(["include", "prebuilds", "build"]);
