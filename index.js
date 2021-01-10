@@ -249,8 +249,13 @@ async function psp(options = Object.create(null)) {
 
     const skipDegraded = new Set([".eslintrc", "jsdoc.json"]);
     const skipTypes = new Set(["addon", "cli", "service"]);
-    for (const fileName of requiredElem.FILE_TO_CHECKS) {
-        if (!elemMainDir.has(fileName)) {
+    for (let fileName of requiredElem.FILE_TO_CHECKS) {
+        const hasLowerCaseFile = elemMainDir.has(fileName.toLowerCase());
+        if (hasLowerCaseFile) {
+            fileName = fileName.toLowerCase();
+        }
+
+        if (!hasLowerCaseFile && !elemMainDir.has(fileName)) {
             // If type === addon
             const isAddonOrCLI = skipTypes.has(ctx.typeOfProject);
             if (fileName === "index.d.ts" && isAddonOrCLI) {

@@ -24,7 +24,7 @@
         "index.d.ts",
         "jsdoc.json",
         "commitlint.config.js",
-        "license",
+        "LICENSE",
         ".npmignore",
         "README.md",
         ".npmrc",
