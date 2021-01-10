@@ -24,7 +24,7 @@ const { WARN, CRIT, INFO } = require("./src/severities");
 
 // CONSTANTS
 const REQUIRE_DIR = requiredElem.REQUIRE_DIR;
-const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES.map((file) => file.toLowerCase()));
+const EXCLUDE_FILES = new Set(requiredElem.EXCLUDE_FILES);
 const EXCLUDE_DIRS = new Set(requiredElem.EXCLUDE_DIRS);
 const NAPI_DEPENDENCIES = new Set(["node-gyp-build", "node-addon-api"]);
 const DIR_NAPI_EXCLUDE = new Set(["include", "prebuilds", "build"]);
@@ -106,7 +106,7 @@ async function psp(options = Object.create(null)) {
     }
 
     // Read the main directory of user
-    const elemMainDir = new Set((await readdir(CWD)).map((file) => file.toLowerCase()));
+    const elemMainDir = new Set(await readdir(CWD));
 
     // If slimio manisfest doesn't installed in this project, then exit
     if (!elemMainDir.has("slimio.toml")) {

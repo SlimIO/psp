@@ -53,6 +53,6 @@ async function execute([fileContent, fileName], log, ctx) {
 }
 
 module.exports = {
-    files: new Set(["README.md"]),
+    files: new Set(["README.md", "readme.md", "Readme.md"]),
     execute
 };
