@@ -12,7 +12,7 @@ const { readFileLocal } = require("../src/utils.js");
 const psp = require("../index.js");
 
 sade("psp", true)
-    .version("0.12.1")
+    .version("0.12.2")
     .option("--gitignore", "show gitignore help", false)
     .option("--editorconfig", "show editorconfig help", false)
     .option("--npmignore", "show npmignore help", false)
